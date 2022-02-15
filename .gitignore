@@ -11,8 +11,32 @@
 # Built Visual Studio Code Extensions
 *.vsix
 
+
 # CMake Auto-Generated Build Folder
 build/
+
+# SGP4 Libraries
+# Not sure if I can distribute these, so I'll have them ignored for now
+lib/libastrofunc.so
+lib/libdllmain.so
+lib/libelops.so
+lib/libenvconst.so
+lib/libextephem.so
+lib/libifcoremt.so.5
+lib/libifport.so.5
+lib/libimf.so
+lib/libintlc.so.5
+lib/libiomp5.so
+lib/libobs.so
+lib/libsatstate.so
+lib/libsensor.so
+lib/libsgp4prop.so
+lib/libspvec.so
+lib/libsvml.so
+lib/libtimefunc.so
+lib/libtle.so
+lib/libvcm.so
+lib/SGP4_Open_License.txt
 
 # SGP4 Output Log
 sgp4_log.txt
