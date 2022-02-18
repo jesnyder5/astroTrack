@@ -3,12 +3,13 @@
  * Author: Jeremy Snyder
  * Creation: Jan 1, 2022
  *
- * Last Update: Jan 12, 2022
+ * Last Update: Feb 17, 2022
  *
  * Uses USSF SGP4 to track objects from an Earth-fixed terrestrial reference frame.
  */
 
 #include "astroTracker.hpp"
+#include "frameLib.hpp"
 #include <iostream>
 #include <fstream>
 #include "stdlib.h"
@@ -90,6 +91,10 @@ astroTracker::~astroTracker(){
 
 // Load all the dlls being used in the program
 void astroTracker::LoadAstroStdDlls(){
+
+    // TEST FUNCTION, REMOVE LATER
+    itrs::test();
+
     std::cout << "LoadAstroStdDlls" << std::endl;
 
     // Load MainDll dll
