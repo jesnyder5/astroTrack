@@ -12,7 +12,7 @@
 #include "astroTracker.hpp"
 #include <iostream>
 #include <fstream>
-#include <json.hpp>
+#include "json.hpp"
 #include <time.h>
 
 using json = nlohmann::json;
