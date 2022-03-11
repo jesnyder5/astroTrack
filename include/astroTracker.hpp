@@ -33,6 +33,11 @@ public:
     
     // Returns string vector of loaded satellite names
     std::vector<std::string> getSatNames();
+
+    // Convert latitude, longitude, and height retrived from GPS to TEME vector
+    void getGPSposTEME(double posTEME[3]);
+
+    void getSunAndMoonPosTEME(double posSunTEME[3]);
     
 private:
     // Json object using satellite names as keys and storing satellite properties as well as corresponding TLE dll satKey

@@ -13,6 +13,7 @@
 #include <iostream>
 #include <fstream>
 #include "stdlib.h"
+#include "time.h"
 
 extern "C" {
 #include "services/DllMainDll_Service.h"
@@ -369,6 +370,64 @@ void astroTracker::loadFromTLE(std::string name, std::string line1, std::string 
 
 std::vector<std::string> astroTracker::getSatNames(){
     return satNames;
+}
+
+// Convert latitude, longitude, and height retrived from GPS to TEME vector
+void astroTracker::getGPSposTEME(double posTEME[3]){
+    double thetaG,
+           metricLLH[3] = {39.05, -76.65, 0.04}, // TEST CASE
+           ds50UT1;
+    
+    // Zero out current vector
+    posTEME[0] = 0;
+    posTEME[1] = 0;
+    posTEME[2] = 0;
+
+    // Swap Earth model for GPS (WGS72 -> WGS84)
+    // EnvSetGeoIdx(84);
+
+    // Retrieve GPS info (converting to Metric if needed) -> metricLLH
+    
+    // === Calculate Greenwich Sidereal (thetaG) ===
+    // Calculate current time in ds50UT1
+    std::time_t t = std::time(0);
+    tm* now = std::localtime(&t);
+    // Replace relevant tm fields with GPS time?
+    ds50UT1 = UTCToUT1(
+        TimeComps2ToUTC(
+            now->tm_year,
+            now->tm_mon,
+            now->tm_mday,
+            now->tm_hour,
+            now->tm_min,
+            now->tm_sec
+        )
+    );
+
+    thetaG = ThetaGrnwch(ds50UT1, EnvGetFkPtr());
+
+    // === Convert LLH to ECI position vector (TEME of Date in km)
+    LLHToXYZ(thetaG, metricLLH, posTEME);
+
+    // Convert position vector to something independent of Earth model
+    // Swap Earth model back to WGS72 for SGP4 propagation
+    // EnvSetGeoIdx(72);
+    // Convert position vector back to TEME
+
+    // === Convert posTEME to unit vector ===
+    // (Is this even needed?)
+    double mag = sqrt(
+        (
+            (posTEME[0]*posTEME[0])+
+            (posTEME[1]*posTEME[1])+
+            (posTEME[2]*posTEME[2])
+        )
+    );
+
+    posTEME[0] = (posTEME[0] / mag);
+    posTEME[1] = (posTEME[1] / mag);
+    posTEME[2] = (posTEME[2] / mag);
+
 }
 
 //================================================ Utility Functions =================================
