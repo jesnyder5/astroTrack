@@ -16,14 +16,14 @@
 #define ASTDYN_STD
 // Provided Astrodynamics Standards library wrappers
 extern "C" {
-#include "services/DllMainDll_Service.h"
-#include "services/TimeFuncDll_Service.h"
-#include "wrappers/DllMainDll.h"
-#include "wrappers/EnvConstDll.h"
-#include "wrappers/AstroFuncDll.h"
-#include "wrappers/TimeFuncDll.h"
-#include "wrappers/TleDll.h"
-#include "wrappers/Sgp4PropDll.h"
+#include "DllMainDll_Service.h"
+#include "TimeFuncDll_Service.h"
+#include "DllMainDll.h"
+#include "EnvConstDll.h"
+#include "AstroFuncDll.h"
+#include "TimeFuncDll.h"
+#include "TleDll.h"
+#include "Sgp4PropDll.h"
 }
 #endif
 
