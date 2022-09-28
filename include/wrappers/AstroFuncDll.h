@@ -1,13 +1,15 @@
-// This wrapper file was generated automatically by the A3\GenDllWrappers program.
+// This wrapper file was generated automatically by the GenDllWrappers program.
 
 #ifndef ASTROFUNCDLL_H
 #define ASTROFUNCDLL_H
 
-#include "services/DllUtils.h"
+#include "../services/DllUtils.h"
 
-// Provide the path to the dll/so
-#ifdef _WIN32
+// Provide the path to the dll/so/dylib
+#if defined (_WIN32) || defined (__CYGWIN__)
   #define AstroFuncDll "AstroFunc.dll"
+#elif __APPLE__
+  #define AstroFuncDll "libastrofunc.dylib"
 #else
   #define AstroFuncDll "libastrofunc.so"
 #endif
@@ -113,10 +115,10 @@ typedef void (STDCALL *fnPtrPosVelMuToKep)(double pos[3], double vel[3], double 
 // W vector: pos x vel
 // pos                The position vector to be converted. (in-Double[3])
 // vel                The velocity vector to be converted. (in-Double[3])
-// uVec               The resulting U vector. (out-Double[3])
+// uvec               The resulting U vector. (out-Double[3])
 // vVec               The resulting V vector. (out-Double[3])
 // wVec               The resulting W vector. (out-Double[3])
-typedef void (STDCALL *fnPtrPosVelToUUVW)(double pos[3], double vel[3], double uVec[3], double vVec[3], double wVec[3]);
+typedef void (STDCALL *fnPtrPosVelToUUVW)(double pos[3], double vel[3], double uvec[3], double vVec[3], double wVec[3]);
 
 
 // Converts position and velocity vectors to U, V, W vectors. See the remarks section for details.
@@ -126,10 +128,10 @@ typedef void (STDCALL *fnPtrPosVelToUUVW)(double pos[3], double vel[3], double u
 // W vector: pos x vel
 // pos                The position vector. (in-Double[3])
 // vel                The velocity vector. (in-Double[3])
-// uVec               The resulting U vector. (out-Double[3])
+// uvec               The resulting U vector. (out-Double[3])
 // vVec               The resulting V vector. (out-Double[3])
 // wVec               The resulting W vector. (out-Double[3])
-typedef void (STDCALL *fnPtrPosVelToPTW)(double pos[3], double vel[3], double uVec[3], double vVec[3], double wVec[3]);
+typedef void (STDCALL *fnPtrPosVelToPTW)(double pos[3], double vel[3], double uvec[3], double vVec[3], double wVec[3]);
 
 
 // Solves Kepler's equation (M = E - e sin(E)) for the eccentric anomaly, E, by iteration.
@@ -447,12 +449,12 @@ typedef void (STDCALL *fnPtrAzElToRaDecTime)(double ds50UTC, double lat, double 
 typedef void (STDCALL *fnPtrRAEToECI)(double theta, double astroLat, double xa_rae[6], double senPos[3], double satPos[3], double satVel[3]);
 
 
-// Computes initial values for the SGP drag term NDOT and the SGP4 drag term BSTAR based upon eccentricity and semi-major axis.
+// Computes initial values for the SGP drag term nDot and the SGP4 drag term BSTAR based upon eccentricity and semi-major axis.
 // semiMajorAxis      Semi-major axis (km). (in-Double)
 // eccen              Eccentricity (unitless). (in-Double)
-// ndot               Ndot (revs/day^2). (out-Double)
+// nDot               nDot (revs/day^2). (out-Double)
 // bstar              Bstar (1/earth radii). (out-Double)
-typedef void (STDCALL *fnPtrGetInitialDrag)(double semiMajorAxis, double eccen, double* ndot, double* bstar);
+typedef void (STDCALL *fnPtrGetInitialDrag)(double semiMajorAxis, double eccen, double* nDot, double* bstar);
 
 
 // Converts covariance matrix PTW to UVW.
@@ -532,7 +534,7 @@ typedef int (STDCALL *fnPtrRotRADec_EqnxToDate)(int nutationTerms, int yrOfEqnx,
 // Note: This method uses the global Earth constants so make sure that you select the right Earth model by calling the EnvConst/EnvSetGeoIdx method
 // pos                The input position vector in ECI TEME Of Date (in-Double[3])
 // vel                The input velocity vector in ECI TEME Of Date (in-Double[3])
-// covMtxEqnx         The input covariance matrix in equinoctial elements (af, ag, Lbar, n, Chi, Psi) (in-Double[6, 6])
+// covMtxEqnx         The input covariance matrix in equinoctial elements (af, ag, Lbar, n, chi, psi) (in-Double[6, 6])
 // covMtxUVW          The output covariance in UVW (out-Double[6, 6])
 typedef void (STDCALL *fnPtrCovMtxEqnxToUVW)(double pos[3], double vel[3], double covMtxEqnx[6][6], double covMtxUVW[6][6]);
 
@@ -542,7 +544,7 @@ typedef void (STDCALL *fnPtrCovMtxEqnxToUVW)(double pos[3], double vel[3], doubl
 // pos                The input position vector in ECI TEME Of Date (in-Double[3])
 // vel                The input velocity vector in ECI TEME Of Date (in-Double[3])
 // covMtxUVW          The input covariance matrix UVW (in-Double[6, 6])
-// covMtxEqnx         The output covariance in in equinoctial elements (af, ag, Lbar, n, Chi, Psi) (out-Double[6, 6])
+// covMtxEqnx         The output covariance in in equinoctial elements (af, ag, Lbar, n, chi, psi) (out-Double[6, 6])
 typedef void (STDCALL *fnPtrCovMtxUVWToEqnx)(double pos[3], double vel[3], double covMtxUVW[6][6], double covMtxEqnx[6][6]);
 
 
@@ -562,141 +564,138 @@ typedef void (STDCALL *fnPtrCovMtxECIToUVW)(double pos[3], double vel[3], double
 // covMtxUVW          The input covariance matrix in UVW (in-Double[6, 6])
 // covMtxECI          The output covariance in ECI (out-Double[6, 6])
 typedef void (STDCALL *fnPtrCovMtxUVWToECI)(double pos[3], double vel[3], double covMtxUVW[6][6], double covMtxECI[6][6]);
-
-// Index of Keplerian elements
-static const int  
-   XA_KEP_A     =   0,       // semi-major axis (km)
-   XA_KEP_E     =   1,       // eccentricity (unitless)
-   XA_KEP_INCLI =   2,       // inclination (deg)
-   XA_KEP_MA    =   3,       // mean anomaly (deg)
-   XA_KEP_NODE  =   4,       // right ascension of the asending node (deg)
-   XA_KEP_OMEGA =   5,       // argument of perigee (deg)
-   XA_KEP_SIZE  =  6;   
-   
-// Index of classical elements
-static const int  
-   XA_CLS_N     =   0,       // N mean motion (revs/day)
-   XA_CLS_E     =   1,       // eccentricity (unitless)
-   XA_CLS_INCLI =   2,       // inclination (deg)
-   XA_CLS_MA    =   3,       // mean anomaly (deg)
-   XA_CLS_NODE  =   4,       // right ascension of the asending node (deg)
-   XA_CLS_OMEGA =   5,       // argument of perigee (deg)
-   XA_CLS_SIZE  =   6;
-
-// Index of equinoctial elements
-static const int  
-   XA_EQNX_AF   =   0,       // Af (unitless) 
-   XA_EQNX_AG   =   1,       // Ag (unitless)
-   XA_EQNX_CHI  =   2,       // Chi (unitless)
-   XA_EQNX_PSI  =   3,       // Psi (unitless)
-   XA_EQNX_L    =   4,       // L mean longitude (deg)
-   XA_EQNX_N    =   5,       // N mean motion (revs/day)
-   XA_EQNX_SIZE =   6;
-   
-// Indexes of AstroConvFrTo
-static const int  
-   XF_CONV_SGP42SGP = 101;        // SGP4 (A, E, Incli, BStar) to SGP (Ndot, N2Dot)
-
-
-// Indexes for topocentric components
-static const int  
-   XA_TOPO_RA    = 0,         // Right ascension (deg)
-   XA_TOPO_DEC   = 1,         // Declination (deg)
-   XA_TOPO_AZ    = 2,         // Azimuth (deg)
-   XA_TOPO_EL    = 3,         // Elevation (deg)
-   XA_TOPO_RANGE = 4,         // Range (km)
-   XA_TOPO_RADOT = 5,         // Right ascension dot (deg/s)
-   XA_TOPO_DECDOT= 6,         // Declincation dot (deg/s)
-   XA_TOPO_AZDOT = 7,         // Azimuth dot (deg/s)
-   XA_TOPO_ELDOT = 8,         // Elevation dot (deg/s)
-   XA_TOPO_RANGEDOT = 9,      // Range dot (km/s)   
-   XA_TOPO_SIZE  = 10;   
-   
-   
-// Indexes for RAE components
-static const int  
-   XA_RAE_RANGE   = 0,        // Range (km)
-   XA_RAE_AZ      = 1,        // Azimuth (deg)
-   XA_RAE_EL      = 2,        // Elevation (deg)
-   XA_RAE_RANGEDOT= 3,        // Range dot (km/s)   
-   XA_RAE_AZDOT   = 4,        // Azimuth dot (deg/s)
-   XA_RAE_ELDOT   = 5,        // Elevation dot (deg/s)
-   XA_RAE_SIZE    = 6;
-   
-   
-// Year of Equinox indicator
-static const int  
-   YROFEQNX_OBTIME = 0,       // Date of observation
-   YROFEQNX_CURR   = 1,       // 0 Jan of Date
-   YROFEQNX_2000   = 2,       // J2000
-   YROFEQNX_1950   = 3;       // B1950
-   
-
-
-
-// AstroFuncDll's function pointers
-fnPtrAstroFuncInit                  AstroFuncInit;
-fnPtrAstroFuncGetInfo               AstroFuncGetInfo;
-fnPtrKepToEqnx                      KepToEqnx;
-fnPtrKepToPosVel                    KepToPosVel;
-fnPtrKepToUVW                       KepToUVW;
-fnPtrClassToEqnx                    ClassToEqnx;
-fnPtrEqnxToClass                    EqnxToClass;
-fnPtrEqnxToKep                      EqnxToKep;
-fnPtrEqnxToPosVel                   EqnxToPosVel;
-fnPtrPosVelToEqnx                   PosVelToEqnx;
-fnPtrPosVelMuToEqnx                 PosVelMuToEqnx;
-fnPtrPosVelToKep                    PosVelToKep;
-fnPtrPosVelMuToKep                  PosVelMuToKep;
-fnPtrPosVelToUUVW                   PosVelToUUVW;
-fnPtrPosVelToPTW                    PosVelToPTW;
-fnPtrSolveKepEqtn                   SolveKepEqtn;
-fnPtrCompTrueAnomaly                CompTrueAnomaly;
-fnPtrNToA                           NToA;
-fnPtrAToN                           AToN;
-fnPtrKozaiToBrouwer                 KozaiToBrouwer;
-fnPtrBrouwerToKozai                 BrouwerToKozai;
-fnPtrKepOscToMean                   KepOscToMean;
-fnPtrXYZToLLH                       XYZToLLH;
-fnPtrXYZToLLHTime                   XYZToLLHTime;
-fnPtrLLHToXYZ                       LLHToXYZ;
-fnPtrLLHToXYZTime                   LLHToXYZTime;
-fnPtrEFGToECI                       EFGToECI;
-fnPtrEFGToECITime                   EFGToECITime;
-fnPtrECIToEFG                       ECIToEFG;
-fnPtrECIToEFGTime                   ECIToEFGTime;
-fnPtrECRToEFG                       ECRToEFG;
-fnPtrECRToEFGTime                   ECRToEFGTime;
-fnPtrEFGToECR                       EFGToECR;
-fnPtrEFGToECRTime                   EFGToECRTime;
-fnPtrEFGPosToLLH                    EFGPosToLLH;
-fnPtrLLHToEFGPos                    LLHToEFGPos;
-fnPtrRotJ2KToDate                   RotJ2KToDate;
-fnPtrRotDateToJ2K                   RotDateToJ2K;
-fnPtrCompSunMoonPos                 CompSunMoonPos;
-fnPtrCompSunPos                     CompSunPos;
-fnPtrCompMoonPos                    CompMoonPos;
-fnPtrAstroConvFrTo                  AstroConvFrTo;
-fnPtrRADecToLAD                     RADecToLAD;
-fnPtrAzElToLAD                      AzElToLAD;
-fnPtrECIToTopoComps                 ECIToTopoComps;
-fnPtrRaDecToAzEl                    RaDecToAzEl;
-fnPtrRaDecToAzElTime                RaDecToAzElTime;
-fnPtrAzElToRaDec                    AzElToRaDec;
-fnPtrAzElToRaDecTime                AzElToRaDecTime;
-fnPtrRAEToECI                       RAEToECI;
-fnPtrGetInitialDrag                 GetInitialDrag;
-fnPtrCovMtxPTWToUVW                 CovMtxPTWToUVW;
-fnPtrCovMtxUVWToPTW                 CovMtxUVWToPTW;
-fnPtrEarthObstructionAngles         EarthObstructionAngles;
-fnPtrIsPointSunlit                  IsPointSunlit;
-fnPtrRotRADecl                      RotRADecl;
-fnPtrRotRADec_DateToEqnx            RotRADec_DateToEqnx;
-fnPtrRotRADec_EqnxToDate            RotRADec_EqnxToDate;
-fnPtrCovMtxEqnxToUVW                CovMtxEqnxToUVW;
-fnPtrCovMtxUVWToEqnx                CovMtxUVWToEqnx;
-fnPtrCovMtxECIToUVW                 CovMtxECIToUVW;
-fnPtrCovMtxUVWToECI                 CovMtxUVWToECI;
+  
+  // INDEX OF KEPLERIAN ELEMENTS
+  static const int  
+     XA_KEP_A     =   0,       // SEMI-MAJOR AXIS (KM)
+     XA_KEP_E     =   1,       // ECCENTRICITY (UNITLESS)
+     XA_KEP_INCLI =   2,       // INCLINATION (DEG)
+     XA_KEP_MA    =   3,       // MEAN ANOMALY (DEG)
+     XA_KEP_NODE  =   4,       // RIGHT ASCENSION OF THE ASENDING NODE (DEG)
+     XA_KEP_OMEGA =   5,       // ARGUMENT OF PERIGEE (DEG)
+     XA_KEP_SIZE  =  6;   
+     
+  // INDEX OF CLASSICAL ELEMENTS
+  static const int  
+     XA_CLS_N     =   0,       // N MEAN MOTION (REVS/DAY)
+     XA_CLS_E     =   1,       // ECCENTRICITY (UNITLESS)
+     XA_CLS_INCLI =   2,       // INCLINATION (DEG)
+     XA_CLS_MA    =   3,       // MEAN ANOMALY (DEG)
+     XA_CLS_NODE  =   4,       // RIGHT ASCENSION OF THE ASENDING NODE (DEG)
+     XA_CLS_OMEGA =   5,       // ARGUMENT OF PERIGEE (DEG)
+     XA_CLS_SIZE  =   6;
+  
+  // INDEX OF EQUINOCTIAL ELEMENTS
+  static const int  
+     XA_EQNX_AF   =   0,       // AF (UNITLESS) 
+     XA_EQNX_AG   =   1,       // AG (UNITLESS)
+     XA_EQNX_CHI  =   2,       // CHI (UNITLESS)
+     XA_EQNX_PSI  =   3,       // PSI (UNITLESS)
+     XA_EQNX_L    =   4,       // L MEAN LONGITUDE (DEG)
+     XA_EQNX_N    =   5,       // N MEAN MOTION (REVS/DAY)
+     XA_EQNX_SIZE =   6;
+     
+  // INDEXES OF ASTROCONVFRTO
+  static const int  
+     XF_CONV_SGP42SGP = 101;        // SGP4 (A, E, INCLI, BSTAR) TO SGP (NDOT, N2DOT)
+  
+  
+  // INDEXES FOR TOPOCENTRIC COMPONENTS
+  static const int  
+     XA_TOPO_RA    = 0,         // RIGHT ASCENSION (DEG)
+     XA_TOPO_DEC   = 1,         // DECLINATION (DEG)
+     XA_TOPO_AZ    = 2,         // AZIMUTH (DEG)
+     XA_TOPO_EL    = 3,         // ELEVATION (DEG)
+     XA_TOPO_RANGE = 4,         // RANGE (KM)
+     XA_TOPO_RADOT = 5,         // RIGHT ASCENSION DOT (DEG/S)
+     XA_TOPO_DECDOT= 6,         // DECLINCATION DOT (DEG/S)
+     XA_TOPO_AZDOT = 7,         // AZIMUTH DOT (DEG/S)
+     XA_TOPO_ELDOT = 8,         // ELEVATION DOT (DEG/S)
+     XA_TOPO_RANGEDOT = 9,      // RANGE DOT (KM/S)   
+     XA_TOPO_SIZE  = 10;   
+     
+     
+  // INDEXES FOR RAE COMPONENTS
+  static const int  
+     XA_RAE_RANGE   = 0,        // RANGE (KM)
+     XA_RAE_AZ      = 1,        // AZIMUTH (DEG)
+     XA_RAE_EL      = 2,        // ELEVATION (DEG)
+     XA_RAE_RANGEDOT= 3,        // RANGE DOT (KM/S)   
+     XA_RAE_AZDOT   = 4,        // AZIMUTH DOT (DEG/S)
+     XA_RAE_ELDOT   = 5,        // ELEVATION DOT (DEG/S)
+     XA_RAE_SIZE    = 6;
+     
+     
+  // YEAR OF EQUINOX INDICATOR
+  static const int  
+     YROFEQNX_OBTIME = 0,       // DATE OF OBSERVATION
+     YROFEQNX_CURR   = 1,       // 0 JAN OF DATE
+     YROFEQNX_2000   = 2,       // J2000
+     YROFEQNX_1950   = 3;       // B1950
+     
+// AstroFuncDll's function pointers declaration
+extern fnPtrAstroFuncInit                  AstroFuncInit;
+extern fnPtrAstroFuncGetInfo               AstroFuncGetInfo;
+extern fnPtrKepToEqnx                      KepToEqnx;
+extern fnPtrKepToPosVel                    KepToPosVel;
+extern fnPtrKepToUVW                       KepToUVW;
+extern fnPtrClassToEqnx                    ClassToEqnx;
+extern fnPtrEqnxToClass                    EqnxToClass;
+extern fnPtrEqnxToKep                      EqnxToKep;
+extern fnPtrEqnxToPosVel                   EqnxToPosVel;
+extern fnPtrPosVelToEqnx                   PosVelToEqnx;
+extern fnPtrPosVelMuToEqnx                 PosVelMuToEqnx;
+extern fnPtrPosVelToKep                    PosVelToKep;
+extern fnPtrPosVelMuToKep                  PosVelMuToKep;
+extern fnPtrPosVelToUUVW                   PosVelToUUVW;
+extern fnPtrPosVelToPTW                    PosVelToPTW;
+extern fnPtrSolveKepEqtn                   SolveKepEqtn;
+extern fnPtrCompTrueAnomaly                CompTrueAnomaly;
+extern fnPtrNToA                           NToA;
+extern fnPtrAToN                           AToN;
+extern fnPtrKozaiToBrouwer                 KozaiToBrouwer;
+extern fnPtrBrouwerToKozai                 BrouwerToKozai;
+extern fnPtrKepOscToMean                   KepOscToMean;
+extern fnPtrXYZToLLH                       XYZToLLH;
+extern fnPtrXYZToLLHTime                   XYZToLLHTime;
+extern fnPtrLLHToXYZ                       LLHToXYZ;
+extern fnPtrLLHToXYZTime                   LLHToXYZTime;
+extern fnPtrEFGToECI                       EFGToECI;
+extern fnPtrEFGToECITime                   EFGToECITime;
+extern fnPtrECIToEFG                       ECIToEFG;
+extern fnPtrECIToEFGTime                   ECIToEFGTime;
+extern fnPtrECRToEFG                       ECRToEFG;
+extern fnPtrECRToEFGTime                   ECRToEFGTime;
+extern fnPtrEFGToECR                       EFGToECR;
+extern fnPtrEFGToECRTime                   EFGToECRTime;
+extern fnPtrEFGPosToLLH                    EFGPosToLLH;
+extern fnPtrLLHToEFGPos                    LLHToEFGPos;
+extern fnPtrRotJ2KToDate                   RotJ2KToDate;
+extern fnPtrRotDateToJ2K                   RotDateToJ2K;
+extern fnPtrCompSunMoonPos                 CompSunMoonPos;
+extern fnPtrCompSunPos                     CompSunPos;
+extern fnPtrCompMoonPos                    CompMoonPos;
+extern fnPtrAstroConvFrTo                  AstroConvFrTo;
+extern fnPtrRADecToLAD                     RADecToLAD;
+extern fnPtrAzElToLAD                      AzElToLAD;
+extern fnPtrECIToTopoComps                 ECIToTopoComps;
+extern fnPtrRaDecToAzEl                    RaDecToAzEl;
+extern fnPtrRaDecToAzElTime                RaDecToAzElTime;
+extern fnPtrAzElToRaDec                    AzElToRaDec;
+extern fnPtrAzElToRaDecTime                AzElToRaDecTime;
+extern fnPtrRAEToECI                       RAEToECI;
+extern fnPtrGetInitialDrag                 GetInitialDrag;
+extern fnPtrCovMtxPTWToUVW                 CovMtxPTWToUVW;
+extern fnPtrCovMtxUVWToPTW                 CovMtxUVWToPTW;
+extern fnPtrEarthObstructionAngles         EarthObstructionAngles;
+extern fnPtrIsPointSunlit                  IsPointSunlit;
+extern fnPtrRotRADecl                      RotRADecl;
+extern fnPtrRotRADec_DateToEqnx            RotRADec_DateToEqnx;
+extern fnPtrRotRADec_EqnxToDate            RotRADec_EqnxToDate;
+extern fnPtrCovMtxEqnxToUVW                CovMtxEqnxToUVW;
+extern fnPtrCovMtxUVWToEqnx                CovMtxUVWToEqnx;
+extern fnPtrCovMtxECIToUVW                 CovMtxECIToUVW;
+extern fnPtrCovMtxUVWToECI                 CovMtxUVWToECI;
 
 
 

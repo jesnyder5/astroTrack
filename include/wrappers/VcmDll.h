@@ -1,13 +1,15 @@
-// This wrapper file was generated automatically by the A3\GenDllWrappers program.
+// This wrapper file was generated automatically by the GenDllWrappers program.
 
 #ifndef VCMDLL_H
 #define VCMDLL_H
 
-#include "services/DllUtils.h"
+#include "../services/DllUtils.h"
 
-// Provide the path to the dll/so
-#ifdef _WIN32
+// Provide the path to the dll/so/dylib
+#if defined (_WIN32) || defined (__CYGWIN__)
   #define VcmDll "Vcm.dll"
+#elif __APPLE__
+  #define VcmDll "libvcm.dylib"
 #else
   #define VcmDll "libvcm.so"
 #endif
@@ -307,7 +309,7 @@ typedef int (STDCALL *fnPtrVcmSetField)(__int64 satKey, int xf_Vcm, char valueSt
 // nTerms             Number of nutation terms I3 (out-Integer)
 // leapYrDtg          Leap second time (out-Character[17])
 // integMode          Integration mode A6: ASW, OSW, SPADOC (SPECTR=1 if ASW, OSW) (out-Character[6])
-// partials           Type of partial derivatives A8 (ANALYTIC, FULL NUM, FAST NUM) (out-Character[8])
+// partials           Type of partial derivatives A8 (Analytic, FULL NUM, FAST NUM) (out-Character[8])
 // stepMode           Integrator step mode A4: AUTO, TIME, S (out-Character[4])
 // fixStep            Fixed step size indicator A3: ON, OFF (out-Character[3])
 // stepSelection      Initial step size selection A6: AUTO, MANUAL (out-Character[6])
@@ -388,166 +390,163 @@ typedef void (STDCALL *fnPtrVcmArrayToVcm1Line)(double xa_vcm[512], char xs_vcm[
 // xs_vcm             Output string that contains all VCM's text fields, see XS_VCM_? for column arrangement (out-Character[512])
 // returns 0 if the VCM is parsed successfully, non-0 if there is an error.
 typedef int (STDCALL *fnPtrVcmStringToArray)(char vcmString[4000], double xa_vcm[512], char xs_vcm[512]);
+    
+  // STARTING LOCATION OF THE VCM'S TEXT DATA FIELDS
+  static const int  
+     XS_VCM_SATNAME       =   0,     // SATELLITE NAME A8
+     XS_VCM_COMMNAME      =   8,     // COMMON SATELLITE NAME A25
+     XS_VCM_GEONAME       =  33,     // GEOPOTENTIAL NAME A6 (WGS-72, WGS-84, EGM-96, ...)
+     XS_VCM_DRAGMOD       =  39,     // DRAG MODEL A12
+     XS_VCM_LUNAR         =  51,     // LUNAR SOLAR PERTUBATIONS A3 (ON, OFF)
+     XS_VCM_RADPRESS      =  54,     // RADIATION PRESSURE PERTUBATIONS A3 (ON, OFF)
+     XS_VCM_EARTHTIDES    =  57,     // EARTH + OCEAN TIDES PERTUBATION A3 (ON, OFF)
+     XS_VCM_INTRACK       =  60,     // INTRACK THRUST A3 (ON, OFF)
+     XS_VCM_INTEGMODE     =  63,     // INTEGRATION MODE A6 (ASW, OSW, SPADOC, ...)
+     XS_VCM_COORDSYS      =  69,     // COORDINATE SYSTEM A5
+     XS_VCM_PARTIALS      =  74,     // TYPE OF PARTIAL DERIVATIVES A8
+     XS_VCM_STEPMODE      =  82,     // STEP MODE A4 (AUTO, TIME, S)
+     XS_VCM_FIXEDSTEP     =  86,     // FIXED STEP SIZE INDICATOR A3 (ON, OFF)
+     XS_VCM_STEPSEL       =  89,     // INITIAL STEP SIZE SELECTION A6 (AUTO, MANUAL)
+     
+     XS_VCM_SIZE          = 512;
   
-// Starting location of the VCM's text data fields
-static const int  
-   XS_VCM_SATNAME       =   0,     // satellite name A8
-   XS_VCM_COMMNAME      =   8,     // common satellite name A25
-   XS_VCM_GEONAME       =  33,     // geopotential name A6 (WGS-72, WGS-84, EGM-96, ...)
-   XS_VCM_DRAGMOD       =  39,     // drag model A12
-   XS_VCM_LUNAR         =  51,     // lunar solar pertubations A3 (ON, OFF)
-   XS_VCM_RADPRESS      =  54,     // radiation pressure pertubations A3 (ON, OFF)
-   XS_VCM_EARTHTIDES    =  57,     // Earth + ocean tides pertubation A3 (ON, OFF)
-   XS_VCM_INTRACK       =  60,     // intrack thrust A3 (ON, OFF)
-   XS_VCM_INTEGMODE     =  63,     // integration mode A6 (ASW, OSW, SPADOC, ...)
-   XS_VCM_COORDSYS      =  69,     // coordinate system A5
-   XS_VCM_PARTIALS      =  74,     // type of partial derivatives A8
-   XS_VCM_STEPMODE      =  82,     // step mode A4 (AUTO, TIME, S)
-   XS_VCM_FIXEDSTEP     =  86,     // fixed step size indicator A3 (ON, OFF)
-   XS_VCM_STEPSEL       =  89,     // initial step size selection A6 (AUTO, MANUAL)
-   
-   XS_VCM_SIZE          = 512;
-
-// Indexes to access data from an array containing VCM numerical data fields
-static const int     
-   XA_VCM_SATNUM        =   0,     // satellite number
-   XA_VCM_EPOCHDS50UTC  =   1,     // satellite's epoch time
-   XA_VCM_REVNUM        =   2,     // epoch revolution number
-   XA_VCM_J2KPOSX       =   3,     // J2K position X (km)
-   XA_VCM_J2KPOSY       =   4,     // J2K position Y (km)
-   XA_VCM_J2KPOSZ       =   5,     // J2K position Z (km)
-   XA_VCM_J2KVELX       =   6,     // J2K velocity X (km/s)
-   XA_VCM_J2KVELY       =   7,     // J2K velocity Y (km/s)
-   XA_VCM_J2KVELZ       =   8,     // J2K velocity Z (km/s)
-   XA_VCM_ECIPOSX       =   9,     // ECI position X (km)
-   XA_VCM_ECIPOSY       =  10,     // ECI position Y (km)
-   XA_VCM_ECIPOSZ       =  11,     // ECI position Z (km)
-   XA_VCM_ECIVELX       =  12,     // ECI velocity X (km/s)
-   XA_VCM_ECIVELY       =  13,     // ECI velocity Y (km/s)
-   XA_VCM_ECIVELZ       =  14,     // ECI velocity Z (km/s)
-   XA_VCM_EFGPOSX       =  15,     // EFG position X (km)
-   XA_VCM_EFGPOSY       =  16,     // EFG position Y (km)
-   XA_VCM_EFGPOSZ       =  17,     // EFG position Z (km)
-   XA_VCM_EFGVELX       =  18,     // EFG velocity X (km/s)
-   XA_VCM_EFGVELY       =  19,     // EFG velocity Y (km/s)
-   XA_VCM_EFGVELZ       =  20,     // EFG velocity Z (km/s)
-   XA_VCM_GEOZON        =  21,     // geopotential zonals
-   XA_VCM_GEOTES        =  22,     // geopotential tesserals
-   XA_VCM_BTERM         =  23,     // ballistic coefficient (m^2/kg)
-   XA_VCM_BDOT          =  24,     // BDOT (m^2/kg-s)
-   XA_VCM_AGOM          =  25,     // solar radiation pressure coefficient (m^2/kg)
-   XA_VCM_EDR           =  26,     // energy dissipation rate (w/kg)
-   XA_VCM_OGPARM        =  27,     // outgassing parameter/thrust acceleration (m/s^2)
-   XA_VCM_CMOFFSET      =  28,     // center of mass offset (m)
-   XA_VCM_F10           =  29,     // solar flux F10
-   XA_VCM_F10AVG        =  30,     // average F10
-   XA_VCM_APAVG         =  31,     // average Ap
-   XA_VCM_TAIMUTC       =  32,     // TAI - UTC (s)
-   XA_VCM_UT1MUTC       =  33,     // UT1 - UTC (s)
-   XA_VCM_UT1RATE       =  34,     // UT1 rate (ms/day)
-   XA_VCM_POLMOTX       =  35,     // polar motion X (arcsec)
-   XA_VCM_POLMOTY       =  36,     // polar motion Y (arcsec)
-   XA_VCM_NUTTERMS      =  37,     // nutation terms
-   XA_VCM_LEAPDS50UTC   =  38,     // leap second time in days since 1950 UTC
-   XA_VCM_INITSTEP      =  39,     // initial step size
-   XA_VCM_ERRCTRL       =  40,     // integrator control error 
-   XA_VCM_POSUSIG       =  41,     // position u sigma (km)   
-   XA_VCM_POSVSIG       =  42,     // position v sigma (km)
-   XA_VCM_POSWSIG       =  43,     // position w sigma (km)
-   XA_VCM_VELUSIG       =  44,     // velocity u sigma (km/s)
-   XA_VCM_VELVSIG       =  45,     // velocity v sigma (km/s)
-   XA_VCM_VELWSIG       =  46,     // velocity w sigma (km/s)
-   XA_VCM_COVMTXSIZE    =  47,     // covariance matrix size
-   XA_VCM_RMS           =  48,     // weighted RM of last DC on the satellite
-   XA_VCM_COVELEMS      = 100,     // the lower triangle portion of the full cov matrix (100-120: 6x6 covmtx, ..., 100-144: 9x9 covmtx)
-   
-   XA_VCM_SIZE          = 512;
-
-// Indexes of VCM data fields
-static const int  
-   XF_VCM_SATNUM    =  1,      // Satellite number I5
-   XF_VCM_SATNAME   =  2,      // Satellite international designator A8
-   XF_VCM_EPOCH     =  3,      // Epoch YYYYDDDHHMMSS.SSS A17
-   XF_VCM_REVNUM    =  4,      // Revolution number I5
-   XF_VCM_POSX      =  5,      // position X (km) F16.8 
-   XF_VCM_POSY      =  6,      // position Y (km) F16.8 
-   XF_VCM_POSZ      =  7,      // position Z (km) F16.8   
-   XF_VCM_VELX      =  8,      // velocity X (km/s) F16.12
-   XF_VCM_VELY      =  9,      // velocity Y (km/s) F16.12
-   XF_VCM_VELZ      = 10,      // velocity Z (km/s) F16.12
-   XF_VCM_GEONAME   = 11,      // Geo Name A6
-   XF_VCM_GEOZONALS = 12,      // Geo zonals I2
-   XF_VCM_GEOTESSER = 13,      // Geo tesserals I2
-   XF_VCM_DRAGMODE  = 14,      // Drag modelel A12 (NONE, JAC70/MSIS90) 
-   XF_VCM_LUNSOL    = 15,      // Lunar solar A3 (ON/OFF)
-   XF_VCM_RADPRESS  = 16,      // Radiation pressure pertubations A3 (ON/OFF)
-   XF_VCM_ERTHTIDES = 17,      // Earth + ocean tides pertubations A3 (ON/OFF)
-   XF_VCM_INTRACK   = 18,      // Intrack thrust A3 (ON/OFF)
-   XF_VCM_BTERM     = 19,      // Ballistic coefficient (m^2/kg)
-   XF_VCM_AGOM      = 20,      // Radiation pressure coefficient  (m^2/kg)
-   XF_VCM_OGPARM    = 21,      // Outgassing parameter (m/s^2)
-   XF_VCM_CMOFFSET  = 22,      // Center of mass offset (m)
-   XF_VCM_F10       = 23,      // Solar flux F10 I3
-   XF_VCM_F10AVG    = 24,      // Solar flux F10 average I3
-   XF_VCM_APAVG     = 25,      // Ap average F5.1
-   XF_VCM_TAIMUTC   = 26,      // TAI minus UTC (s)I2
-   XF_VCM_UT1MUTC   = 27,      // UT1 minus UTC (s) F7.5
-   XF_VCM_UT1RATE   = 28,      // UT1 rate (ms/day)  F5.3
-   XF_VCM_POLARX    = 29,      // Polar motion X (arcsec) F6.4
-   XF_VCM_POLARY    = 30,      // Polar motion Y (arcsec) F6.4
-   XF_VCM_NTERMS    = 31,      // Nutation terms I3
-   XF_VCM_LEAPYR    = 32,      // Leap second time YYYYDDDHHMMSS.SSS A17
-   XF_VCM_INTEGMODE = 33,      // Integration mode A6 (ASW, OSW, SPADOC)
-   XF_VCM_PARTIALS  = 34,      // Type of partial derivatives A8 (ANALYTIC, FULL NUM, FAST NUM)
-   XF_VCM_STEPMODE  = 35,      // Integration step mode A4 (AUTO/TIME, S)
-   XF_VCM_FIXEDSTEP = 36,      // Fixed step size indicator A3 (ON/OFF)
-   XF_VCM_STEPSLCTN = 37,      // Initial step size selection A6 (AUTO/MANUAL)
-   XF_VCM_STEPSIZE  = 38,      // Initial integration step size F8.3
-   XF_VCM_ERRCTRL   = 39,      // Integrator error control E9.3
-   XF_VCM_RMS       = 40,      // Weighted RMS of last DC E10.5
-   XF_VCM_BDOT      = 41,      // BDOT (M2/KG-S)
-   XF_VCM_EDR       = 42;      // EDR (W/KG)
-   
-   
-
-// Maximum string length of a multi-line VCM concatenated into one big string
-#define VCMSTRLEN   4000 
-
-
-// Maximum string length of a 1-line VCM string
-static const int VCM1LINELEN = 1500;
-
-
-
-
-// VcmDll's function pointers
-fnPtrVcmInit                        VcmInit;
-fnPtrVcmGetInfo                     VcmGetInfo;
-fnPtrVcmLoadFile                    VcmLoadFile;
-fnPtrVcmSaveFile                    VcmSaveFile;
-fnPtrVcmRemoveSat                   VcmRemoveSat;
-fnPtrVcmRemoveAllSats               VcmRemoveAllSats;
-fnPtrVcmGetCount                    VcmGetCount;
-fnPtrVcmGetLoaded                   VcmGetLoaded;
-fnPtrVcmAddSatFrLines               VcmAddSatFrLines;
-fnPtrVcmAddSatFrLinesML             VcmAddSatFrLinesML;
-fnPtrVcmAddSatFrFields              VcmAddSatFrFields;
-fnPtrVcmAddSatFrFieldsML            VcmAddSatFrFieldsML;
-fnPtrVcmRetrieveAllData             VcmRetrieveAllData;
-fnPtrVcmUpdateSatFrFields           VcmUpdateSatFrFields;
-fnPtrVcmGetField                    VcmGetField;
-fnPtrVcmSetField                    VcmSetField;
-fnPtrVcmGetAllFields                VcmGetAllFields;
-fnPtrVcmGetLines                    VcmGetLines;
-fnPtrVcm1LineToMultiLine            Vcm1LineToMultiLine;
-fnPtrVcmMultiLineTo1Line            VcmMultiLineTo1Line;
-fnPtrVcmGetSatKey                   VcmGetSatKey;
-fnPtrVcmGetSatKeyML                 VcmGetSatKeyML;
-fnPtrVcmFieldsToSatKey              VcmFieldsToSatKey;
-fnPtrVcmFieldsToSatKeyML            VcmFieldsToSatKeyML;
-fnPtrVcmArrayToVcmLines             VcmArrayToVcmLines;
-fnPtrVcmArrayToVcm1Line             VcmArrayToVcm1Line;
-fnPtrVcmStringToArray               VcmStringToArray;
+  // INDEXES TO ACCESS DATA FROM AN ARRAY CONTAINING VCM NUMERICAL DATA FIELDS
+  static const int     
+     XA_VCM_SATNUM        =   0,     // SATELLITE NUMBER
+     XA_VCM_EPOCHDS50UTC  =   1,     // SATELLITE'S EPOCH TIME
+     XA_VCM_REVNUM        =   2,     // EPOCH REVOLUTION NUMBER
+     XA_VCM_J2KPOSX       =   3,     // J2K POSITION X (KM)
+     XA_VCM_J2KPOSY       =   4,     // J2K POSITION Y (KM)
+     XA_VCM_J2KPOSZ       =   5,     // J2K POSITION Z (KM)
+     XA_VCM_J2KVELX       =   6,     // J2K VELOCITY X (KM/S)
+     XA_VCM_J2KVELY       =   7,     // J2K VELOCITY Y (KM/S)
+     XA_VCM_J2KVELZ       =   8,     // J2K VELOCITY Z (KM/S)
+     XA_VCM_ECIPOSX       =   9,     // ECI POSITION X (KM)
+     XA_VCM_ECIPOSY       =  10,     // ECI POSITION Y (KM)
+     XA_VCM_ECIPOSZ       =  11,     // ECI POSITION Z (KM)
+     XA_VCM_ECIVELX       =  12,     // ECI VELOCITY X (KM/S)
+     XA_VCM_ECIVELY       =  13,     // ECI VELOCITY Y (KM/S)
+     XA_VCM_ECIVELZ       =  14,     // ECI VELOCITY Z (KM/S)
+     XA_VCM_EFGPOSX       =  15,     // EFG POSITION X (KM)
+     XA_VCM_EFGPOSY       =  16,     // EFG POSITION Y (KM)
+     XA_VCM_EFGPOSZ       =  17,     // EFG POSITION Z (KM)
+     XA_VCM_EFGVELX       =  18,     // EFG VELOCITY X (KM/S)
+     XA_VCM_EFGVELY       =  19,     // EFG VELOCITY Y (KM/S)
+     XA_VCM_EFGVELZ       =  20,     // EFG VELOCITY Z (KM/S)
+     XA_VCM_GEOZON        =  21,     // GEOPOTENTIAL ZONALS
+     XA_VCM_GEOTES        =  22,     // GEOPOTENTIAL TESSERALS
+     XA_VCM_BTERM         =  23,     // BALLISTIC COEFFICIENT (M^2/KG)
+     XA_VCM_BDOT          =  24,     // BDOT (M^2/KG-S)
+     XA_VCM_AGOM          =  25,     // SOLAR RADIATION PRESSURE COEFFICIENT (M^2/KG)
+     XA_VCM_EDR           =  26,     // ENERGY DISSIPATION RATE (W/KG)
+     XA_VCM_OGPARM        =  27,     // OUTGASSING PARAMETER/THRUST ACCELERATION (M/S^2)
+     XA_VCM_CMOFFSET      =  28,     // CENTER OF MASS OFFSET (M)
+     XA_VCM_F10           =  29,     // SOLAR FLUX F10
+     XA_VCM_F10AVG        =  30,     // AVERAGE F10
+     XA_VCM_APAVG         =  31,     // AVERAGE AP
+     XA_VCM_TAIMUTC       =  32,     // TAI - UTC (S)
+     XA_VCM_UT1MUTC       =  33,     // UT1 - UTC (S)
+     XA_VCM_UT1RATE       =  34,     // UT1 RATE (MS/DAY)
+     XA_VCM_POLMOTX       =  35,     // POLAR MOTION X (ARCSEC)
+     XA_VCM_POLMOTY       =  36,     // POLAR MOTION Y (ARCSEC)
+     XA_VCM_NUTTERMS      =  37,     // NUTATION TERMS
+     XA_VCM_LEAPDS50UTC   =  38,     // LEAP SECOND TIME IN DAYS SINCE 1950 UTC
+     XA_VCM_INITSTEP      =  39,     // INITIAL STEP SIZE
+     XA_VCM_ERRCTRL       =  40,     // INTEGRATOR CONTROL ERROR 
+     XA_VCM_POSUSIG       =  41,     // POSITION U SIGMA (KM)   
+     XA_VCM_POSVSIG       =  42,     // POSITION V SIGMA (KM)
+     XA_VCM_POSWSIG       =  43,     // POSITION W SIGMA (KM)
+     XA_VCM_VELUSIG       =  44,     // VELOCITY U SIGMA (KM/S)
+     XA_VCM_VELVSIG       =  45,     // VELOCITY V SIGMA (KM/S)
+     XA_VCM_VELWSIG       =  46,     // VELOCITY W SIGMA (KM/S)
+     XA_VCM_COVMTXSIZE    =  47,     // COVARIANCE MATRIX SIZE
+     XA_VCM_RMS           =  48,     // WEIGHTED RM OF LAST DC ON THE SATELLITE
+     XA_VCM_COVELEMS      = 100,     // THE LOWER TRIANGLE PORTION OF THE FULL COV MATRIX (100-120: 6X6 COVMTX, ..., 100-144: 9X9 COVMTX)
+     
+     XA_VCM_SIZE          = 512;
+  
+  // INDEXES OF VCM DATA FIELDS
+  static const int  
+     XF_VCM_SATNUM    =  1,      // SATELLITE NUMBER I5
+     XF_VCM_SATNAME   =  2,      // SATELLITE INTERNATIONAL DESIGNATOR A8
+     XF_VCM_EPOCH     =  3,      // EPOCH YYYYDDDHHMMSS.SSS A17
+     XF_VCM_REVNUM    =  4,      // REVOLUTION NUMBER I5
+     XF_VCM_POSX      =  5,      // POSITION X (KM) F16.8 
+     XF_VCM_POSY      =  6,      // POSITION Y (KM) F16.8 
+     XF_VCM_POSZ      =  7,      // POSITION Z (KM) F16.8   
+     XF_VCM_VELX      =  8,      // VELOCITY X (KM/S) F16.12
+     XF_VCM_VELY      =  9,      // VELOCITY Y (KM/S) F16.12
+     XF_VCM_VELZ      = 10,      // VELOCITY Z (KM/S) F16.12
+     XF_VCM_GEONAME   = 11,      // GEO NAME A6
+     XF_VCM_GEOZONALS = 12,      // GEO ZONALS I2
+     XF_VCM_GEOTESSER = 13,      // GEO TESSERALS I2
+     XF_VCM_DRAGMODE  = 14,      // DRAG MODELEL A12 (NONE, JAC70/MSIS90) 
+     XF_VCM_LUNSOL    = 15,      // LUNAR SOLAR A3 (ON/OFF)
+     XF_VCM_RADPRESS  = 16,      // RADIATION PRESSURE PERTUBATIONS A3 (ON/OFF)
+     XF_VCM_ERTHTIDES = 17,      // EARTH + OCEAN TIDES PERTUBATIONS A3 (ON/OFF)
+     XF_VCM_INTRACK   = 18,      // INTRACK THRUST A3 (ON/OFF)
+     XF_VCM_BTERM     = 19,      // BALLISTIC COEFFICIENT (M^2/KG)
+     XF_VCM_AGOM      = 20,      // RADIATION PRESSURE COEFFICIENT  (M^2/KG)
+     XF_VCM_OGPARM    = 21,      // OUTGASSING PARAMETER (M/S^2)
+     XF_VCM_CMOFFSET  = 22,      // CENTER OF MASS OFFSET (M)
+     XF_VCM_F10       = 23,      // SOLAR FLUX F10 I3
+     XF_VCM_F10AVG    = 24,      // SOLAR FLUX F10 AVERAGE I3
+     XF_VCM_APAVG     = 25,      // AP AVERAGE F5.1
+     XF_VCM_TAIMUTC   = 26,      // TAI MINUS UTC (S)I2
+     XF_VCM_UT1MUTC   = 27,      // UT1 MINUS UTC (S) F7.5
+     XF_VCM_UT1RATE   = 28,      // UT1 RATE (MS/DAY)  F5.3
+     XF_VCM_POLARX    = 29,      // POLAR MOTION X (ARCSEC) F6.4
+     XF_VCM_POLARY    = 30,      // POLAR MOTION Y (ARCSEC) F6.4
+     XF_VCM_NTERMS    = 31,      // NUTATION TERMS I3
+     XF_VCM_LEAPYR    = 32,      // LEAP SECOND TIME YYYYDDDHHMMSS.SSS A17
+     XF_VCM_INTEGMODE = 33,      // INTEGRATION MODE A6 (ASW, OSW, SPADOC)
+     XF_VCM_PARTIALS  = 34,      // TYPE OF PARTIAL DERIVATIVES A8 (ANALYTIC, FULL NUM, FAST NUM)
+     XF_VCM_STEPMODE  = 35,      // INTEGRATION STEP MODE A4 (AUTO/TIME, S)
+     XF_VCM_FIXEDSTEP = 36,      // FIXED STEP SIZE INDICATOR A3 (ON/OFF)
+     XF_VCM_STEPSLCTN = 37,      // INITIAL STEP SIZE SELECTION A6 (AUTO/MANUAL)
+     XF_VCM_STEPSIZE  = 38,      // INITIAL INTEGRATION STEP SIZE F8.3
+     XF_VCM_ERRCTRL   = 39,      // INTEGRATOR ERROR CONTROL E9.3
+     XF_VCM_RMS       = 40,      // WEIGHTED RMS OF LAST DC E10.5
+     XF_VCM_BDOT      = 41,      // BDOT (M2/KG-S)
+     XF_VCM_EDR       = 42;      // EDR (W/KG)
+     
+     
+  
+  // MAXIMUM STRING LENGTH OF A MULTI-LINE VCM CONCATENATED INTO ONE BIG STRING
+  #define VCMSTRLEN   4000 
+  
+  
+  // MAXIMUM STRING LENGTH OF A 1-LINE VCM STRING
+  static const int VCM1LINELEN = 1500;
+  
+// VcmDll's function pointers declaration
+extern fnPtrVcmInit                        VcmInit;
+extern fnPtrVcmGetInfo                     VcmGetInfo;
+extern fnPtrVcmLoadFile                    VcmLoadFile;
+extern fnPtrVcmSaveFile                    VcmSaveFile;
+extern fnPtrVcmRemoveSat                   VcmRemoveSat;
+extern fnPtrVcmRemoveAllSats               VcmRemoveAllSats;
+extern fnPtrVcmGetCount                    VcmGetCount;
+extern fnPtrVcmGetLoaded                   VcmGetLoaded;
+extern fnPtrVcmAddSatFrLines               VcmAddSatFrLines;
+extern fnPtrVcmAddSatFrLinesML             VcmAddSatFrLinesML;
+extern fnPtrVcmAddSatFrFields              VcmAddSatFrFields;
+extern fnPtrVcmAddSatFrFieldsML            VcmAddSatFrFieldsML;
+extern fnPtrVcmRetrieveAllData             VcmRetrieveAllData;
+extern fnPtrVcmUpdateSatFrFields           VcmUpdateSatFrFields;
+extern fnPtrVcmGetField                    VcmGetField;
+extern fnPtrVcmSetField                    VcmSetField;
+extern fnPtrVcmGetAllFields                VcmGetAllFields;
+extern fnPtrVcmGetLines                    VcmGetLines;
+extern fnPtrVcm1LineToMultiLine            Vcm1LineToMultiLine;
+extern fnPtrVcmMultiLineTo1Line            VcmMultiLineTo1Line;
+extern fnPtrVcmGetSatKey                   VcmGetSatKey;
+extern fnPtrVcmGetSatKeyML                 VcmGetSatKeyML;
+extern fnPtrVcmFieldsToSatKey              VcmFieldsToSatKey;
+extern fnPtrVcmFieldsToSatKeyML            VcmFieldsToSatKeyML;
+extern fnPtrVcmArrayToVcmLines             VcmArrayToVcmLines;
+extern fnPtrVcmArrayToVcm1Line             VcmArrayToVcm1Line;
+extern fnPtrVcmStringToArray               VcmStringToArray;
 
 
 

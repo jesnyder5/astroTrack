@@ -6,12 +6,13 @@
  * Author: Jeremy Snyder
  * Creation: Jan 1, 2022
  *
- * Last Update: Jan 12, 2022
+ * Last Update: Aug 31, 2022
  *
  * Uses USSF SGP4 libraries to track objects from an Earth-fixed terrestrial reference frame.
  */
 
 
+#include "satellite.hpp"
 #include "json.hpp"
 using json = nlohmann::json;
 
@@ -33,13 +34,19 @@ public:
     
     // Returns string vector of loaded satellite names
     std::vector<std::string> getSatNames();
+
+    // Prints TLE fields for the specified satellite
+    void printSatTLE(std::string name);
+
+    // 
     
+
 private:
     // Json object using satellite names as keys and storing satellite properties as well as corresponding TLE dll satKey
     json sats;
 
     // Vector containing loaded satellite names (used as keys for sats json)
-    std::vector<std::string> satNames;
+    std::vector<std::string> loadedSatNames;
 
     //Loading Functions
     void loadFromFile(std::string FILENAME);

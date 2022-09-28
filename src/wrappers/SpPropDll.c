@@ -1,7 +1,50 @@
-// This wrapper file was generated automatically by the A3\GenDllWrappers program.
+// This wrapper file was generated automatically by the GenDllWrappers program.
 
-#include "services/DllUtils.h"
-#include "wrappers/SpPropDll.h"
+#include "../services/DllUtils.h"
+#include "SpPropDll.h"
+
+
+// SpPropDll's function pointers definition
+fnPtrSpInit                         SpInit;
+fnPtrSpGetInfo                      SpGetInfo;
+fnPtrSpLoadFile                     SpLoadFile;
+fnPtrSpLoadFileAll                  SpLoadFileAll;
+fnPtrSpSaveFile                     SpSaveFile;
+fnPtrSpInitSat                      SpInitSat;
+fnPtrSpRemoveSat                    SpRemoveSat;
+fnPtrSpRemoveAllSats                SpRemoveAllSats;
+fnPtrSpGetCount                     SpGetCount;
+fnPtrSpReset                        SpReset;
+fnPtrSpGetApCtrl                    SpGetApCtrl;
+fnPtrSpGetApCtrlAll                 SpGetApCtrlAll;
+fnPtrSpSetApCtrl                    SpSetApCtrl;
+fnPtrSpSetApCtrlAll                 SpSetApCtrlAll;
+fnPtrSpGet4P                        SpGet4P;
+fnPtrSpSet4P                        SpSet4P;
+fnPtrSpGetPredCtrl                  SpGetPredCtrl;
+fnPtrSpSetPredCtrl                  SpSetPredCtrl;
+fnPtrSpGetSatData                   SpGetSatData;
+fnPtrSpGetSatDataAll                SpGetSatDataAll;
+fnPtrSpPropMse                      SpPropMse;
+fnPtrSpPropDs50UTC                  SpPropDs50UTC;
+fnPtrSpPropDs50UtcLLH               SpPropDs50UtcLLH;
+fnPtrSpPropDs50UtcPos               SpPropDs50UtcPos;
+fnPtrSpPropAll                      SpPropAll;
+fnPtrSpGetStateDs50UTC              SpGetStateDs50UTC;
+fnPtrSpSetStateDs50UTC              SpSetStateDs50UTC;
+fnPtrSpSetAndProp                   SpSetAndProp;
+fnPtrSpGetPropOut                   SpGetPropOut;
+fnPtrSpGetCovMtx                    SpGetCovMtx;
+fnPtrSpCompCovSigma                 SpCompCovSigma;
+fnPtrSpSet4pAll                     SpSet4pAll;
+fnPtrSpGet4pAll                     SpGet4pAll;
+fnPtrSpSet4PCard                    SpSet4PCard;
+fnPtrSpGet4PCard                    SpGet4PCard;
+fnPtrSpAddFluxRec                   SpAddFluxRec;
+fnPtrSpGetEphemTimes                SpGetEphemTimes;
+fnPtrSpGenEphems                    SpGenEphems;
+fnPtrSpGenEphemsVcm_OS              SpGenEphemsVcm_OS;
+fnPtrSpPropAllSats                  SpPropAllSats;
 
 
 static void* hLib = NULL; // handle to the dll
@@ -51,6 +94,9 @@ void LoadSpPropDll()
    SpGet4PCard = (fnPtrSpGet4PCard)GetFnPtr(hLib, (char*)"SpGet4PCard");
    SpAddFluxRec = (fnPtrSpAddFluxRec)GetFnPtr(hLib, (char*)"SpAddFluxRec");
    SpGetEphemTimes = (fnPtrSpGetEphemTimes)GetFnPtr(hLib, (char*)"SpGetEphemTimes");
+   SpGenEphems = (fnPtrSpGenEphems)GetFnPtr(hLib, (char*)"SpGenEphems");
+   SpGenEphemsVcm_OS = (fnPtrSpGenEphemsVcm_OS)GetFnPtr(hLib, (char*)"SpGenEphemsVcm_OS");
+   SpPropAllSats = (fnPtrSpPropAllSats)GetFnPtr(hLib, (char*)"SpPropAllSats");
 }
 
 

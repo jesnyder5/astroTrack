@@ -1,10 +1,10 @@
-#include "services/DllUtils.h"
-#include "services/SpPropDll_Service.h"
+#include "DllUtils.h"
+#include "SpPropDll_Service.h"
 
 
-#include "wrappers/DllMainDll.h"
-#include "wrappers/SpPropDll.h"
-#include "wrappers/TimeFuncDll.h"
+#include "../wrappers/DllMainDll.h"
+#include "../wrappers/SpPropDll.h"
+#include "../wrappers/TimeFuncDll.h"
 
 
 // Print SP application control parameters
@@ -165,6 +165,7 @@ void PrintSpIntegCtrl(FILE* fp)
    char COM[][7] =   {"SPADOC", "SPECTR"};
    char CVAR[][11] = {"variable", "fixed", "semi-fixed"};
    char noYes[][4] = {"no", "yes", "yes"};
+   char lsPertModes[][6] = { "no", "yes", "jpl", "all", "big", "med", "sma" };
 
    int geoIdx, bulgePert, dragPert, radPresPert, lunSolPert, f10, f10Avg, ap, trunc, incr, ogPert, tidePert, inCoord, nTerms, reEval, integStepMode, stepSizeMethod;
    double initStepSize;
@@ -215,7 +216,7 @@ void PrintSpIntegCtrl(FILE* fp)
       fprintf(fp, " |  B.  DRAG PERTURBATIONS MODELED?   %-3s (%-34s) |\n", "yes" , CNAMA[dragPert]);
    else
       fprintf(fp, " |  B.  DRAG PERTURBATIONS MODELED?   %-3s%-37s |\n", "no", " ");
-   fprintf(fp, " |  C.  LUNAR/SOLAR PERTS MODELED?    %-40s |\n", noYes[lunSolPert]);
+   fprintf(fp, " |  C.  LUNAR/SOLAR PERTS MODELED?    %-40s |\n", lsPertModes[lunSolPert]);
    fprintf(fp, " |      > EARTH/OCEAN TIDES MODELED?  %-40s |\n", noYes[tidePert]);
    fprintf(fp, " |  D.  RAD. PRESSURE PERTS MODELED?  %-40s |\n", noYes[radPresPert]);
    fprintf(fp, " |  E.  OUTGASSING PERTS MODELED?     %-40s |\n", noYes[ogPert]);

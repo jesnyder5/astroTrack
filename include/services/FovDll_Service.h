@@ -1,7 +1,7 @@
 #ifndef FOVDLL_SERVICE_H
 #define FOVDLL_SERVICE_H
 
-#include "wrappers/DllMainDll.h"
+#include "../wrappers/DllMainDll.h"
 
 // Fov control parameters structure
 typedef struct

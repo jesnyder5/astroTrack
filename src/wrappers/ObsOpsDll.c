@@ -1,7 +1,42 @@
-// This wrapper file was generated automatically by the A3\GenDllWrappers program.
+// This wrapper file was generated automatically by the GenDllWrappers program.
 
-#include "services/DllUtils.h"
-#include "wrappers/ObsOpsDll.h"
+#include "../services/DllUtils.h"
+#include "ObsOpsDll.h"
+
+
+// ObsOpsDll's function pointers definition
+fnPtrObsOpsInit                     ObsOpsInit;
+fnPtrObsOpsGetInfo                  ObsOpsGetInfo;
+fnPtrIomodLoadFile                  IomodLoadFile;
+fnPtrIomodLoadFileAll               IomodLoadFileAll;
+fnPtrIomodSaveFile                  IomodSaveFile;
+fnPtrIomodGetIpCard                 IomodGetIpCard;
+fnPtrIomodGetIpAll                  IomodGetIpAll;
+fnPtrIomodSetIpAll                  IomodSetIpAll;
+fnPtrIomodGetIpField                IomodGetIpField;
+fnPtrIomodSetIpField                IomodSetIpField;
+fnPtrManyObsToPosVel                ManyObsToPosVel;
+fnPtrThreeObsToPosVel               ThreeObsToPosVel;
+fnPtrIomod_OS                       Iomod_OS;
+fnPtrTwoObsToPosVel                 TwoObsToPosVel;
+fnPtrAnglesOnlyToPosVel             AnglesOnlyToPosVel;
+fnPtrFindTrack                      FindTrack;
+fnPtrATrackToPosVel                 ATrackToPosVel;
+fnPtrTriGetDefParams                TriGetDefParams;
+fnPtrTriComputeToFile               TriComputeToFile;
+fnPtrTriCompute1                    TriCompute1;
+fnPtrTriCompute2                    TriCompute2;
+fnPtrTriCompute3                    TriCompute3;
+fnPtrGetWaterfallAlt                GetWaterfallAlt;
+fnPtrAnglesOnlyToLLH                AnglesOnlyToLLH;
+fnPtrLombLengthOut                  LombLengthOut;
+fnPtrLomb                           Lomb;
+fnPtrLombFalseProb                  LombFalseProb;
+fnPtrLombFalseProbInv               LombFalseProbInv;
+fnPtrLombLengthCoef                 LombLengthCoef;
+fnPtrLombWaveFit                    LombWaveFit;
+fnPtrLombCalcValueFromTime          LombCalcValueFromTime;
+fnPtrAngleBetweenObs                AngleBetweenObs;
 
 
 static void* hLib = NULL; // handle to the dll
@@ -38,6 +73,14 @@ void LoadObsOpsDll()
    TriCompute3 = (fnPtrTriCompute3)GetFnPtr(hLib, (char*)"TriCompute3");
    GetWaterfallAlt = (fnPtrGetWaterfallAlt)GetFnPtr(hLib, (char*)"GetWaterfallAlt");
    AnglesOnlyToLLH = (fnPtrAnglesOnlyToLLH)GetFnPtr(hLib, (char*)"AnglesOnlyToLLH");
+   LombLengthOut = (fnPtrLombLengthOut)GetFnPtr(hLib, (char*)"LombLengthOut");
+   Lomb = (fnPtrLomb)GetFnPtr(hLib, (char*)"Lomb");
+   LombFalseProb = (fnPtrLombFalseProb)GetFnPtr(hLib, (char*)"LombFalseProb");
+   LombFalseProbInv = (fnPtrLombFalseProbInv)GetFnPtr(hLib, (char*)"LombFalseProbInv");
+   LombLengthCoef = (fnPtrLombLengthCoef)GetFnPtr(hLib, (char*)"LombLengthCoef");
+   LombWaveFit = (fnPtrLombWaveFit)GetFnPtr(hLib, (char*)"LombWaveFit");
+   LombCalcValueFromTime = (fnPtrLombCalcValueFromTime)GetFnPtr(hLib, (char*)"LombCalcValueFromTime");
+   AngleBetweenObs = (fnPtrAngleBetweenObs)GetFnPtr(hLib, (char*)"AngleBetweenObs");
 }
 
 

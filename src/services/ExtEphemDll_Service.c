@@ -1,7 +1,7 @@
-#include "services/DllUtils.h"
-#include "services/ExtEphemDll_Service.h"
+#include "DllUtils.h"
+#include "ExtEphemDll_Service.h"
 
-#include "wrappers/ExtEphemDll.h"
+#include "../wrappers/ExtEphemDll.h"
 
 
 void PrintVecEphHeader(FILE* fp, double ke, double er, char* epochStr, char* orbEltType)

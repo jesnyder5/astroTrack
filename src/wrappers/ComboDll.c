@@ -1,7 +1,28 @@
-// This wrapper file was generated automatically by the A3\GenDllWrappers program.
+// This wrapper file was generated automatically by the GenDllWrappers program.
 
-#include "services/DllUtils.h"
-#include "wrappers/ComboDll.h"
+#include "../services/DllUtils.h"
+#include "ComboDll.h"
+
+
+// ComboDll's function pointers definition
+fnPtrComboInit                      ComboInit;
+fnPtrComboGetInfo                   ComboGetInfo;
+fnPtrComboLoadFile                  ComboLoadFile;
+fnPtrComboLoadFileAll               ComboLoadFileAll;
+fnPtrComboLoadCard                  ComboLoadCard;
+fnPtrComboSaveFile                  ComboSaveFile;
+fnPtrComboGetNumOfPriSecSats        ComboGetNumOfPriSecSats;
+fnPtrComboGetPriSatNums             ComboGetPriSatNums;
+fnPtrComboGetSecSatNums             ComboGetSecSatNums;
+fnPtrComboGet7pCard                 ComboGet7pCard;
+fnPtrComboGet7pAll                  ComboGet7pAll;
+fnPtrComboSet7pAll                  ComboSet7pAll;
+fnPtrComboGet7pField                ComboGet7pField;
+fnPtrComboSet7pField                ComboSet7pField;
+fnPtrComboCompPriSec                ComboCompPriSec;
+fnPtrComboCompPriSec_MT             ComboCompPriSec_MT;
+fnPtrComboPOC                       ComboPOC;
+fnPtrComboCSMPOC                    ComboCSMPOC;
 
 
 static void* hLib = NULL; // handle to the dll

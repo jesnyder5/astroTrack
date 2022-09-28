@@ -1,8 +1,8 @@
 #include <math.h>
-#include "services/DllUtils.h"
-#include "services/DllMainDll_Service.h"
+#include "DllUtils.h"
+#include "DllMainDll_Service.h"
 
-#include "wrappers/DllMainDll.h"
+#include "../wrappers/DllMainDll.h"
 
 
 // Show last logged error message
@@ -54,12 +54,6 @@ double MseToDs50UTC(double epochDs50UTC, double mse)
 double DaysInWholeMilisec(double ds50)
 {
    return (double)((__int64)(ds50 * MSPERDAY) / MSPERDAY);
-}
-
-// Return sensor number from obsKey
-int ObsKeyToSenNum(__int64 obsKey)
-{
-   return (int)(obsKey % 1000);
 }
 
 // Determine if the input value is small enough to be displayed as 0.000 instead of -0.000

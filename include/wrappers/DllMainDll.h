@@ -1,13 +1,15 @@
-// This wrapper file was generated automatically by the A3\GenDllWrappers program.
+// This wrapper file was generated automatically by the GenDllWrappers program.
 
 #ifndef DLLMAINDLL_H
 #define DLLMAINDLL_H
 
-#include "services/DllUtils.h"
+#include "../services/DllUtils.h"
 
-// Provide the path to the dll/so
-#ifdef _WIN32
+// Provide the path to the dll/so/dylib
+#if defined (_WIN32) || defined (__CYGWIN__)
   #define DllMainDll "DllMain.dll"
+#elif __APPLE__
+  #define DllMainDll "libdllmain.dylib"
 #else
   #define DllMainDll "libdllmain.so"
 #endif
@@ -23,6 +25,15 @@
 // If you forget to call this function first, the GetLastErrMsg() function won't return a correct value.
 // 
 // Some of the example code and other documentation may refer to the handle as a "pointer" or an "app pointer".
+// Notes for using bind(c):
+// There are three ways of marking a subroutine/function as exported DLL (in Windows only):
+// example: function DllMainLoadFile(dllMainFile) result(errCode) bind(c, name = "DllMainLoadFile")   
+// 1. use attribute dll export like this
+// !DEC$ ATTRIBUTES DLLEXPORT::DllMainLoadFile
+// 2. add entries in a module definition file (.DEF) that is passed to the linker at link time - need to use GenDllWrapper to generate .DEF file 
+// 3. command link arguments to the linker itseft Linker/Command Line/Additional Options - e.g. include this line /EXPORT:DllMainInit /EXPORT:DllMainGetInfo /EXPORT: DllMainLoadFile
+// Also, need to change the way fortran string declared:
+// from this: "character, intent(out) :: infoStr(INFOSTRLEN)" to this "character(kind = c_char), intent(out) :: infoStr(INFOSTRLEN)
 // returns A handle to the global data set. You will pass this handle to other initialization functions within other DLLs in the API.
 typedef __int64 (STDCALL *fnPtrDllMainInit)();
 
@@ -114,6 +125,29 @@ typedef void (STDCALL *fnPtrGetInitDllNames)(char initDllNames[512]);
 typedef void (STDCALL *fnPtrTestInterface)(char cIn, char* cOut, int intIn, int* intOut, __int64 longIn, __int64* longOut, double realIn, double* realOut, char strIn[512], char strOut[512], int int1DIn[3], int int1DOut[3], __int64 long1DIn[3], __int64 long1DOut[3], double real1DIn[3], double real1DOut[3], int int2DIn[2][3], int int2DOut[2][3], __int64 long2DIn[2][3], __int64 long2DOut[2][3], double real2DIn[2][3], double real2DOut[2][3]);
 
 
+// Tests different input/output data types that are supported by the Astrodynamic Standards library.
+// cInOut             Output should return 'Z' (inout-Character)
+// intInOut           Output should return Input + 1 (inout-Integer)
+// longInOut          Output should return Input + 2 (inout-Long)
+// realInOut          Output should return Input + 42.123456 (inout-Double)
+// strInOut           Output should return "It doesn't matter what your string was." (inout-Character[512])
+// int1DInOut         Output should return Input + 1 (inout-Integer[3])
+// long1DInOut        Output should return Input + 1234567890123456789 (inout-Long[3])
+// real1DInOut        Output should return Input + 42.0 (inout-Double[3])
+// int2DInOut         Output should return Input + 1 (inout-Integer[2, 3])
+// long2DInOut        Output should return Input + 6 (inout-Long[2, 3])
+// real2DInOut        Output should return Input + 7.6 (inout-Double[2, 3])
+typedef void (STDCALL *fnPtrTestInterface2)(char* cInOut, int* intInOut, __int64* longInOut, double* realInOut, char strInOut[512], int int1DInOut[3], __int64 long1DInOut[3], double real1DInOut[3], int int2DInOut[2][3], __int64 long2DInOut[2][3], double real2DInOut[2][3]);
+
+
+// Tests input and output arrays with unknown length that are supported by the Astrodynamic Standards library.
+// Unk1DIn            Unknown dimension should be length (3) (in-Integer[*])
+// Unk1DOut           Unknown dimension should be length (3), Unk1DOut should return same as Unk1DIn * 4 (out-Integer[*])
+// Unk2DIn            Unknown dimension should be length (2) (in-Integer[*, 3])
+// Unk2DOut           Unknown dimension should be length (2), Unk2DOut should return same as Unk2DIn * 5 (out-Integer[*, 3])
+typedef void (STDCALL *fnPtrTestInterface3)(int Unk1DIn[], int Unk1DOut[], int Unk2DIn[][3], int Unk2DOut[][3]);
+
+
 // Returns data parsed from user's AS_MOIC-typed input card - up to 128 fields are allowed.
 // arrSize            size of the xa_moc array - actual number of fields the user enters in an "AS_MOIC" input card (in-Integer)
 // xa_moic            The returning xa_moc array (out-Double[*])
@@ -131,91 +165,93 @@ typedef int (STDCALL *fnPtrSetElsetKeyMode)(int elset_keyMode);
 // Gets current ELSET key mode
 // returns Current elset key mode (see ELSET_KEYMODE_? for available modes)
 typedef int (STDCALL *fnPtrGetElsetKeyMode)();
-
-// log message string length
-#define LOGMSGLEN   128    
-
-// DHN 06Feb12 - Increase file path length to 512 characters from 128 characters to handle longer file path
-#define FILEPATHLEN   512 
-
-// DHN 10Feb12 - Uniformally using 512 characters to passing/receiving string in all Get/Set Field functions
-#define GETSETSTRLEN   512 
-
-#define INFOSTRLEN   128 
-
-// DHN 10Feb12 - All input card types' (elsets, ob, sensors, ...) can now have maximum of 512 characters
-#define INPUTCARDLEN   512 
-
-// Element types (last digit of satKey)
-static const int  
-   ELTTYPE_DMA       = 0,    // Direct memory access
-   ELTTYPE_TLE_SGP   = 1,    // Element type - SGP Tle type 0
-   ELTTYPE_TLE_SGP4  = 2,    // Element type - SGP4 Tle type 2
-   ELTTYPE_TLE_SP    = 3,    // Element type - SP Tle type 6
-   ELTTYPE_SPVEC_B1P = 4,    // Element type - SP Vector
-   ELTTYPE_VCM       = 5,    // Element type - VCM
-   ELTTYPE_EXTEPH    = 6,    // Element type - External ephemeris
-   ELTTYPE_TLE_XP    = 7;    // Element type - SGP Tle type 4 - XP
-
-//*******************************************************************************
-
-// Orbital elset types
-static const int  
-   OET_TLE_SGP   = 1,    // Orbital elset type - SGP Tle type 0
-   OET_TLE_SGP4  = 2,    // Orbital elset type - SGP4 Tle type 2
-   OET_TLE_SP    = 3,    // Orbital elset type - SP Tle type 6
-   OET_SPVEC_B1P = 4,    // Orbital elset type - SP Vector
-   OET_VCM       = 5,    // Orbital elset type - VCM
-   OET_EXTEPH    = 6,    // Orbital elset type - External ephemeris
-   OET_TLE_XP    = 7;    // Orbital elset type - SGP Tle type 4 - XP
-
-//*******************************************************************************
-
-// Propagation types
-static const int  
-   PROPTYPE_GP  = 1,       // GP/SGP4 propagator
-   PROPTYPE_SP  = 2,       // SP propagator
-   PROPTYPE_X   = 3,       // External ephemeris
-   PROPTYPE_UK  = 4;       // Unknown
-//*******************************************************************************
-
-// Add sat error 
-static const int  
-   BADSATKEY = -1,      // Bad satellite key
-   DUPSATKEY =  0;      // Duplicate satellite key
-
-//*******************************************************************************
-// Options used in GetLoaded()   
-static const int  
-   IDX_ORDER_ASC   = 0,    // ascending order
-   IDX_ORDER_DES   = 1,    // descending order
-   IDX_ORDER_READ  = 2,    // order as read
-   IDX_ORDER_QUICK = 9;    // tree traversal order
-
-//*******************************************************************************
-
-// Different key mode options for elset satKey
-static const int  
-   ELSET_KEYMODE_NODUP  = 0,    // Default - duplicate elsets can not be loaded in binary tree                           
-   ELSET_KEYMODE_DMA    = 1;    // Allow duplicate elsets to be loaded and have direct memory access (DMA - no duplication check and no binary tree)
-
-
-
-
-// DllMainDll's function pointers
-fnPtrDllMainInit                    DllMainInit;
-fnPtrDllMainGetInfo                 DllMainGetInfo;
-fnPtrDllMainLoadFile                DllMainLoadFile;
-fnPtrOpenLogFile                    OpenLogFile;
-fnPtrCloseLogFile                   CloseLogFile;
-fnPtrLogMessage                     LogMessage;
-fnPtrGetLastErrMsg                  GetLastErrMsg;
-fnPtrGetLastInfoMsg                 GetLastInfoMsg;
-fnPtrGetInitDllNames                GetInitDllNames;
-fnPtrTestInterface                  TestInterface;
-fnPtrGetMOICData                    GetMOICData;
-fnPtrSetElsetKeyMode                SetElsetKeyMode;
-fnPtrGetElsetKeyMode                GetElsetKeyMode;
+  
+  // LOG MESSAGE STRING LENGTH
+  #define LOGMSGLEN   128    
+  
+  // DHN 06FEB12 - INCREASE FILE PATH LENGTH TO 512 CHARACTERS FROM 128 CHARACTERS TO HANDLE LONGER FILE PATH
+  #define FILEPATHLEN   512 
+  
+  // DHN 10FEB12 - UNIFORMALLY USING 512 CHARACTERS TO PASSING/RECEIVING STRING IN ALL GET/SET FIELD FUNCTIONS
+  #define GETSETSTRLEN   512 
+  
+  #define INFOSTRLEN   128 
+  
+  // DHN 10FEB12 - ALL INPUT CARD TYPES' (ELSETS, OB, SENSORS, ...) CAN NOW HAVE MAXIMUM OF 512 CHARACTERS
+  #define INPUTCARDLEN   512 
+  
+  // ELEMENT TYPES (LAST DIGIT OF SATKEY)
+  static const int  
+     ELTTYPE_DMA       = 0,    // DIRECT MEMORY ACCESS
+     ELTTYPE_TLE_SGP   = 1,    // ELEMENT TYPE - SGP TLE TYPE 0
+     ELTTYPE_TLE_SGP4  = 2,    // ELEMENT TYPE - SGP4 TLE TYPE 2
+     ELTTYPE_TLE_SP    = 3,    // ELEMENT TYPE - SP TLE TYPE 6
+     ELTTYPE_SPVEC_B1P = 4,    // ELEMENT TYPE - SP VECTOR
+     ELTTYPE_VCM       = 5,    // ELEMENT TYPE - VCM
+     ELTTYPE_EXTEPH    = 6,    // ELEMENT TYPE - EXTERNAL EPHEMERIS
+     ELTTYPE_TLE_XP    = 7;    // ELEMENT TYPE - SGP TLE TYPE 4 - XP
+  
+  //*******************************************************************************
+  
+  // ORBITAL ELSET TYPES
+  static const int  
+     OET_TLE_SGP   = 1,    // ORBITAL ELSET TYPE - SGP TLE TYPE 0
+     OET_TLE_SGP4  = 2,    // ORBITAL ELSET TYPE - SGP4 TLE TYPE 2
+     OET_TLE_SP    = 3,    // ORBITAL ELSET TYPE - SP TLE TYPE 6
+     OET_SPVEC_B1P = 4,    // ORBITAL ELSET TYPE - SP VECTOR
+     OET_VCM       = 5,    // ORBITAL ELSET TYPE - VCM
+     OET_EXTEPH    = 6,    // ORBITAL ELSET TYPE - EXTERNAL EPHEMERIS
+     OET_TLE_XP    = 7;    // ORBITAL ELSET TYPE - SGP TLE TYPE 4 - XP
+  
+  //*******************************************************************************
+  
+  // PROPAGATION TYPES
+  static const int  
+     PROPTYPE_GP  = 1,       // GP/SGP4/SGP4-XP PROPAGATOR
+     PROPTYPE_SP  = 2,       // SP PROPAGATOR
+     PROPTYPE_X   = 3,       // EXTERNAL EPHEMERIS
+     PROPTYPE_UK  = 4;       // UNKNOWN
+  //*******************************************************************************
+  
+  // ADD SAT ERROR 
+  static const int  
+     BADSATKEY = -1,      // BAD SATELLITE KEY
+     DUPSATKEY =  0;      // DUPLICATE SATELLITE KEY
+  
+  //*******************************************************************************
+  
+  // OPTIONS USED IN GETLOADED()   
+  static const int  
+     IDX_ORDER_ASC   = 0,    // ASCENDING ORDER
+     IDX_ORDER_DES   = 1,    // DESCENDING ORDER
+     IDX_ORDER_READ  = 2,    // ORDER AS READ
+     IDX_ORDER_QUICK = 9;    // TREE TRAVERSAL ORDER
+  
+  //*******************************************************************************
+  
+  // DIFFERENT KEY MODE OPTIONS FOR ELSET SATKEY
+  static const int  
+     ELSET_KEYMODE_NODUP  = 0,    // DEFAULT - DUPLICATE ELSETS CAN NOT BE LOADED IN BINARY TREE                           
+     ELSET_KEYMODE_DMA    = 1;    // ALLOW DUPLICATE ELSETS TO BE LOADED AND HAVE DIRECT MEMORY ACCESS (DMA - NO DUPLICATION CHECK AND NO BINARY TREE)
+     
+  //*******************************************************************************
+     
+// DllMainDll's function pointers declaration
+extern fnPtrDllMainInit                    DllMainInit;
+extern fnPtrDllMainGetInfo                 DllMainGetInfo;
+extern fnPtrDllMainLoadFile                DllMainLoadFile;
+extern fnPtrOpenLogFile                    OpenLogFile;
+extern fnPtrCloseLogFile                   CloseLogFile;
+extern fnPtrLogMessage                     LogMessage;
+extern fnPtrGetLastErrMsg                  GetLastErrMsg;
+extern fnPtrGetLastInfoMsg                 GetLastInfoMsg;
+extern fnPtrGetInitDllNames                GetInitDllNames;
+extern fnPtrTestInterface                  TestInterface;
+extern fnPtrTestInterface2                 TestInterface2;
+extern fnPtrTestInterface3                 TestInterface3;
+extern fnPtrGetMOICData                    GetMOICData;
+extern fnPtrSetElsetKeyMode                SetElsetKeyMode;
+extern fnPtrGetElsetKeyMode                GetElsetKeyMode;
 
 
 

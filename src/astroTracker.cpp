@@ -3,17 +3,19 @@
  * Author: Jeremy Snyder
  * Creation: Jan 1, 2022
  *
- * Last Update: Feb 17, 2022
+ * Last Update: Aug 31, 2022
  *
  * Uses USSF SGP4 to track objects from an Earth-fixed terrestrial reference frame.
  */
 
 #include "astroTracker.hpp"
-#include "frameLib.hpp"
 #include <iostream>
 #include <fstream>
 #include "stdlib.h"
 
+#ifndef ASTDYN_STD
+#define ASTDYN_STD
+// Provided Astrodynamics Standards library wrappers
 extern "C" {
 #include "services/DllMainDll_Service.h"
 #include "services/TimeFuncDll_Service.h"
@@ -24,7 +26,7 @@ extern "C" {
 #include "wrappers/TleDll.h"
 #include "wrappers/Sgp4PropDll.h"
 }
-
+#endif
 
 astroTracker::astroTracker(){
     std::cout << "constructor" << std::endl;
@@ -91,9 +93,6 @@ astroTracker::~astroTracker(){
 
 // Load all the dlls being used in the program
 void astroTracker::LoadAstroStdDlls(){
-
-    // TEST FUNCTION, REMOVE LATER
-    itrs::test();
 
     std::cout << "LoadAstroStdDlls" << std::endl;
 
@@ -314,7 +313,7 @@ void astroTracker::loadFromJson(json omm){
         {"Revolution_Num", revNum}
     };
 
-    satNames.push_back(omm["OBJECT_NAME"].get<std::string>());
+    loadedSatNames.push_back(omm["OBJECT_NAME"].get<std::string>());
 
 }
 
@@ -361,15 +360,100 @@ void astroTracker::loadFromTLE(std::string name, std::string line1, std::string 
         {"Revolution_Num", revNum}
     };
 
-    satNames.push_back(name);
+    loadedSatNames.push_back(name);
 
 }
 
 //================================================ Main Functions ====================================
 
 std::vector<std::string> astroTracker::getSatNames(){
-    return satNames;
+    return loadedSatNames;
 }
+
+void astroTracker::printSatTLE(std::string name){
+    std::cout << std::endl;
+    std::cout << "satNum: " << sats[name].get<nlohmann::json>()["Norad_ID"].get<int>() << std::endl;
+    std::cout << "secClass: " << sats[name].get<nlohmann::json>()["Security_Class"].get<char>() << std::endl;
+    std::cout << "satName: " << sats[name].get<nlohmann::json>()["Intl_Des"].get<std::string>() << std::endl;
+    std::cout << "epochYr: " << sats[name].get<nlohmann::json>()["Epoch_Year"].get<int>() << std::endl;
+    std::cout << "epochDays: " << sats[name].get<nlohmann::json>()["Epoch_Days"].get<double>() << std::endl;
+    std::cout << "bstar: " << sats[name].get<nlohmann::json>()["Bstar"].get<double>() << std::endl;
+    std::cout << "ephType: " << sats[name].get<nlohmann::json>()["Eph_Type"].get<int>() << std::endl;
+    std::cout << "elsetNum: " << sats[name].get<nlohmann::json>()["Element_Set_Num"].get<int>() << std::endl;
+    std::cout << "incli: " << sats[name].get<nlohmann::json>()["Inclination"].get<double>() << std::endl;
+    std::cout << "node: " << sats[name].get<nlohmann::json>()["RA_Node"].get<double>() << std::endl;
+    std::cout << "eccen: " << sats[name].get<nlohmann::json>()["Eccentricity"].get<double>() << std::endl;
+    std::cout << "omega: " << sats[name].get<nlohmann::json>()["Arg_Perigee"].get<double>() << std::endl;
+    std::cout << "mnAnomaly: " << sats[name].get<nlohmann::json>()["Mean_Anomaly"].get<double>() << std::endl;
+    std::cout << "mnMotion: " << sats[name].get<nlohmann::json>()["Mean_Motion"].get<double>() << std::endl;
+    std::cout << "revNum: " << sats[name].get<nlohmann::json>()["Revolution_Num"].get<int>() << std::endl;
+    std::cout << std::endl;
+
+}
+
+//  The following function has at least some of the logic to convert current WGS84 GPS coordinates
+//  I don't remember writing it, but it was in GitHub's version of this file, so I guess I did
+//  Either way, it appears to essentially be the logic I only just came up with to solve the WGS84-WGS72 conversion issue
+//  ****Review and update before implementing
+/*
+// Convert latitude, longitude, and height retrived from GPS to TEME vector
+void astroTracker::getGPSposTEME(double posTEME[3]){
+    double thetaG,
+           metricLLH[3] = {39.05, -76.65, 0.04}, // TEST CASE
+           ds50UT1;
+    
+    // Zero out current vector
+    posTEME[0] = 0;
+    posTEME[1] = 0;
+    posTEME[2] = 0;
+
+    // Swap Earth model for GPS (WGS72 -> WGS84)
+    // EnvSetGeoIdx(84);
+
+    // Retrieve GPS info (converting to Metric if needed) -> metricLLH
+    
+    // === Calculate Greenwich Sidereal (thetaG) ===
+    // Calculate current time in ds50UT1
+    std::time_t t = std::time(0);
+    tm* now = std::localtime(&t);
+    // Replace relevant tm fields with GPS time?
+    ds50UT1 = UTCToUT1(
+        TimeComps2ToUTC(
+            now->tm_year,
+            now->tm_mon,
+            now->tm_mday,
+            now->tm_hour,
+            now->tm_min,
+            now->tm_sec
+        )
+    );
+
+    thetaG = ThetaGrnwch(ds50UT1, EnvGetFkPtr());
+
+    // === Convert LLH to ECI position vector (TEME of Date in km)
+    LLHToXYZ(thetaG, metricLLH, posTEME);
+
+    // Convert position vector to something independent of Earth model
+    // Swap Earth model back to WGS72 for SGP4 propagation
+    // EnvSetGeoIdx(72);
+    // Convert position vector back to TEME
+
+    // === Convert posTEME to unit vector ===
+    // (Is this even needed?)
+    double mag = sqrt(
+        (
+            (posTEME[0]*posTEME[0])+
+            (posTEME[1]*posTEME[1])+
+            (posTEME[2]*posTEME[2])
+        )
+    );
+
+    posTEME[0] = (posTEME[0] / mag);
+    posTEME[1] = (posTEME[1] / mag);
+    posTEME[2] = (posTEME[2] / mag);
+
+}
+*/
 
 //================================================ Utility Functions =================================
 

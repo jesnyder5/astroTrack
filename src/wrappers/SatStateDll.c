@@ -1,7 +1,32 @@
-// This wrapper file was generated automatically by the A3\GenDllWrappers program.
+// This wrapper file was generated automatically by the GenDllWrappers program.
 
-#include "services/DllUtils.h"
-#include "wrappers/SatStateDll.h"
+#include "../services/DllUtils.h"
+#include "SatStateDll.h"
+
+
+// SatStateDll's function pointers definition
+fnPtrSatStateInit                   SatStateInit;
+fnPtrSatStateGetInfo                SatStateGetInfo;
+fnPtrSatStateLoadFile               SatStateLoadFile;
+fnPtrSatStateSaveFile               SatStateSaveFile;
+fnPtrSatStateRemoveSat              SatStateRemoveSat;
+fnPtrSatStateRemoveSatAll           SatStateRemoveSatAll;
+fnPtrSatStateRemoveAllSats          SatStateRemoveAllSats;
+fnPtrSatStateReset                  SatStateReset;
+fnPtrSatStateGetCount               SatStateGetCount;
+fnPtrSatStateGetLoaded              SatStateGetLoaded;
+fnPtrSatStateNumToKey               SatStateNumToKey;
+fnPtrSatStateGetSatDataAll          SatStateGetSatDataAll;
+fnPtrSatStateGetSatDataField        SatStateGetSatDataField;
+fnPtrSatStateInitSat                SatStateInitSat;
+fnPtrSatStateMse                    SatStateMse;
+fnPtrSatStateDs50UTC                SatStateDs50UTC;
+fnPtrSatStateGetPropOut             SatStateGetPropOut;
+fnPtrSatStateEphCom                 SatStateEphCom;
+fnPtrSatStateEphCom_OS              SatStateEphCom_OS;
+fnPtrSatStateHasCovMtx              SatStateHasCovMtx;
+fnPtrSatStateGetCovUVW              SatStateGetCovUVW;
+fnPtrSatStateGenEphFile             SatStateGenEphFile;
 
 
 static void* hLib = NULL; // handle to the dll

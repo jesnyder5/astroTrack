@@ -1,7 +1,17 @@
-// This wrapper file was generated automatically by the A3\GenDllWrappers program.
+// This wrapper file was generated automatically by the GenDllWrappers program.
 
-#include "services/DllUtils.h"
-#include "wrappers/SaasDll.h"
+#include "../services/DllUtils.h"
+#include "SaasDll.h"
+
+
+// SaasDll's function pointers definition
+fnPtrSaasInit                       SaasInit;
+fnPtrSaasGetInfo                    SaasGetInfo;
+fnPtrSaasGetResults                 SaasGetResults;
+fnPtrSaasAutoConeSize               SaasAutoConeSize;
+fnPtrSaasMissileFlightTime          SaasMissileFlightTime;
+fnPtrComputeLnchOrbPlane            ComputeLnchOrbPlane;
+fnPtrFindPlanerIntersection         FindPlanerIntersection;
 
 
 static void* hLib = NULL; // handle to the dll

@@ -1,7 +1,57 @@
-// This wrapper file was generated automatically by the A3\GenDllWrappers program.
+// This wrapper file was generated automatically by the GenDllWrappers program.
 
-#include "services/DllUtils.h"
-#include "wrappers/TleDll.h"
+#include "../services/DllUtils.h"
+#include "TleDll.h"
+
+
+// TleDll's function pointers definition
+fnPtrTleInit                        TleInit;
+fnPtrTleGetInfo                     TleGetInfo;
+fnPtrTleLoadFile                    TleLoadFile;
+fnPtrTleSaveFile                    TleSaveFile;
+fnPtrTleRemoveSat                   TleRemoveSat;
+fnPtrTleRemoveAllSats               TleRemoveAllSats;
+fnPtrTleGetCount                    TleGetCount;
+fnPtrTleGetLoaded                   TleGetLoaded;
+fnPtrTleAddSatFrLines               TleAddSatFrLines;
+fnPtrTleAddSatFrLinesML             TleAddSatFrLinesML;
+fnPtrTleAddSatFrCsv                 TleAddSatFrCsv;
+fnPtrTleAddSatFrCsvML               TleAddSatFrCsvML;
+fnPtrTleAddSatFrFieldsGP            TleAddSatFrFieldsGP;
+fnPtrTleAddSatFrFieldsGP2           TleAddSatFrFieldsGP2;
+fnPtrTleAddSatFrFieldsGP2ML         TleAddSatFrFieldsGP2ML;
+fnPtrTleUpdateSatFrFieldsGP         TleUpdateSatFrFieldsGP;
+fnPtrTleUpdateSatFrFieldsGP2        TleUpdateSatFrFieldsGP2;
+fnPtrTleAddSatFrFieldsSP            TleAddSatFrFieldsSP;
+fnPtrTleAddSatFrFieldsSPML          TleAddSatFrFieldsSPML;
+fnPtrTleUpdateSatFrFieldsSP         TleUpdateSatFrFieldsSP;
+fnPtrTleSetField                    TleSetField;
+fnPtrTleGetField                    TleGetField;
+fnPtrTleGetAllFieldsGP              TleGetAllFieldsGP;
+fnPtrTleGetAllFieldsGP2             TleGetAllFieldsGP2;
+fnPtrTleGetAllFieldsSP              TleGetAllFieldsSP;
+fnPtrTleParseGP                     TleParseGP;
+fnPtrTleLinesToArray                TleLinesToArray;
+fnPtrTleParseSP                     TleParseSP;
+fnPtrTleGetLines                    TleGetLines;
+fnPtrTleGetCsv                      TleGetCsv;
+fnPtrTleGPFieldsToLines             TleGPFieldsToLines;
+fnPtrTleGPFieldsToCsv               TleGPFieldsToCsv;
+fnPtrTleGPArrayToLines              TleGPArrayToLines;
+fnPtrTleGPArrayToCsv                TleGPArrayToCsv;
+fnPtrTleSPFieldsToLines             TleSPFieldsToLines;
+fnPtrTleGetSatKey                   TleGetSatKey;
+fnPtrTleGetSatKeyML                 TleGetSatKeyML;
+fnPtrTleFieldsToSatKey              TleFieldsToSatKey;
+fnPtrTleFieldsToSatKeyML            TleFieldsToSatKeyML;
+fnPtrTleAddSatFrArray               TleAddSatFrArray;
+fnPtrTleAddSatFrArrayML             TleAddSatFrArrayML;
+fnPtrTleUpdateSatFrArray            TleUpdateSatFrArray;
+fnPtrTleDataToArray                 TleDataToArray;
+fnPtrTleLinesToCsv                  TleLinesToCsv;
+fnPtrTleCsvToLines                  TleCsvToLines;
+fnPtrSetTleKeyMode                  SetTleKeyMode;
+fnPtrGetTleKeyMode                  GetTleKeyMode;
 
 
 static void* hLib = NULL; // handle to the dll

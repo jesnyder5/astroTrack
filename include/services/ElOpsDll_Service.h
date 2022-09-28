@@ -3,10 +3,10 @@
 
 #include "DllUtils.h"
 
-#include "wrappers/TleDll.h"
-#include "wrappers/SpVecDll.h"
-#include "wrappers/VcmDll.h"
-#include "wrappers/ExtEphemDll.h"
+#include "../wrappers/TleDll.h"
+#include "../wrappers/SpVecDll.h"
+#include "../wrappers/VcmDll.h"
+#include "../wrappers/ExtEphemDll.h"
 
 
 // Elest file types

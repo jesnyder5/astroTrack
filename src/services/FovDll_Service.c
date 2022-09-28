@@ -1,16 +1,16 @@
-#include "services/DllUtils.h"
-#include "services/DllMainDll_Service.h"
-#include "services/FovDll_Service.h"
-#include "services/TimeFuncDll_Service.h"
-#include "services/SatStateDll_Service.h"
+#include "DllUtils.h"
+#include "DllMainDll_Service.h"
+#include "FovDll_Service.h"
+#include "TimeFuncDll_Service.h"
+#include "SatStateDll_Service.h"
 #include <math.h>
 
-#include "wrappers/DllMainDll.h"
-#include "wrappers/FovDll.h"
-#include "wrappers/TimeFuncDll.h"
-#include "wrappers/SensorDll.h"
-#include "wrappers/SatStateDll.h"
-#include "wrappers/LamodDll.h"
+#include "../wrappers/DllMainDll.h"
+#include "../wrappers/FovDll.h"
+#include "../wrappers/TimeFuncDll.h"
+#include "../wrappers/SensorDll.h"
+#include "../wrappers/SatStateDll.h"
+#include "../wrappers/LamodDll.h"
 
 
 // Retrieve Fov control data from the dll
@@ -166,9 +166,9 @@ void PrintSourceTargetData(FILE* fpOut, double xa_fovSrc[8], double xa_fovTgt[8]
          fprintf(fpOut, " | SENSOR NUMBER : %3d%57s|\n", srcId, " ");
          break;
       case 2: // FOV_SRCTYPE_LLH
-         fprintf(fpOut, " | NORTH LATITUDE: %9.5f deg%47s|\n", xa_fovSrc[XA_FOVSRC_ELEM1], " ");
-         fprintf(fpOut, " | EAST LONGITUDE: %9.5f deg%47s|\n", xa_fovSrc[XA_FOVSRC_ELEM2], " ");
-         fprintf(fpOut, " | HEIGHT        : %9.0f m%49s|\n", xa_fovSrc[XA_FOVSRC_ELEM3], " ");
+         fprintf(fpOut, " | NORTH LATITUDE: %10.5f deg%46s|\n", xa_fovSrc[XA_FOVSRC_ELEM1], " ");
+         fprintf(fpOut, " | EAST LONGITUDE: %10.5f deg%46s|\n", xa_fovSrc[XA_FOVSRC_ELEM2], " ");
+         fprintf(fpOut, " | HEIGHT        : %10.0f m%48s|\n", xa_fovSrc[XA_FOVSRC_ELEM3], " ");
          break;
       case 3: // FOV_SRCTYPE_EFG 
          fprintf(fpOut, " | ROTATING E: %9.0f m|\n", xa_fovSrc[XA_FOVSRC_ELEM1]);

@@ -1,13 +1,15 @@
-// This wrapper file was generated automatically by the A3\GenDllWrappers program.
+// This wrapper file was generated automatically by the GenDllWrappers program.
 
 #ifndef SPPROPDLL_H
 #define SPPROPDLL_H
 
-#include "services/DllUtils.h"
+#include "../services/DllUtils.h"
 
-// Provide the path to the dll/so
-#ifdef _WIN32
+// Provide the path to the dll/so/dylib
+#if defined (_WIN32) || defined (__CYGWIN__)
   #define SpPropDll "SpProp.dll"
+#elif __APPLE__
+  #define SpPropDll "libspprop.dylib"
 #else
   #define SpPropDll "libspprop.so"
 #endif
@@ -93,7 +95,7 @@ typedef void (STDCALL *fnPtrSpReset)();
 // 3 Run mode
 // 4 Save partials data
 // 5 Specter compatibility mode
-// 6 Consider paramter
+// 6 Consider parameter
 // 7 Decay altitude
 // 8 Output coordinate system
 // 9 Additional VCM options
@@ -464,7 +466,7 @@ typedef int (STDCALL *fnPtrSpAddFluxRec)(double refDs50UTC, double f10, double f
 
 // Returns the times, in days since 1950 UTC, of ephemeris points stored in SP buffer that meet the requirement as specified in the minStepSize
 // This function is used to retrieve times in which SP propagator stored satellite's state vectors in memory (natural integration step size).
-// An error will occur if the actualEphPts is equal to the maxEphPts. In this case, the function will return all ephemereris times up to the time when that maxEphPts is reached.
+// An error will occur if the actualEphPts reaches the maxEphPts. In this case, the function will return all ephemereris times up to the time when that maxEphPts is reached.
 // satKey             The satellite's unique key (in-Long)
 // maxEphPts          Maximum number of possible ephemeris points that the function won't go over. That means actualEphPts can't be greater than maxEphPts even though the time span may have more points than that (in-Integer)
 // startDs50UTC       Start time in days since 1950 UTC (in-Double)
@@ -475,173 +477,263 @@ typedef int (STDCALL *fnPtrSpAddFluxRec)(double refDs50UTC, double f10, double f
 // returns 0 if the function successfully returns all the ephemeris times of the specified start/stop time span, non-0 if there is an error. Also if
 typedef int (STDCALL *fnPtrSpGetEphemTimes)(__int64 satKey, int maxEphPts, double startDs50UTC, double stopDs50UTC, double minStepSize, int* actualEphPts, double ds50UTCArr[]);
 
-// Indexes of SP 4P card fields
-static const int  
-   XF_4P_GEOIDX   = 1,       // Geopotential model to use
-   XF_4P_BULGEFLG = 2,       // Earth gravity pertubations flag
-   XF_4P_DRAGFLG  = 3,       // Drag pertubations flag 
-   XF_4P_RADFLG   = 4,       // Radiation pressure pertubations flag
-   XF_4P_LUNSOL   = 5,       // Lunar/Solar pertubations flag
-   XF_4P_F10      = 6,       // F10 value
-   XF_4P_F10AVG   = 7,       // F10 average value
-   XF_4P_AP       = 8,       // Ap value
-   XF_4P_TRUNC    = 9,       // Geopotential truncation order/degree/zonals
-   XF_4P_CONVERG  = 10,      // Corrector step convergence criterion; exponent of 1/10; default = 10
-   XF_4P_OGFLG    = 11,      // Outgassing pertubations flag
-   XF_4P_TIDESFLG = 12,      // Solid earth and ocean tide pertubations flag
-   XF_4P_INCOORD  = 13,      // Input vector coordinate system
-   XF_4P_NTERMS   = 14,      // Nutation terms
-   XF_4P_REEVAL   = 15,      // Recompute pertubations at each corrector step
-   XF_4P_INTEGCTRL= 16,      // Variable of intergration control
-   XF_4P_VARSTEP  = 17,      // Variable step size control
-   XF_4P_INITSTEP = 18,      // Initial step size
 
-   XF_4P_DCAFILE  = 21,      // DCA file name
-   XF_4P_FLUXFILE = 22,      // Solar flux file name
-   XF_4P_GEOFILE  = 23,      // Geopotential file name
-   XF_4P_JPLFILE  = 24,      // JPL file name
-   XF_4P_JPLSTART = 25,      // JPL start time
-   XF_4P_JPLSTOP  = 26;      // JPL stop time
-   
-//*******************************************************************************
-
-// Indexes of SP application control (preference) paramters
-static const int  
-   XF_SPAPP_GEODIR   = 1,     // Geopotential directory path
-   XF_SPAPP_BUFSIZE  = 2,     // Buffer size
-   XF_SPAPP_RUNMODE  = 3,     // Run mode
-   XF_SPAPP_SAVEPART = 4,     // Save partials data
-   XF_SPAPP_SPECTR   = 5,     // Specter compatibility mode
-   XF_SPAPP_CONSIDER = 6,     // Consider paramter
-   XF_SPAPP_DECAYALT = 7,     // Decay altitude
-   XF_SPAPP_OUTCOORD = 8,     // Output coordinate system
-   XF_SPAPP_VCMOPT   = 9;     // VCM additional options
-
-//*******************************************************************************
-
-// Indexes of data fields of an initialized SP satellite
-static const int  
-   XF_SPSAT_SATNUM  = 1,     // Satellite number I5
-   XF_SPSAT_DS50UTC = 2,     // Satellite's epoch time in days since 1950, UTC 
-   XF_SPSAT_DS50TAI = 3,     // Satellite's epoch time in days since 1950, TAI
-   XF_SPSAT_MU      = 4,     // Mu value 
-   XF_SPSAT_HASCOV  = 5,     // Covariance Matrix flag
-   XF_SPSAT_INTMODE = 6,     // Integration mode
-   XF_SPSAT_NTERMS  = 7,     // Nutation terms
-   XF_SPSAT_SPECTR  = 8;     // Specter compatibility mode
-
-//*******************************************************************************
-   
-// Different time types for passing to SpPropAll
-static const int  
-   SP_TIMETYPE_MSE      = 0,   // propagation time is in minutes since epoch
-   SP_TIMETYPE_DS50UTC  = 1;   // propagation time is in days since 1950, UTC
-   
-
-// Sp propagated data   
-static const int     
-   XA_SPOUT_UTC       =  0,    // Propagation time in days since 1950, UTC
-   XA_SPOUT_MSE       =  1,    // Propagation time in minutes since the satellite's epoch time   
-   XA_SPOUT_UT1       =  2,    // Propagation time in days since 1950, UT1
-   XA_SPOUT_TAI       =  3,    // Propagation time in days since 1950, TAI
-   XA_SPOUT_ET        =  4,    // Propagation time in days since 1950, ET
-   XA_SPOUT_REVNUM    =  5,    // Revolution number
-   XA_SPOUT_NTERMS    =  6,    // Number of nutation terms
-   XA_SPOUT_ISSPECTR  =  7,    // Spectr compatible mode (0=not compatible, 1=compatible)
-   XA_SPOUT_HASCOVMTX =  8,    // Has input covariance matrix (0=no, 1=yes)
-
-   XA_SPOUT_J2KPOSX   = 10,    // J2K position X (km)
-   XA_SPOUT_J2KPOSY   = 11,    // J2K position Y (km)
-   XA_SPOUT_J2KPOSZ   = 12,    // J2K position Z (km)
-   XA_SPOUT_J2KVELX   = 13,    // J2K velocity X (km/s)
-   XA_SPOUT_J2KVELY   = 14,    // J2K velocity Y (km/s)
-   XA_SPOUT_J2KVELZ   = 15,    // J2K velocity Z (km/s)
-   XA_SPOUT_ECIPOSX   = 16,    // ECI position X (km)
-   XA_SPOUT_ECIPOSY   = 17,    // ECI position Y (km)
-   XA_SPOUT_ECIPOSZ   = 18,    // ECI position Z (km)
-   XA_SPOUT_ECIVELX   = 19,    // ECI velocity X (km/s)
-   XA_SPOUT_ECIVELY   = 20,    // ECI velocity Y (km/s)
-   XA_SPOUT_ECIVELZ   = 21,    // ECI velocity Z (km/s)
-   XA_SPOUT_LAT       = 22,    // Geodetic latitude (deg)
-   XA_SPOUT_LON       = 23,    // Geodetic longitude (deg)
-   XA_SPOUT_HEIGHT    = 24,    // Height above geoid (km)
-
-   XA_SPOUT_COVTYPE   = 30,    // Covariance matrix type, if available: 1=UVW_DATE, 2=ECI_DATE, 3=EQNX_DATE, 11=UVW_J2K, 12=ECI_J2K, 13=EQNX_J2K
-   XA_SPOUT_COVMTX    = 31,    // 6 by 6 covariance matrix (31-66)
-   
-                               
-   XA_SPOUT_SIZE      = 128;     
-   
-   
-
-// VCM additional options
-static const int  
-   VCMOPT_USEOWN    = 0,    // use VCM's own data
-   VCMOPT_USEGLOBAL = 1;    // force VCM to use global solar flux and timing constants data
-
-// Run Modes
-static const int  
-   IDX_RUNMODE_PERF = 0,   // Perfromance priority. This mode allows the buffer of integration points to extend freely
-   IDX_RUNMODE_MEM  = 1;   // Memory priority. This mode only allows a number of integration points to be saved in the buffer at any one time
-   
-//*******************************************************************************
-   
-// Partials Saving Modes
-static const int  
-   IDX_PARTIALS_SAVE = 1,     // Save partials in the buffer
-   IDX_PARTIALS_DONT = 0;     // Don't save partials in the buffer
-
-// Indexes of different covariance matrices
-static const int  
-   XF_COVMTX_UVW_DATE  =  1,     // UVW convariance matrix - TEME of DATE
-   XF_COVMTX_XYZ_DATE  =  2,     // Cartesian covariance matrix - TEME of DATE 
-   XF_COVMTX_EQNX_DATE =  3,     // Equinoctial covariance matrix - TEME of DATE (not available for "PARTIALS: ANALYTIC")
-   XF_COVMTX_UVW_J2K   = 11,     // UVW convariance matrix - MEME of J2K
-   XF_COVMTX_XYZ_J2K   = 12,     // Cartesian covariance matrix - MEME of J2K
-   XF_COVMTX_EQNX_J2K  = 13;     // Equinoctial covariance matrix - MEME of J2K  (not available for "PARTIALS: ANALYTIC")
-//*******************************************************************************
+// Generates ephemerides for the input satellite, represented by its satKey, for the specified time span and step size
+// Notes: if arrSize isn't big enough to store all the ephemeris points, the function will exit when the ephemArr reaches
+// that many points (arrSize) and the errCode is set to IDX_ERR_WARN
+// satKey             The unique key of the satellite to generate ephemerides. (in-Long)
+// startDs50UTC       Start time expressed in days since 1950, UTC. (in-Double)
+// stopDs50UTC        End time expressed in days since 1950, UTC. (in-Double)
+// stepSize           Step size in minutes, set to 0 if want to use SP natural integration step size (in-Double)
+// sp_ephem           Output ephemeris type: 1=ECI, 2=J2K. (in-Integer)
+// arrSize            Size of input ephemArr (in-Integer)
+// ephemArr           Output ephemerides - 0: time in days since 1950 UTC, 1-3: pos (km), 4-6: vel (km/sec) (out-Double[*, 7])
+// genEphemPts        Actual number of ephemeris points generated (always &le; arrSize) (out-Integer)
+// returns 0 if the propagation is successful, non-0 if there is an error (see error decoder in GP_ERR_?).
+typedef int (STDCALL *fnPtrSpGenEphems)(__int64 satKey, double startDs50UTC, double stopDs50UTC, double stepSize, int sp_ephem, int arrSize, double ephemArr[][7], int* genEphemPts);
 
 
+// Generates ephemerides for the input vcm (in string format) for the specified time span and step size
+// Notes: if arrSize isn't big enough to store all the ephemeris points, the function will exit when the ephemArr reaches
+// that many points (arrSize) and the errCode is set to IDX_ERR_WARN
+// vcmString          1-line or concatenated string representation of the VCM (in-Character[4000])
+// startDs50UTC       Start time expressed in days since 1950, UTC. (in-Double)
+// stopDs50UTC        End time expressed in days since 1950, UTC. (in-Double)
+// stepSize           Step size in minutes, set to 0 if want to use SP natural integration step size (in-Double)
+// sp_ephem           Output ephemeris type: 1=ECI, 2=J2K. (in-Integer)
+// arrSize            Size of input ephemArr (in-Integer)
+// ephemArr           Output ephemerides - 0: time in days since 1950 UTC, 1-3: pos (km), 4-6: vel (km/sec) (out-Double[*, 7])
+// genEphemPts        Actual number of ephemeris points generated (always &le; arrSize) (out-Integer)
+// returns 0 if the propagation is successful, non-0 if there is an error (see error decoder in GP_ERR_?).
+typedef int (STDCALL *fnPtrSpGenEphemsVcm_OS)(char vcmString[4000], double startDs50UTC, double stopDs50UTC, double stepSize, int sp_ephem, int arrSize, double ephemArr[][7], int* genEphemPts);
 
 
-// SpPropDll's function pointers
-fnPtrSpInit                         SpInit;
-fnPtrSpGetInfo                      SpGetInfo;
-fnPtrSpLoadFile                     SpLoadFile;
-fnPtrSpLoadFileAll                  SpLoadFileAll;
-fnPtrSpSaveFile                     SpSaveFile;
-fnPtrSpInitSat                      SpInitSat;
-fnPtrSpRemoveSat                    SpRemoveSat;
-fnPtrSpRemoveAllSats                SpRemoveAllSats;
-fnPtrSpGetCount                     SpGetCount;
-fnPtrSpReset                        SpReset;
-fnPtrSpGetApCtrl                    SpGetApCtrl;
-fnPtrSpGetApCtrlAll                 SpGetApCtrlAll;
-fnPtrSpSetApCtrl                    SpSetApCtrl;
-fnPtrSpSetApCtrlAll                 SpSetApCtrlAll;
-fnPtrSpGet4P                        SpGet4P;
-fnPtrSpSet4P                        SpSet4P;
-fnPtrSpGetPredCtrl                  SpGetPredCtrl;
-fnPtrSpSetPredCtrl                  SpSetPredCtrl;
-fnPtrSpGetSatData                   SpGetSatData;
-fnPtrSpGetSatDataAll                SpGetSatDataAll;
-fnPtrSpPropMse                      SpPropMse;
-fnPtrSpPropDs50UTC                  SpPropDs50UTC;
-fnPtrSpPropDs50UtcLLH               SpPropDs50UtcLLH;
-fnPtrSpPropDs50UtcPos               SpPropDs50UtcPos;
-fnPtrSpPropAll                      SpPropAll;
-fnPtrSpGetStateDs50UTC              SpGetStateDs50UTC;
-fnPtrSpSetStateDs50UTC              SpSetStateDs50UTC;
-fnPtrSpSetAndProp                   SpSetAndProp;
-fnPtrSpGetPropOut                   SpGetPropOut;
-fnPtrSpGetCovMtx                    SpGetCovMtx;
-fnPtrSpCompCovSigma                 SpCompCovSigma;
-fnPtrSpSet4pAll                     SpSet4pAll;
-fnPtrSpGet4pAll                     SpGet4pAll;
-fnPtrSpSet4PCard                    SpSet4PCard;
-fnPtrSpGet4PCard                    SpGet4PCard;
-fnPtrSpAddFluxRec                   SpAddFluxRec;
-fnPtrSpGetEphemTimes                SpGetEphemTimes;
+// Propagates all input satellites, represented by their satKeys, to the time expressed in days since 1950, UTC. 
+// satKeys            The satellite keys of all input satellites (in-Long[*])
+// numOfSats          The total number of satellites (in-Integer)
+// ds50UTC            The time to propagate all satelllites to, expressed in days since 1950, UTC. (in-Double)
+// ephemArr           0-2: pos (km), 3-5: vel (km/sec) - ECI TEME of Date (out-Double[*, 6])
+// returns 0 if the propagation is successful, non-0 if there is an error.
+typedef int (STDCALL *fnPtrSpPropAllSats)(__int64 satKeys[], int numOfSats, double ds50UTC, double ephemArr[][6]);
+  
+  // INDEXES OF SP 4P CARD FIELDS
+  static const int  
+     XF_4P_GEOIDX   = 1,       // GEOPOTENTIAL MODEL TO USE
+     XF_4P_BULGEFLG = 2,       // EARTH GRAVITY PERTUBATIONS FLAG
+     XF_4P_DRAGFLG  = 3,       // DRAG PERTUBATIONS FLAG 
+     XF_4P_RADFLG   = 4,       // RADIATION PRESSURE PERTUBATIONS FLAG
+     XF_4P_LUNSOL   = 5,       // LUNAR/SOLAR PERTUBATIONS FLAG
+     XF_4P_F10      = 6,       // F10 VALUE
+     XF_4P_F10AVG   = 7,       // F10 AVERAGE VALUE
+     XF_4P_AP       = 8,       // AP VALUE
+     XF_4P_TRUNC    = 9,       // GEOPOTENTIAL TRUNCATION ORDER/DEGREE/ZONALS
+     XF_4P_CONVERG  = 10,      // CORRECTOR STEP CONVERGENCE CRITERION; EXPONENT OF 1/10; DEFAULT = 10
+     XF_4P_OGFLG    = 11,      // OUTGASSING PERTUBATIONS FLAG
+     XF_4P_TIDESFLG = 12,      // SOLID EARTH AND OCEAN TIDE PERTUBATIONS FLAG
+     XF_4P_INCOORD  = 13,      // INPUT VECTOR COORDINATE SYSTEM
+     XF_4P_NTERMS   = 14,      // NUTATION TERMS
+     XF_4P_REEVAL   = 15,      // RECOMPUTE PERTUBATIONS AT EACH CORRECTOR STEP
+     XF_4P_INTEGCTRL= 16,      // VARIABLE OF INTERGRATION CONTROL
+     XF_4P_VARSTEP  = 17,      // VARIABLE STEP SIZE CONTROL
+     XF_4P_INITSTEP = 18,      // INITIAL STEP SIZE
+  
+     XF_4P_DCAFILE  = 21,      // DCA FILE NAME
+     XF_4P_FLUXFILE = 22,      // SOLAR FLUX FILE NAME
+     XF_4P_GEOFILE  = 23,      // GEOPOTENTIAL FILE NAME
+     XF_4P_JPLFILE  = 24,      // JPL FILE NAME
+     XF_4P_JPLSTART = 25,      // JPL START TIME
+     XF_4P_JPLSTOP  = 26;      // JPL STOP TIME
+  
+     //XF_4P_PLANETS  = 27,      // SETS PERTURBATIONS FROM ALL PLANETS TO ON
+     //XF_4P_MERCURY  = 28,      // SETS PERTURBATION FROM MERCURY TO ON
+     //XF_4P_VENUS    = 29,      // SETS PERTURBATION FROM VENUS TO ON
+     //XF_4P_MARS     = 30,      // SETS PERTURBATION FROM MARS TO ON
+     //XF_4P_JUPITER  = 31,      // SETS PERTURBATION FROM JUPITER TO ON
+     //XF_4P_SATURN   = 32,      // SETS PERTURBATION FROM SATURN TO ON
+     //XF_4P_URANUS   = 33,      // SETS PERTURBATION FROM URANUS TO ON
+     //XF_4P_NEPTUNE  = 34,      // SETS PERTURBATION FROM NEPTUNE TO ON
+     //XF_4P_PLUTO    = 35;      // SETS PERTURBATION FROM PLUTO TO ON
+     
+  //*******************************************************************************
+  
+  // INDEXES OF SP APPLICATION CONTROL (PREFERENCE) PARAMETERS
+  static const int  
+     XF_SPAPP_GEODIR   = 1,     // GEOPOTENTIAL DIRECTORY PATH
+     XF_SPAPP_BUFSIZE  = 2,     // BUFFER SIZE
+     XF_SPAPP_RUNMODE  = 3,     // RUN MODE
+     XF_SPAPP_SAVEPART = 4,     // SAVE PARTIALS DATA
+     XF_SPAPP_SPECTR   = 5,     // SPECTER COMPATIBILITY MODE
+     XF_SPAPP_CONSIDER = 6,     // CONSIDER PARAMETER
+     XF_SPAPP_DECAYALT = 7,     // DECAY ALTITUDE
+     XF_SPAPP_OUTCOORD = 8,     // OUTPUT COORDINATE SYSTEM
+     XF_SPAPP_VCMOPT   = 9;     // VCM ADDITIONAL OPTIONS
+  
+  //*******************************************************************************
+  
+  // INDEXES OF DATA FIELDS OF AN INITIALIZED SP SATELLITE
+  static const int  
+     XF_SPSAT_SATNUM  = 1,     // SATELLITE NUMBER I5
+     XF_SPSAT_DS50UTC = 2,     // SATELLITE'S EPOCH TIME IN DAYS SINCE 1950, UTC 
+     XF_SPSAT_DS50TAI = 3,     // SATELLITE'S EPOCH TIME IN DAYS SINCE 1950, TAI
+     XF_SPSAT_MU      = 4,     // MU VALUE 
+     XF_SPSAT_HASCOV  = 5,     // COVARIANCE MATRIX FLAG
+     XF_SPSAT_INTMODE = 6,     // INTEGRATION MODE
+     XF_SPSAT_NTERMS  = 7,     // NUTATION TERMS
+     XF_SPSAT_SPECTR  = 8;     // SPECTER COMPATIBILITY MODE
+  
+  //*******************************************************************************
+  
+  //// INDEXES OF PLANETARY CONTROL
+  //static const int  
+  //   XAI_PLANET_MERCURY = 1,   // 0 = OFF, 1 = ON
+  //   XAI_PLANET_VENUS   = 2,   // 0 = OFF, 1 = ON
+  //   XAI_PLANET_EARTH   = 3,   // NOT USED
+  //   XAI_PLANET_MARS    = 4,   // 0 = OFF, 1 = ON
+  //   XAI_PLANET_JUPITER = 5,   // 0 = OFF, 1 = ON
+  //   XAI_PLANET_SATRUN  = 6,   // 0 = OFF, 1 = ON
+  //   XAI_PLANET_URANUS  = 7,   // 0 = OFF, 1 = ON
+  //   XAI_PLANET_NEPTUNE = 8,   // 0 = OFF, 1 = ON
+  //   XAI_PLANET_PLUTO   = 9,   // 0 = OFF, 1 = ON
+  //   XAI_PLANET_SIZE    = 9;   // SIZE OF ARRAY
+  //
+  ////*******************************************************************************
+     
+  // DIFFERENT TIME TYPES FOR PASSING TO SPPROPALL
+  static const int  
+     SP_TIMETYPE_MSE      = 0,   // PROPAGATION TIME IS IN MINUTES SINCE EPOCH
+     SP_TIMETYPE_DS50UTC  = 1;   // PROPAGATION TIME IS IN DAYS SINCE 1950, UTC
+     
+  
+  // SP PROPAGATED DATA   
+  static const int     
+     XA_SPOUT_UTC       =  0,    // PROPAGATION TIME IN DAYS SINCE 1950, UTC
+     XA_SPOUT_MSE       =  1,    // PROPAGATION TIME IN MINUTES SINCE THE SATELLITE'S EPOCH TIME   
+     XA_SPOUT_UT1       =  2,    // PROPAGATION TIME IN DAYS SINCE 1950, UT1
+     XA_SPOUT_TAI       =  3,    // PROPAGATION TIME IN DAYS SINCE 1950, TAI
+     XA_SPOUT_ET        =  4,    // PROPAGATION TIME IN DAYS SINCE 1950, ET
+     XA_SPOUT_REVNUM    =  5,    // REVOLUTION NUMBER
+     XA_SPOUT_NTERMS    =  6,    // NUMBER OF NUTATION TERMS
+     XA_SPOUT_ISSPECTR  =  7,    // SPECTR COMPATIBLE MODE (0=NOT COMPATIBLE, 1=COMPATIBLE)
+     XA_SPOUT_HASCOVMTX =  8,    // HAS INPUT COVARIANCE MATRIX (0=NO, 1=YES)
+  
+     XA_SPOUT_J2KPOSX   = 10,    // J2K POSITION X (KM)
+     XA_SPOUT_J2KPOSY   = 11,    // J2K POSITION Y (KM)
+     XA_SPOUT_J2KPOSZ   = 12,    // J2K POSITION Z (KM)
+     XA_SPOUT_J2KVELX   = 13,    // J2K VELOCITY X (KM/S)
+     XA_SPOUT_J2KVELY   = 14,    // J2K VELOCITY Y (KM/S)
+     XA_SPOUT_J2KVELZ   = 15,    // J2K VELOCITY Z (KM/S)
+     XA_SPOUT_ECIPOSX   = 16,    // ECI POSITION X (KM)
+     XA_SPOUT_ECIPOSY   = 17,    // ECI POSITION Y (KM)
+     XA_SPOUT_ECIPOSZ   = 18,    // ECI POSITION Z (KM)
+     XA_SPOUT_ECIVELX   = 19,    // ECI VELOCITY X (KM/S)
+     XA_SPOUT_ECIVELY   = 20,    // ECI VELOCITY Y (KM/S)
+     XA_SPOUT_ECIVELZ   = 21,    // ECI VELOCITY Z (KM/S)
+     XA_SPOUT_LAT       = 22,    // GEODETIC LATITUDE (DEG)
+     XA_SPOUT_LON       = 23,    // GEODETIC LONGITUDE (DEG)
+     XA_SPOUT_HEIGHT    = 24,    // HEIGHT ABOVE GEOID (KM)
+  
+     XA_SPOUT_COVTYPE   = 30,    // COVARIANCE MATRIX TYPE, IF AVAILABLE: 1=UVW_DATE, 2=ECI_DATE, 3=EQNX_DATE, 11=UVW_J2K, 12=ECI_J2K, 13=EQNX_J2K
+     XA_SPOUT_COVMTX    = 31,    // 6 BY 6 COVARIANCE MATRIX (31-66)
+     
+     XA_SPOUT_J2KACCX   = 70,    // J2K ACCELERATION X (KM/S^2)
+     XA_SPOUT_J2KACCY   = 71,    // J2K ACCELERATION Y (KM/S^2)
+     XA_SPOUT_J2KACCZ   = 72,    // J2K ACCELERATION Z (KM/S^2)
+     XA_SPOUT_ECIACCX   = 73,    // ECI ACCELERATION X (KM/S^2)
+     XA_SPOUT_ECIACCY   = 74,    // ECI ACCELERATION Y (KM/S^2)
+     XA_SPOUT_ECIACCZ   = 75,    // ECI ACCELERATION Z (KM/S^2)
+     
+  
+                                 
+     XA_SPOUT_SIZE      = 128;     
+  
+  // DIFFERENT OPTIONS FOR GENERATING EPHEMERIDES FROM SP
+  static const int  
+     SP_EPHEM_ECI   = 1,       // ECI TEME OF DATE     - 0: TIME IN DAYS SINCE 1950 UTC, 1-3: POS (KM), 4-6: VEL (KM/SEC)
+     SP_EPHEM_J2K   = 2;       // MEME OF J2K (4 TERMS)- 0: TIME IN DAYS SINCE 1950 UTC, 1-3: POS (KM), 4-6: VEL (KM/SEC) 
+  
+     
+     
+  
+  // VCM ADDITIONAL OPTIONS
+  static const int  
+     VCMOPT_USEOWN    = 0,    // USE VCM'S OWN DATA
+     VCMOPT_USEGLOBAL = 1;    // FORCE VCM TO USE GLOBAL SOLAR FLUX AND TIMING CONSTANTS DATA
+  
+  // RUN MODES
+  static const int  
+     IDX_RUNMODE_PERF = 0,   // PERFROMANCE PRIORITY. THIS MODE ALLOWS THE BUFFER OF INTEGRATION POINTS TO EXTEND FREELY
+     IDX_RUNMODE_MEM  = 1;   // MEMORY PRIORITY. THIS MODE ONLY ALLOWS A NUMBER OF INTEGRATION POINTS TO BE SAVED IN THE BUFFER AT ANY ONE TIME
+     
+  //*******************************************************************************
+     
+  // PARTIALS SAVING MODES
+  static const int  
+     IDX_PARTIALS_SAVE = 1,     // SAVE PARTIALS IN THE BUFFER
+     IDX_PARTIALS_DONT = 0;     // DON'T SAVE PARTIALS IN THE BUFFER
+  
+  // INDEXES OF DIFFERENT COVARIANCE MATRICES
+  static const int  
+     XF_COVMTX_UVW_DATE  =  1,     // UVW CONVARIANCE MATRIX - TEME OF DATE
+     XF_COVMTX_XYZ_DATE  =  2,     // CARTESIAN COVARIANCE MATRIX - TEME OF DATE 
+     XF_COVMTX_EQNX_DATE =  3,     // EQUINOCTIAL COVARIANCE MATRIX - TEME OF DATE (NOT AVAILABLE FOR "PARTIALS: ANALYTIC")
+     XF_COVMTX_UVW_J2K   = 11,     // UVW CONVARIANCE MATRIX - MEME OF J2K
+     XF_COVMTX_XYZ_J2K   = 12,     // CARTESIAN COVARIANCE MATRIX - MEME OF J2K
+     XF_COVMTX_EQNX_J2K  = 13;     // EQUINOCTIAL COVARIANCE MATRIX - MEME OF J2K  (NOT AVAILABLE FOR "PARTIALS: ANALYTIC")
+  //*******************************************************************************
+  
+  // INDEXES OF LUNAR/SOLAR AND PLANETS PERTURBATION MODES
+  static const int  
+     LSPERT_NONE      = 0,   // LUNAR/SOLAR PERTURBATION OFF
+     LSPERT_ANALYTIC  = 1,   // LUNAR/SOLAR PERTURBATION ON (USING ANALYTIC MODE)
+     LSPERT_JPL       = 2,   // LUNAR/SOLAR PERTURBATION USING JPL EPHEMERIS FILE
+     LSPERT_ALL       = 3,   // LUNAR/SOLAR + ALL PLANETS PERTURBATION USING JPL EPHEMERIS FILE 
+     LSPERT_BIG       = 4,   // LUNAR/SOLAR + JUPITER AND VENUS USING JPL EPHEMERIS FILE (BIG FORCE PLANETS) 
+     LSPERT_MED       = 5,   // LUNAR/SOLAR + JUPITER, VENUS, SATURN, MARS, AND MERCURY USING JPL EPHEMERIS FILE (BIG AND MEDIUM FORCE PLANETS) 
+     LSPERT_SMA       = 6;   // LUNAR/SOLAR + ALL PLANETS PERTURBATION EXCEPT PLUTO USING JPL EPHEMERIS FILE (BIG, MEDIUM, AND SMALL FORCE PLANETS)
+  
+  //*******************************************************************************   
+  
+// SpPropDll's function pointers declaration
+extern fnPtrSpInit                         SpInit;
+extern fnPtrSpGetInfo                      SpGetInfo;
+extern fnPtrSpLoadFile                     SpLoadFile;
+extern fnPtrSpLoadFileAll                  SpLoadFileAll;
+extern fnPtrSpSaveFile                     SpSaveFile;
+extern fnPtrSpInitSat                      SpInitSat;
+extern fnPtrSpRemoveSat                    SpRemoveSat;
+extern fnPtrSpRemoveAllSats                SpRemoveAllSats;
+extern fnPtrSpGetCount                     SpGetCount;
+extern fnPtrSpReset                        SpReset;
+extern fnPtrSpGetApCtrl                    SpGetApCtrl;
+extern fnPtrSpGetApCtrlAll                 SpGetApCtrlAll;
+extern fnPtrSpSetApCtrl                    SpSetApCtrl;
+extern fnPtrSpSetApCtrlAll                 SpSetApCtrlAll;
+extern fnPtrSpGet4P                        SpGet4P;
+extern fnPtrSpSet4P                        SpSet4P;
+extern fnPtrSpGetPredCtrl                  SpGetPredCtrl;
+extern fnPtrSpSetPredCtrl                  SpSetPredCtrl;
+extern fnPtrSpGetSatData                   SpGetSatData;
+extern fnPtrSpGetSatDataAll                SpGetSatDataAll;
+extern fnPtrSpPropMse                      SpPropMse;
+extern fnPtrSpPropDs50UTC                  SpPropDs50UTC;
+extern fnPtrSpPropDs50UtcLLH               SpPropDs50UtcLLH;
+extern fnPtrSpPropDs50UtcPos               SpPropDs50UtcPos;
+extern fnPtrSpPropAll                      SpPropAll;
+extern fnPtrSpGetStateDs50UTC              SpGetStateDs50UTC;
+extern fnPtrSpSetStateDs50UTC              SpSetStateDs50UTC;
+extern fnPtrSpSetAndProp                   SpSetAndProp;
+extern fnPtrSpGetPropOut                   SpGetPropOut;
+extern fnPtrSpGetCovMtx                    SpGetCovMtx;
+extern fnPtrSpCompCovSigma                 SpCompCovSigma;
+extern fnPtrSpSet4pAll                     SpSet4pAll;
+extern fnPtrSpGet4pAll                     SpGet4pAll;
+extern fnPtrSpSet4PCard                    SpSet4PCard;
+extern fnPtrSpGet4PCard                    SpGet4PCard;
+extern fnPtrSpAddFluxRec                   SpAddFluxRec;
+extern fnPtrSpGetEphemTimes                SpGetEphemTimes;
+extern fnPtrSpGenEphems                    SpGenEphems;
+extern fnPtrSpGenEphemsVcm_OS              SpGenEphemsVcm_OS;
+extern fnPtrSpPropAllSats                  SpPropAllSats;
 
 
 

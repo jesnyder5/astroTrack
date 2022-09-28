@@ -1,7 +1,7 @@
 #ifndef LAMODDLL_SERVICE_H
 #define LAMODDLL_SERVICE_H
 
-#include "wrappers/DllMainDll.h"
+#include "../wrappers/DllMainDll.h"
 
 
 #define MINSPERDAY       1440.0

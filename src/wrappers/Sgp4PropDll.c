@@ -1,7 +1,32 @@
-// This wrapper file was generated automatically by the A3\GenDllWrappers program.
+// This wrapper file was generated automatically by the GenDllWrappers program.
 
-#include "services/DllUtils.h"
-#include "wrappers/Sgp4PropDll.h"
+#include "../services/DllUtils.h"
+#include "Sgp4PropDll.h"
+
+
+// Sgp4PropDll's function pointers definition
+fnPtrSgp4Init                       Sgp4Init;
+fnPtrSgp4GetInfo                    Sgp4GetInfo;
+fnPtrSgp4InitSat                    Sgp4InitSat;
+fnPtrSgp4RemoveSat                  Sgp4RemoveSat;
+fnPtrSgp4RemoveAllSats              Sgp4RemoveAllSats;
+fnPtrSgp4GetCount                   Sgp4GetCount;
+fnPtrSgp4PropMse                    Sgp4PropMse;
+fnPtrSgp4PropDs50UTC                Sgp4PropDs50UTC;
+fnPtrSgp4PropDs50UtcPosVel          Sgp4PropDs50UtcPosVel;
+fnPtrSgp4PropDs50UtcLLH             Sgp4PropDs50UtcLLH;
+fnPtrSgp4PropDs50UtcPos             Sgp4PropDs50UtcPos;
+fnPtrSgp4GetPropOut                 Sgp4GetPropOut;
+fnPtrSgp4PropAll                    Sgp4PropAll;
+fnPtrSgp4PosVelToKep                Sgp4PosVelToKep;
+fnPtrSgp4PosVelToTleArr             Sgp4PosVelToTleArr;
+fnPtrSgp4ReepochTLE                 Sgp4ReepochTLE;
+fnPtrSgp4ReepochCsv                 Sgp4ReepochCsv;
+fnPtrSgp4SetLicFilePath             Sgp4SetLicFilePath;
+fnPtrSgp4GetLicFilePath             Sgp4GetLicFilePath;
+fnPtrSgp4GenEphems                  Sgp4GenEphems;
+fnPtrSgp4GenEphems_OS               Sgp4GenEphems_OS;
+fnPtrSgp4PropAllSats                Sgp4PropAllSats;
 
 
 static void* hLib = NULL; // handle to the dll

@@ -1,13 +1,15 @@
-// This wrapper file was generated automatically by the A3\GenDllWrappers program.
+// This wrapper file was generated automatically by the GenDllWrappers program.
 
 #ifndef SENSORDLL_H
 #define SENSORDLL_H
 
-#include "services/DllUtils.h"
+#include "../services/DllUtils.h"
 
-// Provide the path to the dll/so
-#ifdef _WIN32
+// Provide the path to the dll/so/dylib
+#if defined (_WIN32) || defined (__CYGWIN__)
   #define SensorDll "Sensor.dll"
+#elif __APPLE__
+  #define SensorDll "libsensor.dylib"
 #else
   #define SensorDll "libsensor.so"
 #endif
@@ -138,7 +140,7 @@ typedef int (STDCALL *fnPtrSensorSetLocAll)(int senKey, double astroLat, double 
 // 5Sensor position Y (km)
 // 6Sensor position Z (km)
 // 7Sensor description
-// 8Orbiting sensor's number (satnum)   
+// 8Orbiting sensor's number (satNum)   
 // 9Sensor classification    
 //    
 // senKey             The sensor's unique key (same as the sensor number) (in-Integer)
@@ -380,153 +382,150 @@ typedef int (STDCALL *fnPtrSensorAddSegment)(int senKey, int segType, double xa_
 // xa_seg             The resulting sensor segment data (out-Double[16])
 // returns 0 if the sensor segment data is returned successfully, non-0 if there is an error
 typedef int (STDCALL *fnPtrSensorGetSegment)(int senKey, int segNum, int* segType, double xa_seg[16]);
-
-// Indexes of Sensor data fields
-static const int  
-   XF_SENLOC_NUM  = 1,             // Sensor number
-   XF_SENLOC_LAT  = 2,             // Sensor location - astronomical longitude (deg) (+=West/-=East)
-   XF_SENLOC_LON  = 3,             // Sensor location - astronomical latitude (deg)  (+=North/-=South)
-   XF_SENLOC_POSX = 4,             // Sensor ECR position X (km)
-   XF_SENLOC_POSY = 5,             // Sensor ECR position Y (km)
-   XF_SENLOC_POSZ = 6,             // Sensor ECR position Z (km)
-   XF_SENLOC_DESC = 7,             // Sensor description
-   XF_SENLOC_ORBSATNUM = 8,        // Orbiting sensor's number (satnum)   
-   XF_SENLOC_SECCLASS  = 9,        // Sensor classification   
-   
-   XF_SENLIM_VIEWTYPE  = 11,       // Sensor view type
-   XF_SENLIM_OBSTYPE   = 12,       // Sensor observation type
-   XF_SENLIM_UNIT      = 13,       // Unit on range/range rate
-   XF_SENLIM_MAXRNG    = 14,       // Max observable range (km)
-   XF_SENLIM_MINRNG    = 15,       // Min observable range (km)
-   XF_SENLIM_INTERVAL  = 16,       // Output interval (min)
-   XF_SENLIM_OPTVISFLG = 17,       // Visual pass control flag
-   XF_SENLIM_RNGLIMFLG = 18,       // Range limit control flag 
-   XF_SENLIM_PTSPERPAS = 19,       // Max number of points per pass
-   XF_SENLIM_RRLIM     = 20,       // Range rate/relative velocity limit (km/sec)
-   
-   XF_SENLIM_ELLIM1    = 31,       // Elevation limits #1 (low, deg) or orbiting sensor off-boresight angle (low, deg) or conical sensor boresight elvation (deg)
-   XF_SENLIM_ELLIM2    = 32,       // Elevation limits #2 (high, deg) or orbiting sensor off-boresight angle (high, deg) or conical sensor boresight minimum angle (deg)
-   XF_SENLIM_ELLIM3    = 33,       // Elevation limits #3 (low, deg) or orbiting sensor off-boresight angle (low, deg) or 
-   XF_SENLIM_ELLIM4    = 34,       // Elevation limits #4 (high, deg) or orbiting sensor off-boresight angle (high, deg)
-   XF_SENLIM_AZLIM1    = 35,       // Azimuth limits #1 (low, deg) or orbiting sensor clock angle (from, deg) or conical sensor boresight azimuth (deg)
-   XF_SENLIM_AZLIM2    = 36,       // Azimuth limits #2 (high, deg) or orbiting sensor clock angle (to, deg) or conical sensor off-boresight azimuth angle (deg)
-   XF_SENLIM_AZLIM3    = 37,       // Azimuth limits #3 (low, deg) or orbiting sensor clock angle (from, deg)
-   XF_SENLIM_AZLIM4    = 38,       // Azimuth limits #4 (high, deg) or orbiting sensor clock angle (to, deg)
-   
-   
-   XF_SENLIM_PLNTRYRES = 52,       // Orbiting sensor planetary restriction
-   XF_SENLIM_BOREVEC1  = 53,       // Orbiting sensor boresight vector 1
-   XF_SENLIM_BOREVEC2  = 54,       // Orbiting sensor boresight vector 2
-   XF_SENLIM_KEARTH    = 55,       // Allow orbiting sensor to view sat against earth background
-   XF_SENLIM_ELIMB     = 56,       // Orbiting sensor earth limb exclusion distance (km)
-   XF_SENLIM_SOLEXCANG = 57,       // Orbiting sensor solar exclusion angle (deg)   
-   XF_SENLIM_LUNEXCANG = 58,       // Orbiting sensor lunar exclusion angle (deg)
-   
-   
-   XF_SENLIM_MINIL     = 59,       // Orbiting sensor min illumination angle (deg)
-   XF_SENLIM_TWILIT    = 60,       // Ground site twilight offset angle (deg) 
-   XF_SENLIM_SMSEN     = 61,       // Is special mobil sensor flag / column 9 in 1L card
-   XF_SENLIM_NUMSEGS   = 62,       // Number of additional segments added to sensor limits
-   XF_SENLIM_FILE      = 63,       // Space fence FOR's Az/El table file name
-   XF_SENLIM_AZELROWS  = 64;       // Number of rows in space fence FOR's Az/El table 
-
-//*******************************************************************************
-   
-// Indexes of sensor location data
-static const int     
-   XA_SENLOC_NUM     =  0,       // Sensor nubmer
-   XA_SENLOC_LAT     =  1,       // Sensor location - astronomical latitude (deg)  (+=North/-=South)
-   XA_SENLOC_LON     =  2,       // Sensor location - astronomical longitude (deg) (+=West/-=East)
-   XA_SENLOC_POSX    =  3,       // Sensor ECR position X (km)
-   XA_SENLOC_POSY    =  4,       // Sensor ECR position Y (km)
-   XA_SENLOC_POSZ    =  5,       // Sensor ECR position Z (km)
-   
-   XA_SENLOC_SIZE    = 16;   
-   
-//*******************************************************************************
-   
-// Indexes of Sensor's sigma   biases data fields
-static const int  
-   XAF_SENBS_AZSIGMA =  0,    // azimuth sigma (deg)
-   XAF_SENBS_ELSIGMA =  1,    // elevation sigma (deg)
-   XAF_SENBS_RGSIGMA =  2,    // range sigma (km)
-   XAF_SENBS_RRSIGMA =  3,    // range-rate sigma (km/sec) 
-   XAF_SENBS_ARSIGMA =  4,    // az rate sigma (deg/sec)
-   XAF_SENBS_ERSIGMA =  5,    // el rate sigma (deg/sec)
-
-   XAF_SENBS_AZBIAS  =  8,    // azimuth bias (deg)
-   XAF_SENBS_ELBIAS  =  9,    // elevation bias (deg)
-   XAF_SENBS_RGBIAS  = 10,    // range bias (km)
-   XAF_SENBS_RRBIAS  = 11,    // range-rate bias (km/sec)
-   XAF_SENBS_TIMEBIAS= 15;    // time bias (sec)
-   
-   
-   
-// Sensor segment types
-static const int  
-   SEG_BCONE = 1,      // bounded-cone-typed limit: Boresight Az/El, Min/Max halfcone angle/Range, minimum cut-off elevation
-   SEG_DOME  = 2;      // dome-typed limit: Min/Max Az/El/Range
-   
-
-
-// Indexes of dome segment parameters
-static const int  
-   XA_SEG_DOME_AZFR   =  0,   // start azimuth (deg)          
-   XA_SEG_DOME_AZTO   =  1,   // end azimuth (deg)            
-   XA_SEG_DOME_ELFR   =  2,   // lower-bound elevation (deg)  
-   XA_SEG_DOME_ELTO   =  3,   // higher-bound elevation (deg) 
-   XA_SEG_DOME_MINRNG =  4,   // minimum range (km)           
-   XA_SEG_DOME_MAXRNG =  5,   // maximum range (km)           
-   
-   XA_SEG_DOME_SIZE   = 16;
-   
-
-// Indexes of bounded-cone segment parameters
-static const int  
-   XA_SEG_BCONE_BSAZ   =  0,   // boresight azimuth (deg)
-   XA_SEG_BCONE_BSEL   =  1,   // boresight elevation (deg)          
-   XA_SEG_BCONE_ANGFR  =  2,   // offboresight lower angle (deg)
-   XA_SEG_BCONE_ANGTO  =  3,   // offboresight higher angle (deg)
-   XA_SEG_BCONE_MINRNG =  4,   // minimum range (km)
-   XA_SEG_BCONE_MAXRNG =  5,   // maximum range (km)
-   XA_SEG_BCONE_MINEL  =  6,   // minimum cut-off elevation (deg)
-   
-   XA_SEG_BCONE_SIZE   = 16;
-   
-   
-
-
-
-// SensorDll's function pointers
-fnPtrSensorInit                     SensorInit;
-fnPtrSensorGetInfo                  SensorGetInfo;
-fnPtrSensorLoadFile                 SensorLoadFile;
-fnPtrSensorLoadCard                 SensorLoadCard;
-fnPtrSensorSaveFile                 SensorSaveFile;
-fnPtrSensorRemove                   SensorRemove;
-fnPtrSensorRemoveAll                SensorRemoveAll;
-fnPtrSensorGetCount                 SensorGetCount;
-fnPtrSensorGetLoaded                SensorGetLoaded;
-fnPtrSensorGetLocAll                SensorGetLocAll;
-fnPtrSensorSetLocAll                SensorSetLocAll;
-fnPtrSensorGetLocField              SensorGetLocField;
-fnPtrSensorSetLocField              SensorSetLocField;
-fnPtrSensorGet1L                    SensorGet1L;
-fnPtrSensorSet1L                    SensorSet1L;
-fnPtrSensorGet2L                    SensorGet2L;
-fnPtrSensorSet2L                    SensorSet2L;
-fnPtrSensorGetLimField              SensorGetLimField;
-fnPtrSensorSetLimField              SensorSetLimField;
-fnPtrSensorGetBS                    SensorGetBS;
-fnPtrSensorSetBS                    SensorSetBS;
-fnPtrSensorGetBSField               SensorGetBSField;
-fnPtrSensorSetBSField               SensorSetBSField;
-fnPtrSensorGetLines                 SensorGetLines;
-fnPtrSensorGetOrbSatKey             SensorGetOrbSatKey;
-fnPtrSensorSetOrbSatKey             SensorSetOrbSatKey;
-fnPtrSensorLoadAzElTable            SensorLoadAzElTable;
-fnPtrSensorAddSegment               SensorAddSegment;
-fnPtrSensorGetSegment               SensorGetSegment;
+  
+  // INDEXES OF SENSOR DATA FIELDS
+  static const int  
+     XF_SENLOC_NUM  = 1,             // SENSOR NUMBER
+     XF_SENLOC_LAT  = 2,             // SENSOR LOCATION - ASTRONOMICAL LONGITUDE (DEG) (+=WEST/-=EAST)
+     XF_SENLOC_LON  = 3,             // SENSOR LOCATION - ASTRONOMICAL LATITUDE (DEG)  (+=NORTH/-=SOUTH)
+     XF_SENLOC_POSX = 4,             // SENSOR ECR POSITION X (KM)
+     XF_SENLOC_POSY = 5,             // SENSOR ECR POSITION Y (KM)
+     XF_SENLOC_POSZ = 6,             // SENSOR ECR POSITION Z (KM)
+     XF_SENLOC_DESC = 7,             // SENSOR DESCRIPTION
+     XF_SENLOC_ORBSATNUM = 8,        // ORBITING SENSOR'S NUMBER (SATNUM)   
+     XF_SENLOC_SECCLASS  = 9,        // SENSOR CLASSIFICATION   
+     
+     XF_SENLIM_VIEWTYPE  = 11,       // SENSOR VIEW TYPE
+     XF_SENLIM_OBSTYPE   = 12,       // SENSOR OBSERVATION TYPE
+     XF_SENLIM_UNIT      = 13,       // UNIT ON RANGE/RANGE RATE
+     XF_SENLIM_MAXRNG    = 14,       // MAX OBSERVABLE RANGE (KM)
+     XF_SENLIM_MINRNG    = 15,       // MIN OBSERVABLE RANGE (KM)
+     XF_SENLIM_INTERVAL  = 16,       // OUTPUT INTERVAL (MIN)
+     XF_SENLIM_OPTVISFLG = 17,       // VISUAL PASS CONTROL FLAG
+     XF_SENLIM_RNGLIMFLG = 18,       // RANGE LIMIT CONTROL FLAG 
+     XF_SENLIM_PTSPERPAS = 19,       // MAX NUMBER OF POINTS PER PASS
+     XF_SENLIM_RRLIM     = 20,       // RANGE RATE/RELATIVE VELOCITY LIMIT (KM/SEC)
+     
+     XF_SENLIM_ELLIM1    = 31,       // ELEVATION LIMITS #1 (LOW, DEG) OR ORBITING SENSOR OFF-BORESIGHT ANGLE (LOW, DEG) OR CONICAL SENSOR BORESIGHT ELVATION (DEG)
+     XF_SENLIM_ELLIM2    = 32,       // ELEVATION LIMITS #2 (HIGH, DEG) OR ORBITING SENSOR OFF-BORESIGHT ANGLE (HIGH, DEG) OR CONICAL SENSOR BORESIGHT MINIMUM ANGLE (DEG)
+     XF_SENLIM_ELLIM3    = 33,       // ELEVATION LIMITS #3 (LOW, DEG) OR ORBITING SENSOR OFF-BORESIGHT ANGLE (LOW, DEG) OR 
+     XF_SENLIM_ELLIM4    = 34,       // ELEVATION LIMITS #4 (HIGH, DEG) OR ORBITING SENSOR OFF-BORESIGHT ANGLE (HIGH, DEG)
+     XF_SENLIM_AZLIM1    = 35,       // AZIMUTH LIMITS #1 (LOW, DEG) OR ORBITING SENSOR CLOCK ANGLE (FROM, DEG) OR CONICAL SENSOR BORESIGHT AZIMUTH (DEG)
+     XF_SENLIM_AZLIM2    = 36,       // AZIMUTH LIMITS #2 (HIGH, DEG) OR ORBITING SENSOR CLOCK ANGLE (TO, DEG) OR CONICAL SENSOR OFF-BORESIGHT AZIMUTH ANGLE (DEG)
+     XF_SENLIM_AZLIM3    = 37,       // AZIMUTH LIMITS #3 (LOW, DEG) OR ORBITING SENSOR CLOCK ANGLE (FROM, DEG)
+     XF_SENLIM_AZLIM4    = 38,       // AZIMUTH LIMITS #4 (HIGH, DEG) OR ORBITING SENSOR CLOCK ANGLE (TO, DEG)
+     
+     
+     XF_SENLIM_PLNTRYRES = 52,       // ORBITING SENSOR PLANETARY RESTRICTION
+     XF_SENLIM_BOREVEC1  = 53,       // ORBITING SENSOR BORESIGHT VECTOR 1
+     XF_SENLIM_BOREVEC2  = 54,       // ORBITING SENSOR BORESIGHT VECTOR 2
+     XF_SENLIM_KEARTH    = 55,       // ALLOW ORBITING SENSOR TO VIEW SAT AGAINST EARTH BACKGROUND
+     XF_SENLIM_ELIMB     = 56,       // ORBITING SENSOR EARTH LIMB EXCLUSION DISTANCE (KM)
+     XF_SENLIM_SOLEXCANG = 57,       // ORBITING SENSOR SOLAR EXCLUSION ANGLE (DEG)   
+     XF_SENLIM_LUNEXCANG = 58,       // ORBITING SENSOR LUNAR EXCLUSION ANGLE (DEG)
+     
+     
+     XF_SENLIM_MINIL     = 59,       // ORBITING SENSOR MIN ILLUMINATION ANGLE (DEG)
+     XF_SENLIM_TWILIT    = 60,       // GROUND SITE TWILIGHT OFFSET ANGLE (DEG) 
+     XF_SENLIM_SMSEN     = 61,       // IS SPECIAL MOBIL SENSOR FLAG / COLUMN 9 IN 1L CARD
+     XF_SENLIM_NUMSEGS   = 62,       // NUMBER OF ADDITIONAL SEGMENTS ADDED TO SENSOR LIMITS
+     XF_SENLIM_FILE      = 63,       // SPACE FENCE FOR'S AZ/EL TABLE FILE NAME
+     XF_SENLIM_AZELROWS  = 64;       // NUMBER OF ROWS IN SPACE FENCE FOR'S AZ/EL TABLE 
+  
+  //*******************************************************************************
+     
+  // INDEXES OF SENSOR LOCATION DATA
+  static const int     
+     XA_SENLOC_NUM     =  0,       // SENSOR NUBMER
+     XA_SENLOC_LAT     =  1,       // SENSOR LOCATION - ASTRONOMICAL LATITUDE (DEG)  (+=NORTH/-=SOUTH)
+     XA_SENLOC_LON     =  2,       // SENSOR LOCATION - ASTRONOMICAL LONGITUDE (DEG) (+=WEST/-=EAST)
+     XA_SENLOC_POSX    =  3,       // SENSOR ECR POSITION X (KM)
+     XA_SENLOC_POSY    =  4,       // SENSOR ECR POSITION Y (KM)
+     XA_SENLOC_POSZ    =  5,       // SENSOR ECR POSITION Z (KM)
+     
+     XA_SENLOC_SIZE    = 16;   
+     
+  //*******************************************************************************
+     
+  // INDEXES OF SENSOR'S SIGMA   BIASES DATA FIELDS
+  static const int  
+     XAF_SENBS_AZSIGMA =  0,    // AZIMUTH SIGMA (DEG)
+     XAF_SENBS_ELSIGMA =  1,    // ELEVATION SIGMA (DEG)
+     XAF_SENBS_RGSIGMA =  2,    // RANGE SIGMA (KM)
+     XAF_SENBS_RRSIGMA =  3,    // RANGE-RATE SIGMA (KM/SEC) 
+     XAF_SENBS_ARSIGMA =  4,    // AZ RATE SIGMA (DEG/SEC)
+     XAF_SENBS_ERSIGMA =  5,    // EL RATE SIGMA (DEG/SEC)
+  
+     XAF_SENBS_AZBIAS  =  8,    // AZIMUTH BIAS (DEG)
+     XAF_SENBS_ELBIAS  =  9,    // ELEVATION BIAS (DEG)
+     XAF_SENBS_RGBIAS  = 10,    // RANGE BIAS (KM)
+     XAF_SENBS_RRBIAS  = 11,    // RANGE-RATE BIAS (KM/SEC)
+     XAF_SENBS_TIMEBIAS= 15;    // TIME BIAS (SEC)
+     
+     
+     
+  // SENSOR SEGMENT TYPES
+  static const int  
+     SEG_BCONE = 1,      // BOUNDED-CONE-TYPED LIMIT: BORESIGHT AZ/EL, MIN/MAX HALFCONE ANGLE/RANGE, MINIMUM CUT-OFF ELEVATION
+     SEG_DOME  = 2;      // DOME-TYPED LIMIT: MIN/MAX AZ/EL/RANGE
+     
+  
+  
+  // INDEXES OF DOME SEGMENT PARAMETERS
+  static const int  
+     XA_SEG_DOME_AZFR   =  0,   // START AZIMUTH (DEG)          
+     XA_SEG_DOME_AZTO   =  1,   // END AZIMUTH (DEG)            
+     XA_SEG_DOME_ELFR   =  2,   // LOWER-BOUND ELEVATION (DEG)  
+     XA_SEG_DOME_ELTO   =  3,   // HIGHER-BOUND ELEVATION (DEG) 
+     XA_SEG_DOME_MINRNG =  4,   // MINIMUM RANGE (KM)           
+     XA_SEG_DOME_MAXRNG =  5,   // MAXIMUM RANGE (KM)           
+     
+     XA_SEG_DOME_SIZE   = 16;
+     
+  
+  // INDEXES OF BOUNDED-CONE SEGMENT PARAMETERS
+  static const int  
+     XA_SEG_BCONE_BSAZ   =  0,   // BORESIGHT AZIMUTH (DEG)
+     XA_SEG_BCONE_BSEL   =  1,   // BORESIGHT ELEVATION (DEG)          
+     XA_SEG_BCONE_ANGFR  =  2,   // OFFBORESIGHT LOWER ANGLE (DEG)
+     XA_SEG_BCONE_ANGTO  =  3,   // OFFBORESIGHT HIGHER ANGLE (DEG)
+     XA_SEG_BCONE_MINRNG =  4,   // MINIMUM RANGE (KM)
+     XA_SEG_BCONE_MAXRNG =  5,   // MAXIMUM RANGE (KM)
+     XA_SEG_BCONE_MINEL  =  6,   // MINIMUM CUT-OFF ELEVATION (DEG)
+     
+     XA_SEG_BCONE_SIZE   = 16;
+     
+     
+// SensorDll's function pointers declaration
+extern fnPtrSensorInit                     SensorInit;
+extern fnPtrSensorGetInfo                  SensorGetInfo;
+extern fnPtrSensorLoadFile                 SensorLoadFile;
+extern fnPtrSensorLoadCard                 SensorLoadCard;
+extern fnPtrSensorSaveFile                 SensorSaveFile;
+extern fnPtrSensorRemove                   SensorRemove;
+extern fnPtrSensorRemoveAll                SensorRemoveAll;
+extern fnPtrSensorGetCount                 SensorGetCount;
+extern fnPtrSensorGetLoaded                SensorGetLoaded;
+extern fnPtrSensorGetLocAll                SensorGetLocAll;
+extern fnPtrSensorSetLocAll                SensorSetLocAll;
+extern fnPtrSensorGetLocField              SensorGetLocField;
+extern fnPtrSensorSetLocField              SensorSetLocField;
+extern fnPtrSensorGet1L                    SensorGet1L;
+extern fnPtrSensorSet1L                    SensorSet1L;
+extern fnPtrSensorGet2L                    SensorGet2L;
+extern fnPtrSensorSet2L                    SensorSet2L;
+extern fnPtrSensorGetLimField              SensorGetLimField;
+extern fnPtrSensorSetLimField              SensorSetLimField;
+extern fnPtrSensorGetBS                    SensorGetBS;
+extern fnPtrSensorSetBS                    SensorSetBS;
+extern fnPtrSensorGetBSField               SensorGetBSField;
+extern fnPtrSensorSetBSField               SensorSetBSField;
+extern fnPtrSensorGetLines                 SensorGetLines;
+extern fnPtrSensorGetOrbSatKey             SensorGetOrbSatKey;
+extern fnPtrSensorSetOrbSatKey             SensorSetOrbSatKey;
+extern fnPtrSensorLoadAzElTable            SensorLoadAzElTable;
+extern fnPtrSensorAddSegment               SensorAddSegment;
+extern fnPtrSensorGetSegment               SensorGetSegment;
 
 
 

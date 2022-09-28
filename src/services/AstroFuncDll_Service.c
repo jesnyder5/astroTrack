@@ -1,8 +1,8 @@
-#include "services/DllUtils.h"
-#include "services/AstroFuncDll_Service.h"
+#include "DllUtils.h"
+#include "AstroFuncDll_Service.h"
 
-#include "wrappers/AstroFuncDll.h"
-#include "wrappers/TimeFuncDll.h"
+#include "../wrappers/AstroFuncDll.h"
+#include "../wrappers/TimeFuncDll.h"
 
 
 // Compute LLH from position vector

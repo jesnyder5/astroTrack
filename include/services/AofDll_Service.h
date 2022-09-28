@@ -1,7 +1,7 @@
 #ifndef AOFDLL_SERVICE_H
 #define AOFDLL_SERVICE_H
 
-#include "wrappers/DllMainDll.h"
+#include "../wrappers/DllMainDll.h"
 
 // Aof control parameters structure
 typedef struct

@@ -1,13 +1,15 @@
-// This wrapper file was generated automatically by the A3\GenDllWrappers program.
+// This wrapper file was generated automatically by the GenDllWrappers program.
 
 #ifndef TLEDLL_H
 #define TLEDLL_H
 
-#include "services/DllUtils.h"
+#include "../services/DllUtils.h"
 
-// Provide the path to the dll/so
-#ifdef _WIN32
+// Provide the path to the dll/so/dylib
+#if defined (_WIN32) || defined (__CYGWIN__)
   #define TleDll "Tle.dll"
+#elif __APPLE__
+  #define TleDll "libtle.dylib"
 #else
   #define TleDll "libtle.so"
 #endif
@@ -180,7 +182,7 @@ typedef __int64 (STDCALL *fnPtrTleAddSatFrFieldsGP2)(int satNum, char secClass, 
 typedef void (STDCALL *fnPtrTleAddSatFrFieldsGP2ML)(int satNum, char secClass, char satName[8], int epochYr, double epochDays, double bstar, int ephType, int elsetNum, double incli, double node, double eccen, double omega, double mnAnomaly, double mnMotion, int revNum, double nDotO2, double n2DotO6, __int64* satKey);
 
 
-// Updates a GP satellite's data in memory by providing its individual field values. Note: satnum, year, day, and ephtype can't be updated.
+// Updates a GP satellite's data in memory by providing its individual field values. Note: satNum, year, day, and ephtype can't be updated.
 // The satellite's unique key will not be changed by this function. If you specify a satKey that does not correspond to a currently loaded satellite, the function will indicate an error.
 // 
 // Remember to use the correct mean motion depending on the satellite's ephType.
@@ -200,7 +202,7 @@ typedef void (STDCALL *fnPtrTleAddSatFrFieldsGP2ML)(int satNum, char secClass, c
 typedef int (STDCALL *fnPtrTleUpdateSatFrFieldsGP)(__int64 satKey, char secClass, char satName[8], double bstar, int elsetNum, double incli, double node, double eccen, double omega, double mnAnomaly, double mnMotion, int revNum);
 
 
-// This function is similar to TleUpdateSatFrFieldsGP but includes nDotO2 and n2DotO6. Note: satnum, year, day, and ephtype can't be updated.
+// This function is similar to TleUpdateSatFrFieldsGP but includes nDotO2 and n2DotO6. Note: satNum, year, day, and ephtype can't be updated.
 // nDotO2 and n2DotO6 values are not used in the SGP4 propagator. However, some users still want to preserve the integrity of all input data.
 // satKey             The satellite's unique key (in-Long)
 // secClass           Security classification (in-Character)
@@ -229,7 +231,7 @@ typedef int (STDCALL *fnPtrTleUpdateSatFrFieldsGP2)(__int64 satKey, char secClas
 // epochDays          Element epoch time - day of year, DDD.DDDDDDDD (in-Double)
 // bTerm              Ballistic coefficient (m^2/kg) (in-Double)
 // ogParm             Outgassing parameter/Thrust Acceleration (km/s^2) (in-Double)
-// agom               Agom (m^2/kg) (in-Double)
+// agom               agom (m^2/kg) (in-Double)
 // elsetNum           Element set number (in-Integer)
 // incli              Orbit inclination (degrees) (in-Double)
 // node               Right ascension of ascending node (degrees) (in-Double)
@@ -252,7 +254,7 @@ typedef __int64 (STDCALL *fnPtrTleAddSatFrFieldsSP)(int satNum, char secClass, c
 // epochDays          Element epoch time - day of year, DDD.DDDDDDDD (in-Double)
 // bTerm              Ballistic coefficient (m^2/kg) (in-Double)
 // ogParm             Outgassing parameter/Thrust Acceleration (km/s^2) (in-Double)
-// agom               Agom (m^2/kg) (in-Double)
+// agom               agom (m^2/kg) (in-Double)
 // elsetNum           Element set number (in-Integer)
 // incli              Orbit inclination (degrees) (in-Double)
 // node               Right ascension of ascending node (degrees) (in-Double)
@@ -265,7 +267,7 @@ typedef __int64 (STDCALL *fnPtrTleAddSatFrFieldsSP)(int satNum, char secClass, c
 typedef void (STDCALL *fnPtrTleAddSatFrFieldsSPML)(int satNum, char secClass, char satName[8], int epochYr, double epochDays, double bTerm, double ogParm, double agom, int elsetNum, double incli, double node, double eccen, double omega, double mnAnomaly, double mnMotion, int revNum, __int64* satKey);
 
 
-// Updates an SP satellite's data in memory using its individually provided field values. Note: satnum, year, day, and ephtype can't be updated.
+// Updates an SP satellite's data in memory using its individually provided field values. Note: satNum, year, day, and ephtype can't be updated.
 // Only applies to SP propagator.
 // The satellite's unique key will not be changed by this function. If you specify a satKey that does not correspond to a currently loaded TLE, the function will indicate an error. 
 // satKey             The satellite's unique key (in-Long)
@@ -273,7 +275,7 @@ typedef void (STDCALL *fnPtrTleAddSatFrFieldsSPML)(int satNum, char secClass, ch
 // satName            Satellite international designator (in-Character[8])
 // bterm              Ballistic coefficient (m^2/kg) (in-Double)
 // ogParm             Outgassing parameter/Thrust Acceleration (km/s^2) (in-Double)
-// agom               Agom (m^2/kg) (in-Double)
+// agom               agom (m^2/kg) (in-Double)
 // elsetNum           Element set number (in-Integer)
 // incli              Orbit inclination (degrees) (in-Double)
 // node               Right ascension of ascending node (degrees) (in-Double)
@@ -289,7 +291,7 @@ typedef int (STDCALL *fnPtrTleUpdateSatFrFieldsSP)(__int64 satKey, char secClass
 // Updates the value of a field of a TLE. This function can be used for both GP and SP satellites.
 // 
 // The table below indicates which index values correspond to which fields. Make sure to use the appropriate field index for GP TLEs and SP TLEs.  For indexes 5, 15 and 16, the interpretation depends on the ephemeris type of the TLE.
-// Satnum (1), Epoch (4), and Ephemeris Type (5) cannot be altered.
+// satNum (1), Epoch (4), and Ephemeris Type (5) cannot be altered.
 // 
 // 
 // 	index
@@ -300,7 +302,7 @@ typedef int (STDCALL *fnPtrTleUpdateSatFrFieldsSP)(__int64 satKey, char secClass
 // 3Satellite international designator
 // 4Epoch
 // 5Ephemeris type = 0,2: B* drag term (1/er) Ephemeris type = 6   : SP radiation pressure
-// coefficient Agom (m2/kg)
+// coefficient agom (m2/kg)
 // 6Ephemeris type
 // 7Element set number
 // 8Orbit inclination (degrees)
@@ -335,7 +337,7 @@ typedef int (STDCALL *fnPtrTleSetField)(__int64 satKey, int xf_Tle, char valueSt
 // 3Satellite international designator
 // 4Epoch
 // 5Ephemeris type = 0,2: B* drag term (1/er) Ephemeris type = 6   : SP radiation pressure
-// coefficient Agom (m2/kg)
+// coefficient agom (m2/kg)
 // 6Ephemeris type
 // 7Element set number
 // 8Orbit inclination (degrees)
@@ -654,7 +656,7 @@ typedef __int64 (STDCALL *fnPtrTleAddSatFrArray)(double xa_tle[64], char xs_tle[
 typedef void (STDCALL *fnPtrTleAddSatFrArrayML)(double xa_tle[64], char xs_tle[512], __int64* satKey);
 
 
-// Updates existing TLE data with the provided new data stored in the input parameters. Note: satnum, year, day, and ephtype can't be updated.
+// Updates existing TLE data with the provided new data stored in the input parameters. Note: satNum, year, day, and ephtype can't be updated.
 // nDotO2 and n2DotO6 values are not used in the SGP4 propagator. However, some users still want to preserve the integrity of all input data.
 // satKey             The satellite's unique key (in-Long)
 // xa_tle             Array containing TLE's numerical fields, see XA_TLE_? for array arrangement (in-Double[64])
@@ -759,156 +761,153 @@ typedef int (STDCALL *fnPtrSetTleKeyMode)(int tle_keyMode);
 // Gets current TLE key mode - This function was deprecated, please use DllMain/GetElsetKeyMode() instead
 // returns Current Tle key mode (see TLE_KEYMODE_? for available modes)
 typedef int (STDCALL *fnPtrGetTleKeyMode)();
-
-// TLE types (TLE ephemeris types) - They are different than ELTTYPE
-static const int  
-   TLETYPE_SGP  = 0,    // TLE SGP elset (Kozai mean motion)
-   TLETYPE_SGP4 = 2,    // TLE SGP4 elset (Brouwer mean motion)
-   TLETYPE_XP   = 4,    // TLE SGP4-XP elset (Brouwer mean motion)
-   TLETYPE_SP   = 6;    // TLE SP elset (osculating elements)
-
-// Indexes of TLE data fields
-static const int  
-   XF_TLE_SATNUM     =  1,    // Satellite number
-   XF_TLE_CLASS      =  2,    // Security classification U: unclass, C: confidential, S: Secret
-   XF_TLE_SATNAME    =  3,    // Satellite name A8
-   XF_TLE_EPOCH      =  4,    // Satellite's epoch time "YYYYJJJ.jjjjjjjj"
-   XF_TLE_BSTAR      =  5,    // GP B* drag term (1/er)  (not the same as XF_TLE_BTERM) 
-   XF_TLE_EPHTYPE    =  6,    // Satellite ephemeris type: 0=SGP, 2=SGP4, 6=SP
-   XF_TLE_ELSETNUM   =  7,    // Element set number
-   XF_TLE_INCLI      =  8,    // Orbit inclination (deg)
-   XF_TLE_NODE       =  9,    // Right ascension of asending node (deg)
-   XF_TLE_ECCEN      = 10,    // Eccentricity
-   XF_TLE_OMEGA      = 11,    // Argument of perigee (deg)
-   XF_TLE_MNANOM     = 12,    // Mean anomaly (deg)
-   XF_TLE_MNMOTN     = 13,    // Mean motion (rev/day) (ephType=0: Kozai, ephType=2: Brouwer)
-   XF_TLE_REVNUM     = 14,    // Revolution number at epoch 
-   
-   XF_TLE_NDOT       = 15,    // GP Mean motion derivative (rev/day /2)
-   XF_TLE_NDOTDOT    = 16,    // GP Mean motion second derivative (rev/day**2 /6)
-   XF_TLE_AGOMGP     = 16,    // Solar radiation pressure GP (m2/kg)
-
-   XF_TLE_SP_AGOM    =  5,    // SP Radiation Pressure Coefficient
-   XF_TLE_SP_BTERM   = 15,    // SP ballistic coefficient (m2/kg)
-   XF_TLE_SP_OGPARM  = 16,    // SP outgassing parameter (km/s2)
-
-   XF_TLE_ORGSATNUM  = 17,    // Original satellite number
-   XF_TLE_BTERM      = 18,    // GP ballistic coefficient (m2/kg) (not the same as XF_TLE_BSTAR)
-   XF_TLE_OBSTIME    = 19,    // Time of last observation relative to epoch +/- fractional days
-   XF_TLE_EGR        = 20,    // Last calculated error growth rate (km/day)
-   XF_TLE_EDR        = 21,    // Last calculated energy dissipation rate (w/kg)
-   XF_TLE_VISMAG     = 22,    // Median Vismag 
-   XF_TLE_RCS        = 23,    // Median RCS - diameter in centimeters (cm)
-   XF_TLE_OBJTYPE    = 24,    // Object Type (Payload, Rocket Body, Platform, Debris, Unknown)
-   XF_TLE_SATNAME_12 = 25;    // Satellite name A12 (upto 12 character long)
-   
-   
-// Indexes of TLE numerical data in an array
-static const int  
-   // Line 1
-   XA_TLE_SATNUM        =  0,    // Satellite number
-   XA_TLE_EPOCH         =  1,    // Satellite's epoch time in DS50UTC
-   XA_TLE_NDOT          =  2,    // GP Mean motion derivative (rev/day /2)
-   XA_TLE_NDOTDOT       =  3,    // GP Mean motion second derivative (rev/day**2 /6)
-   XA_TLE_BSTAR         =  4,    // GP B* drag term (1/er)  
-   XA_TLE_EPHTYPE       =  5,    // Satellite ephemeris type: 0=SGP, 2=SGP4, 4=SGP4-XP, 6=SP
-   
-   // Line 2
-   XA_TLE_INCLI         = 20,    // Orbit inclination (deg)
-   XA_TLE_NODE          = 21,    // Right ascension of asending node (deg)
-   XA_TLE_ECCEN         = 22,    // Eccentricity
-   XA_TLE_OMEGA         = 23,    // Argument of perigee (deg)
-   XA_TLE_MNANOM        = 24,    // Mean anomaly (deg)
-   XA_TLE_MNMOTN        = 25,    // Mean motion (rev/day) (ephType=0, 4: Kozai, ephType=2: Brouwer)
-   XA_TLE_REVNUM        = 26,    // Revolution number at epoch 
-   XA_TLE_ELSETNUM      = 30,    // Element set number
-   
-   // CSV (or TLE-XP, ephemType=4) specific fields 
-   XA_TLE_ORGSATNUM     = 31,    // Original satellite number
-   XA_TLE_BTERM         = 32,    // SP/SGP4-XP ballistic coefficient (m2/kg) 
-   XA_TLE_OBSTIME       = 33,    // Time of last observation relative to epoch +/- fractional days
-   XA_TLE_EGR           = 34,    // Last calculated error growth rate (km/day)
-   XA_TLE_EDR           = 35,    // Last calculated energy dissipation rate (w/kg)
-   XA_TLE_VISMAG        = 36,    // Median Vismag 
-   XA_TLE_RCS           = 37,    // Median RCS - diameter in centimeters (cm)
-
-   // CSV (or TLE-XP, ephemType=4)
-   XA_TLE_AGOMGP        = 38,    // Solar Radiation Pressure Coefficient GP (m2/kg)
-
-   
-   // SP specific fields
-   XA_TLE_SP_BTERM      =  2,    // SP ballistic coefficient (m2/kg)
-   XA_TLE_SP_OGPARM     =  3,    // SP outgassing parameter (km/s2)
-   XA_TLE_SP_AGOM       =  4,    // SP Radiation Pressure Coefficient
-   
-   XA_TLE_SIZE          = 64;
-
-// Indexes of TLE text data in an array of chars
-static const int  
-   XS_TLE_SECCLASS_1   =  0,    // Security classification of line 1 and line 2
-   XS_TLE_SATNAME_12   =  1,    // Satellite name
-   XS_TLE_OBJTYPE_11   = 13,    // Object Type (Payload, Rocket Body, Platform, Debris, Unknown)
-   
-   
-   XS_TLE_SIZE         = 512;      
-   
-// Indexes of different TLE file's formats
-static const int  
-   XF_TLEFORM_ORG    =  0,    // Original TLE format
-   XF_TLEFORM_CSV    =  1;    // CSV format
-   
-   
-
-
-
-// TleDll's function pointers
-fnPtrTleInit                        TleInit;
-fnPtrTleGetInfo                     TleGetInfo;
-fnPtrTleLoadFile                    TleLoadFile;
-fnPtrTleSaveFile                    TleSaveFile;
-fnPtrTleRemoveSat                   TleRemoveSat;
-fnPtrTleRemoveAllSats               TleRemoveAllSats;
-fnPtrTleGetCount                    TleGetCount;
-fnPtrTleGetLoaded                   TleGetLoaded;
-fnPtrTleAddSatFrLines               TleAddSatFrLines;
-fnPtrTleAddSatFrLinesML             TleAddSatFrLinesML;
-fnPtrTleAddSatFrCsv                 TleAddSatFrCsv;
-fnPtrTleAddSatFrCsvML               TleAddSatFrCsvML;
-fnPtrTleAddSatFrFieldsGP            TleAddSatFrFieldsGP;
-fnPtrTleAddSatFrFieldsGP2           TleAddSatFrFieldsGP2;
-fnPtrTleAddSatFrFieldsGP2ML         TleAddSatFrFieldsGP2ML;
-fnPtrTleUpdateSatFrFieldsGP         TleUpdateSatFrFieldsGP;
-fnPtrTleUpdateSatFrFieldsGP2        TleUpdateSatFrFieldsGP2;
-fnPtrTleAddSatFrFieldsSP            TleAddSatFrFieldsSP;
-fnPtrTleAddSatFrFieldsSPML          TleAddSatFrFieldsSPML;
-fnPtrTleUpdateSatFrFieldsSP         TleUpdateSatFrFieldsSP;
-fnPtrTleSetField                    TleSetField;
-fnPtrTleGetField                    TleGetField;
-fnPtrTleGetAllFieldsGP              TleGetAllFieldsGP;
-fnPtrTleGetAllFieldsGP2             TleGetAllFieldsGP2;
-fnPtrTleGetAllFieldsSP              TleGetAllFieldsSP;
-fnPtrTleParseGP                     TleParseGP;
-fnPtrTleLinesToArray                TleLinesToArray;
-fnPtrTleParseSP                     TleParseSP;
-fnPtrTleGetLines                    TleGetLines;
-fnPtrTleGetCsv                      TleGetCsv;
-fnPtrTleGPFieldsToLines             TleGPFieldsToLines;
-fnPtrTleGPFieldsToCsv               TleGPFieldsToCsv;
-fnPtrTleGPArrayToLines              TleGPArrayToLines;
-fnPtrTleGPArrayToCsv                TleGPArrayToCsv;
-fnPtrTleSPFieldsToLines             TleSPFieldsToLines;
-fnPtrTleGetSatKey                   TleGetSatKey;
-fnPtrTleGetSatKeyML                 TleGetSatKeyML;
-fnPtrTleFieldsToSatKey              TleFieldsToSatKey;
-fnPtrTleFieldsToSatKeyML            TleFieldsToSatKeyML;
-fnPtrTleAddSatFrArray               TleAddSatFrArray;
-fnPtrTleAddSatFrArrayML             TleAddSatFrArrayML;
-fnPtrTleUpdateSatFrArray            TleUpdateSatFrArray;
-fnPtrTleDataToArray                 TleDataToArray;
-fnPtrTleLinesToCsv                  TleLinesToCsv;
-fnPtrTleCsvToLines                  TleCsvToLines;
-fnPtrSetTleKeyMode                  SetTleKeyMode;
-fnPtrGetTleKeyMode                  GetTleKeyMode;
+  
+  // TLE TYPES (TLE EPHEMERIS TYPES) - THEY ARE DIFFERENT THAN ELTTYPE
+  static const int  
+     TLETYPE_SGP  = 0,    // TLE SGP ELSET (KOZAI MEAN MOTION)
+     TLETYPE_SGP4 = 2,    // TLE SGP4 ELSET (BROUWER MEAN MOTION)
+     TLETYPE_XP   = 4,    // TLE SGP4-XP ELSET (BROUWER MEAN MOTION)
+     TLETYPE_SP   = 6;    // TLE SP ELSET (OSCULATING ELEMENTS)
+  
+  // INDEXES OF TLE DATA FIELDS
+  static const int  
+     XF_TLE_SATNUM     =  1,    // SATELLITE NUMBER
+     XF_TLE_CLASS      =  2,    // SECURITY CLASSIFICATION U: UNCLASS, C: CONFIDENTIAL, S: SECRET
+     XF_TLE_SATNAME    =  3,    // SATELLITE NAME A8
+     XF_TLE_EPOCH      =  4,    // SATELLITE'S EPOCH TIME "YYYYJJJ.JJJJJJJJ"
+     XF_TLE_BSTAR      =  5,    // GP B* DRAG TERM (1/ER)  (NOT THE SAME AS XF_TLE_BTERM) 
+     XF_TLE_EPHTYPE    =  6,    // SATELLITE EPHEMERIS TYPE: 0=SGP, 2=SGP4, 6=SP
+     XF_TLE_ELSETNUM   =  7,    // ELEMENT SET NUMBER
+     XF_TLE_INCLI      =  8,    // ORBIT INCLINATION (DEG)
+     XF_TLE_NODE       =  9,    // RIGHT ASCENSION OF ASENDING NODE (DEG)
+     XF_TLE_ECCEN      = 10,    // ECCENTRICITY
+     XF_TLE_OMEGA      = 11,    // ARGUMENT OF PERIGEE (DEG)
+     XF_TLE_MNANOM     = 12,    // MEAN ANOMALY (DEG)
+     XF_TLE_MNMOTN     = 13,    // MEAN MOTION (REV/DAY) (EPHTYPE=0: KOZAI, EPHTYPE=2: BROUWER)
+     XF_TLE_REVNUM     = 14,    // REVOLUTION NUMBER AT EPOCH 
+     
+     XF_TLE_NDOT       = 15,    // GP MEAN MOTION DERIVATIVE (REV/DAY /2)
+     XF_TLE_NDOTDOT    = 16,    // GP MEAN MOTION SECOND DERIVATIVE (REV/DAY**2 /6)
+     XF_TLE_AGOMGP     = 16,    // SOLAR RADIATION PRESSURE GP (M2/KG)
+  
+     XF_TLE_SP_AGOM    =  5,    // SP RADIATION PRESSURE COEFFICIENT
+     XF_TLE_SP_BTERM   = 15,    // SP BALLISTIC COEFFICIENT (M2/KG)
+     XF_TLE_SP_OGPARM  = 16,    // SP OUTGASSING PARAMETER (KM/S2)
+  
+     XF_TLE_ORGSATNUM  = 17,    // ORIGINAL SATELLITE NUMBER
+     XF_TLE_BTERM      = 18,    // GP BALLISTIC COEFFICIENT (M2/KG) (NOT THE SAME AS XF_TLE_BSTAR)
+     XF_TLE_OBSTIME    = 19,    // TIME OF LAST OBSERVATION RELATIVE TO EPOCH +/- FRACTIONAL DAYS
+     XF_TLE_EGR        = 20,    // LAST CALCULATED ERROR GROWTH RATE (KM/DAY)
+     XF_TLE_EDR        = 21,    // LAST CALCULATED ENERGY DISSIPATION RATE (W/KG)
+     XF_TLE_VISMAG     = 22,    // MEDIAN VISMAG 
+     XF_TLE_RCS        = 23,    // MEDIAN RCS - DIAMETER IN CENTIMETERS (CM)
+     XF_TLE_OBJTYPE    = 24,    // OBJECT TYPE (PAYLOAD, ROCKET BODY, PLATFORM, DEBRIS, UNKNOWN)
+     XF_TLE_SATNAME_12 = 25;    // SATELLITE NAME A12 (UPTO 12 CHARACTER LONG)
+     
+     
+  // INDEXES OF TLE NUMERICAL DATA IN AN ARRAY
+  static const int  
+     // LINE 1
+     XA_TLE_SATNUM        =  0,    // SATELLITE NUMBER
+     XA_TLE_EPOCH         =  1,    // SATELLITE'S EPOCH TIME IN DS50UTC
+     XA_TLE_NDOT          =  2,    // GP MEAN MOTION DERIVATIVE (REV/DAY /2)
+     XA_TLE_NDOTDOT       =  3,    // GP MEAN MOTION SECOND DERIVATIVE (REV/DAY**2 /6)
+     XA_TLE_BSTAR         =  4,    // GP B* DRAG TERM (1/ER)  
+     XA_TLE_EPHTYPE       =  5,    // SATELLITE EPHEMERIS TYPE: 0=SGP, 2=SGP4, 4=SGP4-XP, 6=SP
+     
+     // LINE 2
+     XA_TLE_INCLI         = 20,    // ORBIT INCLINATION (DEG)
+     XA_TLE_NODE          = 21,    // RIGHT ASCENSION OF ASENDING NODE (DEG)
+     XA_TLE_ECCEN         = 22,    // ECCENTRICITY
+     XA_TLE_OMEGA         = 23,    // ARGUMENT OF PERIGEE (DEG)
+     XA_TLE_MNANOM        = 24,    // MEAN ANOMALY (DEG)
+     XA_TLE_MNMOTN        = 25,    // MEAN MOTION (REV/DAY) (EPHTYPE=0, 4: KOZAI, EPHTYPE=2: BROUWER)
+     XA_TLE_REVNUM        = 26,    // REVOLUTION NUMBER AT EPOCH 
+     XA_TLE_ELSETNUM      = 30,    // ELEMENT SET NUMBER
+     
+     // CSV (OR TLE-XP, EPHEMTYPE=4) SPECIFIC FIELDS 
+     XA_TLE_ORGSATNUM     = 31,    // ORIGINAL SATELLITE NUMBER
+     XA_TLE_BTERM         = 32,    // SP/SGP4-XP BALLISTIC COEFFICIENT (M2/KG) 
+     XA_TLE_OBSTIME       = 33,    // TIME OF LAST OBSERVATION RELATIVE TO EPOCH +/- FRACTIONAL DAYS
+     XA_TLE_EGR           = 34,    // LAST CALCULATED ERROR GROWTH RATE (KM/DAY)
+     XA_TLE_EDR           = 35,    // LAST CALCULATED ENERGY DISSIPATION RATE (W/KG)
+     XA_TLE_VISMAG        = 36,    // MEDIAN VISMAG 
+     XA_TLE_RCS           = 37,    // MEDIAN RCS - DIAMETER IN CENTIMETERS (CM)
+  
+     // CSV (OR TLE-XP, EPHEMTYPE=4)
+     XA_TLE_AGOMGP        = 38,    // SOLAR RADIATION PRESSURE COEFFICIENT GP (M2/KG)
+  
+     
+     // SP SPECIFIC FIELDS
+     XA_TLE_SP_BTERM      =  2,    // SP BALLISTIC COEFFICIENT (M2/KG)
+     XA_TLE_SP_OGPARM     =  3,    // SP OUTGASSING PARAMETER (KM/S2)
+     XA_TLE_SP_AGOM       =  4,    // SP RADIATION PRESSURE COEFFICIENT
+     
+     XA_TLE_SIZE          = 64;
+  
+  // INDEXES OF TLE TEXT DATA IN AN ARRAY OF CHARS
+  static const int  
+     XS_TLE_SECCLASS_1   =  0,    // SECURITY CLASSIFICATION OF LINE 1 AND LINE 2
+     XS_TLE_SATNAME_12   =  1,    // SATELLITE NAME
+     XS_TLE_OBJTYPE_11   = 13,    // OBJECT TYPE (PAYLOAD, ROCKET BODY, PLATFORM, DEBRIS, UNKNOWN)
+     
+     
+     XS_TLE_SIZE         = 512;      
+     
+  // INDEXES OF DIFFERENT TLE FILE'S FORMATS
+  static const int  
+     XF_TLEFORM_ORG    =  0,    // ORIGINAL TLE FORMAT
+     XF_TLEFORM_CSV    =  1;    // CSV FORMAT
+     
+     
+// TleDll's function pointers declaration
+extern fnPtrTleInit                        TleInit;
+extern fnPtrTleGetInfo                     TleGetInfo;
+extern fnPtrTleLoadFile                    TleLoadFile;
+extern fnPtrTleSaveFile                    TleSaveFile;
+extern fnPtrTleRemoveSat                   TleRemoveSat;
+extern fnPtrTleRemoveAllSats               TleRemoveAllSats;
+extern fnPtrTleGetCount                    TleGetCount;
+extern fnPtrTleGetLoaded                   TleGetLoaded;
+extern fnPtrTleAddSatFrLines               TleAddSatFrLines;
+extern fnPtrTleAddSatFrLinesML             TleAddSatFrLinesML;
+extern fnPtrTleAddSatFrCsv                 TleAddSatFrCsv;
+extern fnPtrTleAddSatFrCsvML               TleAddSatFrCsvML;
+extern fnPtrTleAddSatFrFieldsGP            TleAddSatFrFieldsGP;
+extern fnPtrTleAddSatFrFieldsGP2           TleAddSatFrFieldsGP2;
+extern fnPtrTleAddSatFrFieldsGP2ML         TleAddSatFrFieldsGP2ML;
+extern fnPtrTleUpdateSatFrFieldsGP         TleUpdateSatFrFieldsGP;
+extern fnPtrTleUpdateSatFrFieldsGP2        TleUpdateSatFrFieldsGP2;
+extern fnPtrTleAddSatFrFieldsSP            TleAddSatFrFieldsSP;
+extern fnPtrTleAddSatFrFieldsSPML          TleAddSatFrFieldsSPML;
+extern fnPtrTleUpdateSatFrFieldsSP         TleUpdateSatFrFieldsSP;
+extern fnPtrTleSetField                    TleSetField;
+extern fnPtrTleGetField                    TleGetField;
+extern fnPtrTleGetAllFieldsGP              TleGetAllFieldsGP;
+extern fnPtrTleGetAllFieldsGP2             TleGetAllFieldsGP2;
+extern fnPtrTleGetAllFieldsSP              TleGetAllFieldsSP;
+extern fnPtrTleParseGP                     TleParseGP;
+extern fnPtrTleLinesToArray                TleLinesToArray;
+extern fnPtrTleParseSP                     TleParseSP;
+extern fnPtrTleGetLines                    TleGetLines;
+extern fnPtrTleGetCsv                      TleGetCsv;
+extern fnPtrTleGPFieldsToLines             TleGPFieldsToLines;
+extern fnPtrTleGPFieldsToCsv               TleGPFieldsToCsv;
+extern fnPtrTleGPArrayToLines              TleGPArrayToLines;
+extern fnPtrTleGPArrayToCsv                TleGPArrayToCsv;
+extern fnPtrTleSPFieldsToLines             TleSPFieldsToLines;
+extern fnPtrTleGetSatKey                   TleGetSatKey;
+extern fnPtrTleGetSatKeyML                 TleGetSatKeyML;
+extern fnPtrTleFieldsToSatKey              TleFieldsToSatKey;
+extern fnPtrTleFieldsToSatKeyML            TleFieldsToSatKeyML;
+extern fnPtrTleAddSatFrArray               TleAddSatFrArray;
+extern fnPtrTleAddSatFrArrayML             TleAddSatFrArrayML;
+extern fnPtrTleUpdateSatFrArray            TleUpdateSatFrArray;
+extern fnPtrTleDataToArray                 TleDataToArray;
+extern fnPtrTleLinesToCsv                  TleLinesToCsv;
+extern fnPtrTleCsvToLines                  TleCsvToLines;
+extern fnPtrSetTleKeyMode                  SetTleKeyMode;
+extern fnPtrGetTleKeyMode                  GetTleKeyMode;
 
 
 

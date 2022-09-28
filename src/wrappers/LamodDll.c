@@ -1,7 +1,47 @@
-// This wrapper file was generated automatically by the A3\GenDllWrappers program.
+// This wrapper file was generated automatically by the GenDllWrappers program.
 
-#include "services/DllUtils.h"
-#include "wrappers/LamodDll.h"
+#include "../services/DllUtils.h"
+#include "LamodDll.h"
+
+
+// LamodDll's function pointers definition
+fnPtrLamodInit                      LamodInit;
+fnPtrLamodGetInfo                   LamodGetInfo;
+fnPtrLamodLoadFile                  LamodLoadFile;
+fnPtrLamodLoadFileAll               LamodLoadFileAll;
+fnPtrLamodLoadCard                  LamodLoadCard;
+fnPtrLamodSaveFile                  LamodSaveFile;
+fnPtrLamodGetNumOfSensSats          LamodGetNumOfSensSats;
+fnPtrLamodGetSenNums                LamodGetSenNums;
+fnPtrLamodGetSatNums                LamodGetSatNums;
+fnPtrLamodGet1pCard                 LamodGet1pCard;
+fnPtrLamodGet1pAll                  LamodGet1pAll;
+fnPtrLamodSet1pAll                  LamodSet1pAll;
+fnPtrLamodGet1pField                LamodGet1pField;
+fnPtrLamodSet1pField                LamodSet1pField;
+fnPtrLamodGet3pAll                  LamodGet3pAll;
+fnPtrLamodSet3pAll                  LamodSet3pAll;
+fnPtrLamodGetObsFileName            LamodGetObsFileName;
+fnPtrLamodSetObsFileName            LamodSetObsFileName;
+fnPtrLamodSenSatVisible             LamodSenSatVisible;
+fnPtrLamodInitSenSat                LamodInitSenSat;
+fnPtrLamodInitSenSat_MT             LamodInitSenSat_MT;
+fnPtrLamodGetSenSatDataAll          LamodGetSenSatDataAll;
+fnPtrLamodGetSenSatDataField        LamodGetSenSatDataField;
+fnPtrLamodSenSatDataToArray         LamodSenSatDataToArray;
+fnPtrLamodGetNumPasses              LamodGetNumPasses;
+fnPtrLamodGetRiseCulmSetTimes       LamodGetRiseCulmSetTimes;
+fnPtrLamodComputeLookAngle          LamodComputeLookAngle;
+fnPtrLamodComputeLookView           LamodComputeLookView;
+fnPtrLamodFindExactIOTime           LamodFindExactIOTime;
+fnPtrLamodGetOrbSenViewdata         LamodGetOrbSenViewdata;
+fnPtrLamodGetViewDataField          LamodGetViewDataField;
+fnPtrLamodCompRaDec                 LamodCompRaDec;
+fnPtrLamodGenObs                    LamodGenObs;
+fnPtrLamodGenObsAtTime              LamodGenObsAtTime;
+fnPtrLamodRemoveSenSat              LamodRemoveSenSat;
+fnPtrLamodRemoveAllSenSats          LamodRemoveAllSenSats;
+fnPtrLamodReset                     LamodReset;
 
 
 static void* hLib = NULL; // handle to the dll

@@ -1,10 +1,10 @@
-#include "services/DllUtils.h"
+#include "DllUtils.h"
 
-#include "services/TimeFuncDll_Service.h"
-#include "services/ObsDll_Service.h"
+#include "TimeFuncDll_Service.h"
+#include "ObsDll_Service.h"
 
-#include "wrappers/TimeFuncDll.h"
-#include "wrappers/ObsDll.h"
+#include "../wrappers/TimeFuncDll.h"
+#include "../wrappers/ObsDll.h"
 
 
 int GetObsData(__int64 obsKey, ObsRecord* obs)
@@ -49,7 +49,7 @@ int GetObsData(__int64 obsKey, ObsRecord* obs)
    obs->rangeAccel      = rangeAccel;
    obs->obsType         = obsType;
    obs->trackInd        = trackInd;
-   obs->ASTAT           = ASTAT;
+   obs->astat           = ASTAT;
    obs->siteTag         = siteTag;
    obs->spadocTag       = spadocTag;
    obs->pos[0]          = pos[0];
@@ -84,7 +84,7 @@ void PrintObsData(FILE* fpOut, int obsNum, ObsRecord* obs)
 
    obsType = obs->obsType;
 
-   fprintf(fpOut, " %4d %1d %5d %3d  %18s %c %c", obsNum, obs->ASTAT, obs->satNum, obs->senNum, 
+   fprintf(fpOut, " %4d %1d %5d %3d  %18s %c %c", obsNum, obs->astat, obs->satNum, obs->senNum, 
       UTCToDtg18Str(obs->obsTimeDs50UTC), obs->secClass, obsType);
 
    if ((obsType >= '1' && obsType <= '5') || obsType == '8' || obsType == '9' || obsType == 'M' || obsType == 'O')

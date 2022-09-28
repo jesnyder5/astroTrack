@@ -35,11 +35,11 @@ typedef __int64 fAddr;
    //#define min(x, y) ((x) < (y) ? (x) : (y))
 #endif
 
-//extern inline int min_i(int x, int y);
-// extern inline int max_i(int x, int y);
+static inline int min_i(int x, int y) { return x < y ? x : y; }
+static inline int max_i(int x, int y) { return x > y ? x : y; }
 
-// extern inline double min_d(double x, double y);
-// extern inline double max_d(double x, double y);
+static inline double min_d(double x, double y) { return x < y ? x : y; }
+static inline double max_d(double x, double y) { return x > y ? x : y; }
 
 // Generic function pointer for all Get functions
 typedef void (STDCALL *fnPtrGetKey32Field)(int key, int fieldIdx, char strValue[512]);
@@ -61,8 +61,6 @@ typedef struct
    char  outFile[512];        // Output file name from command line
    char  logFile[512];        // Log file name from command line
    char  bConst[7];           // Optional earth constant from command line   
-   char  libPath[128];        // Path to Astrodynamic Standards Dlls/SOs
-   char  sgp4LicPath[128];    // Path to the sgp4 license key file "SGP4_Open_License.txt"
 } CommandLineArgs;
 
 

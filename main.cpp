@@ -3,11 +3,11 @@
  * Author: Jeremy Snyder
  * Creation: Jan 1, 2022
  *
- * Last Update: Feb 16, 2022
+ * Last Update: Aug 31, 2022
  *
  * [desc]
  */
-//export LD_LIBRARY_PATH=/home/jeremy/projects/astroTrack/lib/
+//export LD_LIBRARY_PATH=./lib/
 
 #include "astroTracker.hpp"
 #include <iostream>
@@ -22,8 +22,6 @@ int main(){
     clock_t startTime, finishTime;
     startTime = clock();
 
-    //astroTracker test;
-    //astroTracker test2(j);
     std::string file;
     file = "omm-weather.json";
     //file = "weather2.tle";
@@ -35,6 +33,14 @@ int main(){
     for(int i=0; i < satNames.size(); i++){
         std::cout << (i + 1) << ": " << satNames.at(i) << std::endl;
     }
+
+    // std::cout << std::endl << "print first satellite (" << satNames.at(0) << ") TLE fields:" << std::endl;
+    // test.printSatTLE(satNames.at(0));
+
+    // std::cout << std::endl << "print second satellite (" << satNames.at(1) << ") TLE fields:" << std::endl;
+    // test.printSatTLE(satNames.at(1));
+
+    
 
     finishTime = clock();
     std::cout 

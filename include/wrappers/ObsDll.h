@@ -1,13 +1,15 @@
-// This wrapper file was generated automatically by the A3\GenDllWrappers program.
+// This wrapper file was generated automatically by the GenDllWrappers program.
 
 #ifndef OBSDLL_H
 #define OBSDLL_H
 
-#include "services/DllUtils.h"
+#include "../services/DllUtils.h"
 
-// Provide the path to the dll/so
-#ifdef _WIN32
+// Provide the path to the dll/so/dylib
+#if defined (_WIN32) || defined (__CYGWIN__)
   #define ObsDll "Obs.dll"
+#elif __APPLE__
+  #define ObsDll "libobs.dylib"
 #else
   #define ObsDll "libobs.so"
 #endif
@@ -62,12 +64,12 @@ typedef int (STDCALL *fnPtrObsGetCount)();
 
 // Retrieves all of the currently loaded obsKeys. These obsKeys can be used to access the internal data for the observations
 // Sort options (order):
-// (+/-)1 = (descending/ascending) time, sensor, obstype, elev
+// (+/-)1 = (descending/ascending) time, sensor, obsType, elev
 // (+/-)2 = (descending/ascending) time, elevation
 // (+/-)3 = (descending/ascending) time, sensor, otype, el, satno
 // (+/-)4 = (descending/ascending) sensor, satno, time, elev
 // (+/-)5 = (descending/ascending) sensor, time, elevation
-// (+/-)6 = (descending/ascending) sensor, satno, obstype, time, elev
+// (+/-)6 = (descending/ascending) sensor, satno, obsType, time, elev
 // (+/-)7 = (descending/ascending) satno, time, sensor, otype, el
 // (+/-)8 = (reversed/same)        order as obs were read
 // 9 : as is in the tree
@@ -163,7 +165,7 @@ typedef void (STDCALL *fnPtrObsAddFrCsvML)(char csvLine[512], __int64* obsKey);
 // secClass           security classification (in-Character)
 // satNum             satellite number (in-Integer)
 // senNum             sensor number (in-Integer)
-// obsTimeDs50UTC     observation time in days since 1950 UTC (in-Double)
+// obsTimeDs50utc     observation time in days since 1950 UTC (in-Double)
 // elOrDec            elevation or declination (deg) (in-Double)
 // azOrRA             azimuth or right-ascension (deg) (in-Double)
 // range              range (km) (in-Double)
@@ -180,14 +182,14 @@ typedef void (STDCALL *fnPtrObsAddFrCsvML)(char csvLine[512], __int64* obsKey);
 // vel                velocity XYZ (km/s) (ECI or EFG) (in-Double[3])
 // extArr             extra array - future use (in-Double[128])
 // returns The obsKey of the newly added observation on success, a negative value on error
-typedef __int64 (STDCALL *fnPtrObsAddFrFields)(char secClass, int satNum, int senNum, double obsTimeDs50UTC, double elOrDec, double azOrRA, double range, double rangeRate, double elRate, double azRate, double rangeAccel, char obsType, int trackInd, int ASTAT, int siteTag, int spadocTag, double pos[3], double vel[3], double extArr[128]);
+typedef __int64 (STDCALL *fnPtrObsAddFrFields)(char secClass, int satNum, int senNum, double obsTimeDs50utc, double elOrDec, double azOrRA, double range, double rangeRate, double elRate, double azRate, double rangeAccel, char obsType, int trackInd, int ASTAT, int siteTag, int spadocTag, double pos[3], double vel[3], double extArr[128]);
 
 
 // Works like ObsAddFrFields but designed for Matlab
 // secClass           security classification (in-Character)
 // satNum             satellite number (in-Integer)
 // senNum             sensor number (in-Integer)
-// obsTimeDs50UTC     observation time in days since 1950 UTC (in-Double)
+// obsTimeDs50utc     observation time in days since 1950 UTC (in-Double)
 // elOrDec            elevation or declination (deg) (in-Double)
 // azOrRA             azimuth or right-ascension (deg) (in-Double)
 // range              range (km) (in-Double)
@@ -204,7 +206,7 @@ typedef __int64 (STDCALL *fnPtrObsAddFrFields)(char secClass, int satNum, int se
 // vel                velocity XYZ (km/s) (ECI or EFG) (in-Double[3])
 // extArr             extra array - future use (in-Double[128])
 // obsKey             The obsKey of the newly added observation on success, a negative value on error (out-Long)
-typedef void (STDCALL *fnPtrObsAddFrFieldsML)(char secClass, int satNum, int senNum, double obsTimeDs50UTC, double elOrDec, double azOrRA, double range, double rangeRate, double elRate, double azRate, double rangeAccel, char obsType, int trackInd, int ASTAT, int siteTag, int spadocTag, double pos[3], double vel[3], double extArr[128], __int64* obsKey);
+typedef void (STDCALL *fnPtrObsAddFrFieldsML)(char secClass, int satNum, int senNum, double obsTimeDs50utc, double elOrDec, double azOrRA, double range, double rangeRate, double elRate, double azRate, double rangeAccel, char obsType, int trackInd, int ASTAT, int siteTag, int spadocTag, double pos[3], double vel[3], double extArr[128], __int64* obsKey);
 
 
 // Adds one observation using its input data stored in an array. Depending on the observation type, some input data might be unavailable and left blank
@@ -224,7 +226,7 @@ typedef void (STDCALL *fnPtrObsAddFrArrayML)(double xa_obs[64], __int64* obsKey)
 // secClass           security classification (out-Character)
 // satNum             satellite number (out-Integer)
 // senNum             sensor number (out-Integer)
-// obsTimeDs50UTC     observation time in days since 1950 UTC (out-Double)
+// obsTimeDs50utc     observation time in days since 1950 UTC (out-Double)
 // elOrDec            elevation or declination (deg) (out-Double)
 // azOrRA             azimuth or right-ascension (deg) (out-Double)
 // range              range (km) (out-Double)
@@ -241,7 +243,7 @@ typedef void (STDCALL *fnPtrObsAddFrArrayML)(double xa_obs[64], __int64* obsKey)
 // vel                velocity XYZ (km/s) (ECI or EFG) (out-Double[3])
 // extArr             extra array - future use (out-Double[128])
 // returns 0 if all values are retrieved successfully, non-0 if there is an error
-typedef int (STDCALL *fnPtrObsGetAllFields)(__int64 obsKey, char* secClass, int* satNum, int* senNum, double* obsTimeDs50UTC, double* elOrDec, double* azOrRA, double* range, double* rangeRate, double* elRate, double* azRate, double* rangeAccel, char* obsType, int* trackInd, int* ASTAT, int* siteTag, int* spadocTag, double pos[3], double vel[3], double extArr[128]);
+typedef int (STDCALL *fnPtrObsGetAllFields)(__int64 obsKey, char* secClass, int* satNum, int* senNum, double* obsTimeDs50utc, double* elOrDec, double* azOrRA, double* range, double* rangeRate, double* elRate, double* azRate, double* rangeAccel, char* obsType, int* trackInd, int* ASTAT, int* siteTag, int* spadocTag, double pos[3], double vel[3], double extArr[128]);
 
 
 // Retrieves observation data and stored it in the passing array. Depending on the observation type, some data fields might be unavailable
@@ -350,7 +352,7 @@ typedef int (STDCALL *fnPtrObsGetCsv)(__int64 obsKey, char csvline[512]);
 // secClass           security classification (in-Character)
 // satNum             satellite number (in-Integer)
 // senNum             sensor number (in-Integer)
-// obsTimeDs50UTC     observation time in days since 1950 UTC (in-Double)
+// obsTimeDs50utc     observation time in days since 1950 UTC (in-Double)
 // elOrDec            elevation or declination (deg) (in-Double)
 // azOrRA             azimuth or right-ascension (deg) (in-Double)
 // range              range (km) (in-Double)
@@ -365,14 +367,14 @@ typedef int (STDCALL *fnPtrObsGetCsv)(__int64 obsKey, char csvline[512]);
 // spadocTag          SPADOC-asssigned tag number (in-Integer)
 // pos                position XYZ (km) (ECI or EFG) (in-Double[3])
 // b3Card             A string to hold the B3 observation format (out-Character[512])
-typedef void (STDCALL *fnPtrObsFieldsToB3Card)(char secClass, int satNum, int senNum, double obsTimeDs50UTC, double elOrDec, double azOrRA, double range, double rangeRate, double elRate, double azRate, double rangeAccel, char obsType, int trackInd, int ASTAT, int siteTag, int spadocTag, double pos[3], char b3Card[512]);
+typedef void (STDCALL *fnPtrObsFieldsToB3Card)(char secClass, int satNum, int senNum, double obsTimeDs50utc, double elOrDec, double azOrRA, double range, double rangeRate, double elRate, double azRate, double rangeAccel, char obsType, int trackInd, int ASTAT, int siteTag, int spadocTag, double pos[3], char b3Card[512]);
 
 
 // Constructs a csv string from the input observation data fields
 // secClass           security classification (in-Character)
 // satNum             satellite number (in-Integer)
 // senNum             sensor number (in-Integer)
-// obsTimeDs50UTC     observation time in days since 1950 UTC (in-Double)
+// obsTimeDs50utc     observation time in days since 1950 UTC (in-Double)
 // elOrDec            elevation or declination (deg) (in-Double)
 // azOrRA             azimuth or right-ascension (deg) (in-Double)
 // range              range (km) (in-Double)
@@ -387,14 +389,14 @@ typedef void (STDCALL *fnPtrObsFieldsToB3Card)(char secClass, int satNum, int se
 // spadocTag          SPADOC-asssigned tag number (in-Integer)
 // pos                position XYZ (km) (ECI or EFG) (in-Double[3])
 // csvLine            A string to hold the csv observation format (out-Character[512])
-typedef void (STDCALL *fnPtrObsFieldsToCsv)(char secClass, int satNum, int senNum, double obsTimeDs50UTC, double elOrDec, double azOrRA, double range, double rangeRate, double elRate, double azRate, double rangeAccel, char obsType, int trackInd, int ASTAT, int siteTag, int spadocTag, double pos[3], char csvLine[512]);
+typedef void (STDCALL *fnPtrObsFieldsToCsv)(char secClass, int satNum, int senNum, double obsTimeDs50utc, double elOrDec, double azOrRA, double range, double rangeRate, double elRate, double azRate, double rangeAccel, char obsType, int trackInd, int ASTAT, int siteTag, int spadocTag, double pos[3], char csvLine[512]);
 
 
 // Constructs a TTY-card string from the input observation data fields
 // secClass           security classification (in-Character)
 // satNum             satellite number (in-Integer)
 // senNum             sensor number (in-Integer)
-// obsTimeDs50UTC     observation time in days since 1950 UTC (in-Double)
+// obsTimeDs50utc     observation time in days since 1950 UTC (in-Double)
 // elOrDec            elevation or declination (deg) (in-Double)
 // azOrRA             azimuth or right-ascension (deg) (in-Double)
 // range              range (km) (in-Double)
@@ -406,23 +408,23 @@ typedef void (STDCALL *fnPtrObsFieldsToCsv)(char secClass, int satNum, int senNu
 // pos                position XYZ (km) (ECI or EFG) (in-Double[3])
 // ttyCard1           first line of a TTY card (out-Character[512])
 // ttyCard2           second line of a TTY card (might be unavailable for certain obs type) (out-Character[512])
-typedef void (STDCALL *fnPtrObsFieldsToTTYCard)(char secClass, int satNum, int senNum, double obsTimeDs50UTC, double elOrDec, double azOrRA, double range, double rangeRate, double elRate, double azRate, double rangeAccel, char obsType, double pos[3], char ttyCard1[512], char ttyCard2[512]);
+typedef void (STDCALL *fnPtrObsFieldsToTTYCard)(char secClass, int satNum, int senNum, double obsTimeDs50utc, double elOrDec, double azOrRA, double range, double rangeRate, double elRate, double azRate, double rangeAccel, char obsType, double pos[3], char ttyCard1[512], char ttyCard2[512]);
 
 
 // Computes an obsKey from individually provided fields
 // satNum             input satellite's number (in-Integer)
 // senNum             input sensor's number (in-Integer)
-// obsTimeDs50UTC     input observation time in days since 1950, UTC (in-Double)
+// obsTimeDs50utc     input observation time in days since 1950, UTC (in-Double)
 // returns The newly created observation Key
-typedef __int64 (STDCALL *fnPtrObsFieldsToObsKey)(int satNum, int senNum, double obsTimeDs50UTC);
+typedef __int64 (STDCALL *fnPtrObsFieldsToObsKey)(int satNum, int senNum, double obsTimeDs50utc);
 
 
 // Works like ObsFieldsToObsKey but designed for Matlab
 // satNum             input satellite's number (in-Integer)
 // senNum             input sensor's number (in-Integer)
-// obsTimeDs50UTC     input observation time in days since 1950, UTC (in-Double)
+// obsTimeDs50utc     input observation time in days since 1950, UTC (in-Double)
 // obsKey             The newly created observation Key (out-Long)
-typedef void (STDCALL *fnPtrObsFieldsToObsKeyML)(int satNum, int senNum, double obsTimeDs50UTC, __int64* obsKey);
+typedef void (STDCALL *fnPtrObsFieldsToObsKeyML)(int satNum, int senNum, double obsTimeDs50utc, __int64* obsKey);
 
 
 // Parses observation data from a B3-card (or B3E) string / one-line TTY / or CSV - Converts obs data to TEME of Date if neccessary
@@ -430,7 +432,7 @@ typedef void (STDCALL *fnPtrObsFieldsToObsKeyML)(int satNum, int senNum, double 
 // secClass           security classification (out-Character)
 // satNum             satellite number (out-Integer)
 // senNum             sensor number (out-Integer)
-// obsTimeDs50UTC     observation time in days since 1950 UTC (out-Double)
+// obsTimeDs50utc     observation time in days since 1950 UTC (out-Double)
 // elOrDec            elevation or declination (deg) (out-Double)
 // azOrRA             azimuth or right-ascension (deg) (out-Double)
 // range              range (km) (out-Double)
@@ -445,7 +447,7 @@ typedef void (STDCALL *fnPtrObsFieldsToObsKeyML)(int satNum, int senNum, double 
 // spadocTag          SPADOC-asssigned tag number (out-Integer)
 // pos                position XYZ (km) (ECI or EFG) (out-Double[3])
 // returns 0 if the data is successfully parsed, non-0 if there is an error
-typedef int (STDCALL *fnPtrObsB3Parse)(char b3ObsCard[512], char* secClass, int* satNum, int* senNum, double* obsTimeDs50UTC, double* elOrDec, double* azOrRA, double* range, double* rangeRate, double* elRate, double* azRate, double* rangeAccel, char* obsType, int* trackInd, int* ASTAT, int* siteTag, int* spadocTag, double pos[3]);
+typedef int (STDCALL *fnPtrObsB3Parse)(char b3ObsCard[512], char* secClass, int* satNum, int* senNum, double* obsTimeDs50utc, double* elOrDec, double* azOrRA, double* range, double* rangeRate, double* elRate, double* azRate, double* rangeAccel, char* obsType, int* trackInd, int* ASTAT, int* siteTag, int* spadocTag, double pos[3]);
 
 
 // Parses any observation data format (B3-card (or B3E) string / one or two line TTY / CSV - No conversion takes place
@@ -487,12 +489,12 @@ typedef int (STDCALL *fnPtrObsGetCountGID)(int gid);
 
 // Retrieves all of the currently loaded obsKeys that have the same gid. These obsKeys can be used to access the internal data for the observations
 // Sort options (order):
-// (+/-)1 = (descending/ascending) time, sensor, obstype, elev
+// (+/-)1 = (descending/ascending) time, sensor, obsType, elev
 // (+/-)2 = (descending/ascending) time, elevation
 // (+/-)3 = (descending/ascending) time, sensor, otype, el, satno
 // (+/-)4 = (descending/ascending) sensor, satno, time, elev
 // (+/-)5 = (descending/ascending) sensor, time, elevation
-// (+/-)6 = (descending/ascending) sensor, satno, obstype, time, elev
+// (+/-)6 = (descending/ascending) sensor, satno, obsType, time, elev
 // (+/-)7 = (descending/ascending) satno, time, sensor, otype, el
 // (+/-)8 = (reversed/same)        order as obs were read
 // 9 : as is in the tree
@@ -565,355 +567,387 @@ typedef int (STDCALL *fnPtrObsDataToStates)(double xa_obs[64], double xa_obState
 // returns 0 if the data is successfully , non-0 if there is an error
 typedef int (STDCALL *fnPtrObsArrToLines)(double xa_obs[64], int obsForm, char line1[512], char line2[512]);
 
-// CSV sigma type indicator
-static const int CSVSIGMATYPE = 7;
 
-// Indexes of Observation data fields
-static const int  
-   XF_OBS_SECCLASS     =  1,     // security classification
-   XF_OBS_SATNUM       =  2,     // satellite number
-   XF_OBS_SENNUM       =  3,     // sensor number
-   XF_OBS_DS50UTC      =  4,     // observation time in days since 1950 UTC
-   XF_OBS_ELEVATION    =  5,     // elevation (deg)
-   XF_OBS_DECLINATION  =  6,     // declination (deg)
-   XF_OBS_AZIMUTH      =  7,     // azimuth (deg)
-   XF_OBS_RA           =  8,     // right-ascension (deg)
-   XF_OBS_RANGE        =  9,     // range (km)
-   XF_OBS_RANGERATE    = 10,     // range rate (km/s)
-   XF_OBS_ELRATE       = 11,     // elevation rate (deg/s)
-   XF_OBS_AZRATE       = 12,     // azimuth rate (deg/s)
-   XF_OBS_RANGEACCEL   = 13,     // range acceleration (km/s^2)
-   XF_OBS_OBSTYPE      = 14,     // observation type
-   XF_OBS_TRACKIND     = 15,     // track position indicator (3=start track ob, 4=in track ob, 5=end track ob)
-   XF_OBS_ASTAT        = 16,     // association status assigned by SPADOC
-   XF_OBS_SITETAG      = 17,     // original satellite number
-   XF_OBS_SPADOCTAG    = 18,     // SPADOC-asssigned tag number
-   XF_OBS_POSE         = 19,     // position X/EFG (km)
-   XF_OBS_POSF         = 20,     // position Y/EFG (km)
-   XF_OBS_POSG         = 21,     // position Z/EFG (km)
-   XF_OBS_POSX         = 22,     // position X/ECI (km)
-   XF_OBS_POSY         = 23,     // position Y/ECI (km)
-   XF_OBS_POSZ         = 24,     // position Z/ECI (km)
+// Sets OBS key mode
+// This mode can also be turned on if the user loads an input text file that includes this line - "AS_DMA_OBS_ON" -
+// and is currently calling any of these methods: DllMainLoadFile(), or ObsLoadFile()
+// obs_keyMode        Desired obs key mode (see OBS_KEYMODE_? for available modes) (in-Integer)
+// returns 0 if the set is successful, non-0 if there is an error.
+typedef int (STDCALL *fnPtrSetObsKeyMode)(int obs_keyMode);
 
-   XF_OBS_RCS_PP       = 25,     // Principal Polarization RCS
-   XF_OBS_RCS_OP       = 26,     // Orthogonal Polarization RCS
-   XF_OBS_RCS_PPS      = 27,     // Principal Polarization RCS sigma
-   XF_OBS_RCS_OPS      = 28,     // Orthogonal Polarization RCS sigma
-   XF_OBS_SNR          = 29,     // Radar Signal to Noise Ratio
-   XF_OBS_BORE_AZ      = 30,     // Azimuth of Boresite
-   XF_OBS_BORE_EL      = 31,     // Elevation of Boresite
-   XF_OBS_VISMAG       = 32,     // Apparent Visual magnitude
-   XF_OBS_VISMAG_NORM  = 33,     // GEO Normalized Visual magnitude
-   XF_OBS_SOL_PHASE    = 34,     // Solar Phase Angle
-   XF_OBS_FRAME        = 35,     // Frame Number
-   XF_OBS_ABERATION    = 36,     // Aberation correction indicator (0=YES, 1=NO)
-   XF_OBS_ASTAT_METHOD = 37;     // Either R" or T; ROTAS=General Perturbations, TRACK=Special Perturbations
 
-// Indexes of observation data in an array
-static const int  
-   XA_OBS_SECCLASS     =  0,     // security classification, 1 = Unclassified, 2 = Confidential, 3 = Secret
-   XA_OBS_SATNUM       =  1,     // satellite number
-   XA_OBS_SENNUM       =  2,     // sensor number
-   XA_OBS_DS50UTC      =  3,     // observation time in days since 1950 UTC
-   XA_OBS_ELORDEC      =  4,     // elevation (for ob type 1, 2, 3, 4, 8) or declination (for ob type 5, 9) (deg)
-   XA_OBS_AZORRA       =  5,     // azimuth (for ob type 1, 2, 3, 4, 8) or right ascesion (for ob type 5, 9) (deg)
-   XA_OBS_RANGE        =  6,     // range (km)
-   XA_OBS_RANGERATE    =  7,     // range rate (km/s) for non-optical obs type
-   XA_OBS_ELRATE       =  8,     // elevation rate (deg/s)
-   XA_OBS_AZRATE       =  9,     // azimuth rate (deg/s)
-   XA_OBS_RANGEACCEL   = 10,     // range acceleration (km/s^2)
-   XA_OBS_OBSTYPE      = 11,     // observation type   
-   XA_OBS_TRACKIND     = 12,     // track position indicator (3=start track ob, 4=in track ob, 5=end track ob)
-   XA_OBS_ASTAT        = 13,     // association status assigned by SPADOC
-   XA_OBS_SITETAG      = 14,     // original satellite number
-   XA_OBS_SPADOCTAG    = 15,     // SPADOC-asssigned tag number
-   XA_OBS_POSX         = 16,     // position X/ECI or X/EFG (km)
-   XA_OBS_POSY         = 17,     // position Y/ECI or Y/EFG (km)
-   XA_OBS_POSZ         = 18,     // position Z/ECI or Z/EFG (km)   
-   XA_OBS_VELX         = 19,     // velocity X/ECI (km/s)  (or Edot/EFG (km) for ob type 7 TTY)
-   XA_OBS_VELY         = 20,     // velocity Y/ECI (km/s)  (or Fdot/EFG (km) for ob type 7 TTY)
-   XA_OBS_VELZ         = 21,     // velocity Z/ECI (km/s)  (or Gdot/EFG (km) for ob type 7 TTY)
-   XA_OBS_YROFEQNX     = 22,     // year of equinox indicator for obs type 5/9 (0= Time of obs, 1= 0 Jan of date, 2= J2000, 3= B1950)
+// Gets current OBS key mode
+// returns Current obs key mode (see OBS_KEYMODE_? for available modes)
+typedef int (STDCALL *fnPtrGetObsKeyMode)();
 
-   XA_OBS_AZORRABIAS   = 33,     // AZ/RA bias (deg)
-   XA_OBS_ELORDECBIAS  = 34,     // EL/DEC bias (deg)
-   XA_OBS_RGBIAS       = 35,     // Range bias (km)
-   XA_OBS_RRBIAS       = 36,     // Range-rate bias (km/sec)
-   XA_OBS_TIMEBIAS     = 37,     // Time bias (sec)
-   XA_OBS_RAZORRABIAS  = 38,     // AZ/RA rate bias (deg/sec) 
-   XA_OBS_RELORDECBIAS = 39,     // EL/DEC rate bias (deg/sec)
 
-   XA_OBS_SIGMATYPE    = 40,     // individual obs's sigmas type (0: N/A, 6: 6 elements, 21: 21 elements, 7: this is CSV obs)
-   XA_OBS_SIGMAEL1     = 41,     // sigma\covariance element 1 - 6 elemens - Az sigma
-   XA_OBS_SIGMAEL2     = 42,     // sigma\covariance element 2 - 6 elemens - El sigma
-   XA_OBS_SIGMAEL3     = 43,     // sigma\covariance element 3 - 6 elemens - Range sigma
-   XA_OBS_SIGMAEL4     = 44,     // sigma\covariance element 4 - 6 elemens - Range rate sigma
-   XA_OBS_SIGMAEL5     = 45,     // sigma\covariance element 5 - 6 elemens - Az rate sigma
-   XA_OBS_SIGMAEL6     = 46,     // sigma\covariance element 6 - 6 elemens - El rate sigma
-   XA_OBS_SIGMAEL7     = 47,     // sigma\covariance element 7 
-   XA_OBS_SIGMAEL8     = 48,     // sigma\covariance element 8
-   XA_OBS_SIGMAEL9     = 49,     // sigma\covariance element 9
-   XA_OBS_SIGMAEL10    = 50,     // sigma\covariance element 10
-   XA_OBS_SIGMAEL11    = 51,     // sigma\covariance element 11
-   XA_OBS_SIGMAEL12    = 52,     // sigma\covariance element 12
-   XA_OBS_SIGMAEL13    = 53,     // sigma\covariance element 13
-   XA_OBS_SIGMAEL14    = 54,     // sigma\covariance element 14
-   XA_OBS_SIGMAEL15    = 55,     // sigma\covariance element 15
-   XA_OBS_SIGMAEL16    = 56,     // sigma\covariance element 16
-   XA_OBS_SIGMAEL17    = 57,     // sigma\covariance element 17
-   XA_OBS_SIGMAEL18    = 58,     // sigma\covariance element 18
-   XA_OBS_SIGMAEL19    = 59,     // sigma\covariance element 19
-   XA_OBS_SIGMAEL20    = 60,     // sigma\covariance element 20
-   XA_OBS_SIGMAEL21    = 61,     // sigma\covariance element 21
+// Returs the satellite number associated with the input obsKey
+// obsKey             The observation's unique key (in-Long)
+// returns The satellite number associated with the input obsKey (satNum = -1 if obsKey doesn't exist)
+typedef int (STDCALL *fnPtrSatNumFrObsKey)(__int64 obsKey);
 
-   XA_OBS_SIZE         = 64;
-   
-// Indexes of observation data in an array (Obs Type CSV specific)
-static const int  
-   XA_OTCSV_SECCLASS     =  0,     // security classification, 1 = Unclassified, 2 = Confidential, 3 = Secret
-   XA_OTCSV_SATNUM       =  1,     // satellite number
-   XA_OTCSV_SENNUM       =  2,     // sensor number
-   XA_OTCSV_DS50UTC      =  3,     // observation time in days since 1950 UTC
-   XA_OTCSV_ELORDEC      =  4,     // elevation (for ob type 1, 2, 3, 4, 8) or declination (for ob type 5, 9) (deg)
-   XA_OTCSV_AZORRA       =  5,     // azimuth (for ob type 1, 2, 3, 4, 8) or right ascesion (for ob type 5, 9) (deg)
-   XA_OTCSV_RANGE        =  6,     // range (km)
-   XA_OTCSV_RANGERATE    =  7,     // range rate (km/s) for non-optical obs type
-   XA_OTCSV_ELRATE       =  8,     // elevation rate (deg/s)
-   XA_OTCSV_AZRATE       =  9,     // azimuth rate (deg/s)
-   XA_OTCSV_RANGEACCEL   = 10,     // range acceleration (km/s^2)
-   XA_OTCSV_OBSTYPE      = 11,     // observation type   
-   XA_OTCSV_TRACKIND     = 12,     // track position indicator (3=start track ob, 4=in track ob, 5=end track ob)
-   XA_OTCSV_ASTAT        = 13,     // association status assigned by SPADOC
-   XA_OTCSV_SITETAG      = 14,     // original satellite number
-   XA_OTCSV_SPADOCTAG    = 15,     // SPADOC-asssigned tag number
-   XA_OTCSV_POSX         = 16,     // position X/ECI or X/EFG (km)
-   XA_OTCSV_POSY         = 17,     // position Y/ECI or Y/EFG (km)
-   XA_OTCSV_POSZ         = 18,     // position Z/ECI or Z/EFG (km)   
-   XA_OTCSV_VELX         = 19,     // velocity X/ECI (km/s)  (or Edot/EFG (km) for ob type 7 TTY)
-   XA_OTCSV_VELY         = 20,     // velocity Y/ECI (km/s)  (or Fdot/EFG (km) for ob type 7 TTY)
-   XA_OTCSV_VELZ         = 21,     // velocity Z/ECI (km/s)  (or Gdot/EFG (km) for ob type 7 TTY)
-   XA_OTCSV_YROFEQNX     = 22,     // year of equinox indicator for obs type 5/9 (0= Time of obs, 1= 0 Jan of date, 2= J2000, 3= B1950)
 
-   XA_OTCSV_RCS_PP       = 23,     // Principal Polarization RCS
-   XA_OTCSV_RCS_OP       = 24,     // Orthogonal Polarization RCS
-   XA_OTCSV_RCS_PPS      = 25,     // Principal Polarization RCS sigma
-   XA_OTCSV_RCS_OPS      = 26,     // Orthogonal Polarization RCS sigma
-   XA_OTCSV_SNR          = 27,     // Radar Signal to Noise Ratio
-   XA_OTCSV_BORE_AZ      = 28,     // Azimuth of Boresite
-   XA_OTCSV_BORE_EL      = 29,     // Elevation of Boresite
-   XA_OTCSV_VISMAG       = 30,     // Apparent Visual magnitude
-   XA_OTCSV_VISMAG_NORM  = 31,     // GEO Normalized Visual magnitude
-   XA_OTCSV_SOL_PHASE    = 32,     // Solar Phase Angle
-   XA_OTCSV_FRAME        = 33,     // Frame Number
-   XA_OTCSV_ABERATION    = 34,     // Aberation correction indicator (0=YES, 1=NO)
-   XA_OTCSV_ASTAT_METHOD = 35,     // 0 = ROTAS, 1 = TRACK
-   
-   XA_OTCSV_SIGMATYPE    = 40,     // must equal to 7 to signify this is CSV format
-   XA_OTCSV_SIGMAEL1     = 41,     // sigma\covariance element 1 - Az sigma
-   XA_OTCSV_SIGMAEL2     = 42,     // sigma\covariance element 2 - El sigma
-   XA_OTCSV_SIGMAEL3     = 43,     // sigma\covariance element 3 - Range sigma
-   XA_OTCSV_SIGMAEL4     = 44,     // sigma\covariance element 4 - Range rate sigma
-   XA_OTCSV_SIGMAEL5     = 45,     // sigma\covariance element 5 - Az rate sigma
-   XA_OTCSV_SIGMAEL6     = 46,     // sigma\covariance element 6 - El rate sigma
-   XA_OTCSV_SIGMAEL7     = 47,     // sigma\covariance element 7 - Time sigma 
-   XA_OTCSV_BIAS1        = 48,     // AZ/RA bias
-   XA_OTCSV_BIAS2        = 49,     // EL/DEC bias
-   XA_OTCSV_BIAS3        = 50,     // Range bias
-   XA_OTCSV_BIAS4        = 51,     // Range-rate bias
-   XA_OTCSV_BIAS5        = 52,     // Time bias
-
-   
-   XA_OTCSV_SIZE         = 64;   
-   
-// Indexes of observation data in an array
-static const int  
-   XA_OBSTATE_SATNUM       =  0,     // satellite number
-   XA_OBSTATE_SENNUM       =  1,     // sensor number
-   XA_OBSTATE_DS50UTC      =  2,     // observation time in days since 1950 UTC
-   
-   XA_OBSTATE_POSX         = 10,     // position X/ECI (km)
-   XA_OBSTATE_POSY         = 11,     // position Y/ECI (km)
-   XA_OBSTATE_POSZ         = 12,     // position Z/ECI (km)   
-   XA_OBSTATE_VELX         = 13,     // velocity X/ECI (km/s)
-   XA_OBSTATE_VELY         = 14,     // velocity Y/ECI (km/s)
-   XA_OBSTATE_VELZ         = 15,     // velocity Z/ECI (km/s)   
-   XA_OBSTATE_LAT          = 16,     // geodetic latitude (deg)
-   XA_OBSTATE_LON          = 17,     // geodetic longitude (deg)
-   XA_OBSTATE_HGHT         = 18,     // geodetic height (km)   
-   XA_OBSTATE_POSE         = 19,     // position X/EFG (km)
-   XA_OBSTATE_POSF         = 20,     // position Y/EFG (km)   
-   XA_OBSTATE_POSG         = 21,     // position Z/EFG (km)
-
-   
-   XA_OBSTATE_SIZE         = 64;   
-   
-// Indexes of observation data available for each obs type (OT0: obs type 0, OT1: obs type 1, ...)
-// All obs types have these common data fields  XA_OBS_SECCLASS = 0, XA_OBS_SATNUM = 1, and  XA_OBS_SENNUM = 2
-static const int     
-   XA_OT0_DS50UTC   =  3,     // observation time in days since 1950 UTC
-   XA_OT0_RANGERATE =  7,     // range rate (km/s)  
+// Returs the sensor number associated with the input obsKey
+// obsKey             The observation's unique key (in-Long)
+// returns The satellite number associated with the input obsKey (senNum = -1 if obsKey doesn't exist)
+typedef int (STDCALL *fnPtrSenNumFrObsKey)(__int64 obsKey);
   
-   XA_OT1_DS50UTC   =  3,     // observation time in days since 1950 UTC
-   XA_OT1_ELEVATION =  4,     // elevation (deg)
-   XA_OT1_AZIMUTH   =  5,     // azimuth (deg)
-
-   XA_OT2_DS50UTC   =  3,     // observation time in days since 1950 UTC
-   XA_OT2_ELEVATION =  4,     // elevation (deg)
-   XA_OT2_AZIMUTH   =  5,     // azimuth (deg)
-   XA_OT2_RANGE     =  6,     // range (km)
-
-   XA_OT3_DS50UTC   =  3,     // observation time in days since 1950 UTC
-   XA_OT3_ELEVATION =  4,     // elevation (deg)
-   XA_OT3_AZIMUTH   =  5,     // azimuth (deg)
-   XA_OT3_RANGE     =  6,     // range (km)
-   XA_OT3_RANGERATE =  7,     // range rate (km/s) 
-
-   XA_OT4_DS50UTC   =  3,     // observation time in days since 1950 UTC
-   XA_OT4_ELEVATION =  4,     // elevation (deg)
-   XA_OT4_AZIMUTH   =  5,     // azimuth (deg)
-   XA_OT4_RANGE     =  6,     // range (km)
-   XA_OT4_RANGERATE =  7,     // range rate (km/s) 
-   XA_OT4_ELRATE    =  8,     // elevation rate (deg/s)
-   XA_OT4_AZRATE    =  9,     // azimuth rate (deg/s)
-   XA_OT4_RANGEACCEL= 10,     // range acceleration (km/s^2)
-
-   XA_OT5_DS50UTC   =  3,     // observation time in days since 1950 UTC
-   XA_OT5_DECL      =  4,     // declination (deg)
-   XA_OT5_RIGHTASC  =  5,     // right ascesion (deg)
-   XA_OT5_YROFEQNX  = 22,     // year of equinox indicator (0= Time of obs, 1= 0 Jan of date, 2= J2000, 3= B1950)
-
-   XA_OT6_DS50UTC   =  3,     // observation time in days since 1950 UTC
-   XA_OT6_RANGE     =  6,     // range (km)
-
-   XA_OT8_DS50UTC   =  3,     // observation time in days since 1950 UTC
-   XA_OT8_ELEVATION =  4,     // elevation (deg)
-   XA_OT8_AZIMUTH   =  5,     // azimuth (deg)
-   XA_OT8_RANGE     =  6,     // optional - range (km)
-   XA_OT8_POSE      = 16,     // orbiting sensor position X/EFG (km)
-   XA_OT8_POSF      = 17,     // orbiting sensor position Y/EFG (km)
-   XA_OT8_POSG      = 18,     // orbiting sensor position Z/EFG (km)   
-
-   XA_OT9_DS50UTC   =  3,     // observation time in days since 1950 UTC
-   XA_OT9_DECL      =  4,     // declination (deg)
-   XA_OT9_RIGHTASC  =  5,     // right ascesion (deg)
-   XA_OT9_RANGE     =  6,     // optional - range (km)
-   XA_OT9_POSE      = 16,     // orbiting sensor position X/EFG (km)
-   XA_OT9_POSF      = 17,     // orbiting sensor position Y/EFG (km)
-   XA_OT9_POSG      = 18,     // orbiting sensor position Z/EFG (km)   
-   XA_OT9_YROFEQNX  = 22,     // year of equinox indicator (0= Time of obs, 1= 0 Jan of date, 2= J2000, 3= B1950)   
-
-   XA_OTP_DS50UTC   =  3,     // observation time in days since 1950 UTC
-   XA_OTP_POSX      = 16,     // position X/ECI or X/EFG (km)
-   XA_OTP_POSY      = 17,     // position Y/ECI or Y/EFG (km)
-   XA_OTP_POSZ      = 18,     // position Z/ECI or Z/EFG (km)   
-   
-   XA_OTV_DS50UTC   =  3,     // observation time in days since 1950 UTC
-   XA_OTV_POSX      = 16,     // position X/ECI or X/EFG (km)
-   XA_OTV_POSY      = 17,     // position Y/ECI or Y/EFG (km)
-   XA_OTV_POSZ      = 18,     // position Z/ECI or Z/EFG (km)   
-   XA_OTV_VELX      = 19,     // velocity X/ECI (km/s)  (or Edot/EFG (km) for ob type 7 TTY)
-   XA_OTV_VELY      = 20,     // velocity Y/ECI (km/s)  (or Fdot/EFG (km) for ob type 7 TTY)
-   XA_OTV_VELZ      = 21;     // velocity Z/ECI (km/s)  (or Gdot/EFG (km) for ob type 7 TTY)
-   
-   
-
-// Equinox indicator
-static const int  
-   EQUINOX_OBSTIME = 0,       // time of observation
-   EQUINOX_OBSYEAR = 1,       // time @ 0 Jan Year of Date
-   EQUINOX_J2K     = 2,       // J2000
-   EQUINOX_B1950   = 3;       // B1950
-   
-// Indexes for sorting ob
-// Sort options:
-// (+/-) 1 = (descending/ascending) time, sensor, obstype, elev
-// (+/-) 2 = (descending/ascending) time, elevation
-// (+/-) 3 = (descending/ascending) time, sensor, otype, el, satno
-// (+/-) 4 = (descending/ascending) sensor, satno, time, elev
-// (+/-) 5 = (descending/ascending) sensor, time, elevation
-// (+/-) 6 = (descending/ascending) sensor, satno, obstype, time, elev
-// (+/-) 7 = (descending/ascending) satno, time, sensor, otype, el
-// (+/-)10 = (descending/ascending) satno, sensor, time     
-   
-static const int  
-   SORT_TIMESENTYPEEL      =  1,  
-   SORT_TIMEEL             =  2,  
-   SORT_TIMESENTYPEELSAT   =  3,  
-   SORT_SENSATTIMEEL       =  4,  
-   SORT_SENTIMEEL          =  5,  
-   SORT_SENSATTYPETIMEEL   =  6,  
-   SORT_SATTIMESENTYPEEL   =  7,  
-   SORT_ORDERASREAD        =  8,  
-   SORT_SATSENTIME         = 10;
-   
-   
-// Indexes of different obs file format
-static const int  
-   OBSFORM_B3   = 0,   // B3 obs format
-   OBSFORM_TTY  = 1,   // Transmission obs format
-   OBSFORM_CSV  = 2;   // CSV obs format
-   
-static const int BADOBSKEY = -1;   
-static const int DUPOBSKEY = 0;
-   
-   
-//*******************************************************************************   
-   
-
-
-
-// ObsDll's function pointers
-fnPtrObsInit                        ObsInit;
-fnPtrObsGetInfo                     ObsGetInfo;
-fnPtrObsSetTTYYear                  ObsSetTTYYear;
-fnPtrObsLoadFile                    ObsLoadFile;
-fnPtrObsSaveFile                    ObsSaveFile;
-fnPtrObsRemove                      ObsRemove;
-fnPtrObsRemoveAll                   ObsRemoveAll;
-fnPtrObsGetCount                    ObsGetCount;
-fnPtrObsGetLoaded                   ObsGetLoaded;
-fnPtrObsLoadCard                    ObsLoadCard;
-fnPtrObsLoadTwoCards                ObsLoadTwoCards;
-fnPtrObsAddFrB3Card                 ObsAddFrB3Card;
-fnPtrObsAddFrB3CardML               ObsAddFrB3CardML;
-fnPtrObsB3ToCsv                     ObsB3ToCsv;
-fnPtrObsCsvToB3                     ObsCsvToB3;
-fnPtrObsAddFrTTYCards               ObsAddFrTTYCards;
-fnPtrObsAddFrTTYCardsML             ObsAddFrTTYCardsML;
-fnPtrObsTTYToCsv                    ObsTTYToCsv;
-fnPtrObsCsvToTTY                    ObsCsvToTTY;
-fnPtrObsAddFrCsv                    ObsAddFrCsv;
-fnPtrObsAddFrCsvML                  ObsAddFrCsvML;
-fnPtrObsAddFrFields                 ObsAddFrFields;
-fnPtrObsAddFrFieldsML               ObsAddFrFieldsML;
-fnPtrObsAddFrArray                  ObsAddFrArray;
-fnPtrObsAddFrArrayML                ObsAddFrArrayML;
-fnPtrObsGetAllFields                ObsGetAllFields;
-fnPtrObsDataToArray                 ObsDataToArray;
-fnPtrObsUpdateFrFields              ObsUpdateFrFields;
-fnPtrObsGetField                    ObsGetField;
-fnPtrObsSetField                    ObsSetField;
-fnPtrObsGetB3Card                   ObsGetB3Card;
-fnPtrObsGetTTYCard                  ObsGetTTYCard;
-fnPtrObsGetCsv                      ObsGetCsv;
-fnPtrObsFieldsToB3Card              ObsFieldsToB3Card;
-fnPtrObsFieldsToCsv                 ObsFieldsToCsv;
-fnPtrObsFieldsToTTYCard             ObsFieldsToTTYCard;
-fnPtrObsFieldsToObsKey              ObsFieldsToObsKey;
-fnPtrObsFieldsToObsKeyML            ObsFieldsToObsKeyML;
-fnPtrObsB3Parse                     ObsB3Parse;
-fnPtrObsParse                       ObsParse;
-fnPtrObsLoadFileGID                 ObsLoadFileGID;
-fnPtrObsSaveFileGID                 ObsSaveFileGID;
-fnPtrObsRemoveGID                   ObsRemoveGID;
-fnPtrObsGetCountGID                 ObsGetCountGID;
-fnPtrObsGetLoadedGID                ObsGetLoadedGID;
-fnPtrObsTypeCToI                    ObsTypeCToI;
-fnPtrObsTypeIToC                    ObsTypeIToC;
-fnPtrObsResetSelObs                 ObsResetSelObs;
-fnPtrObsGetStates                   ObsGetStates;
-fnPtrObsDataToStates                ObsDataToStates;
-fnPtrObsArrToLines                  ObsArrToLines;
+  // CSV SIGMA TYPE INDICATOR
+  static const int CSVSIGMATYPE = 7;
+  
+  // INDEXES OF OBSERVATION DATA FIELDS
+  static const int  
+     XF_OBS_SECCLASS     =  1,     // SECURITY CLASSIFICATION
+     XF_OBS_SATNUM       =  2,     // SATELLITE NUMBER
+     XF_OBS_SENNUM       =  3,     // SENSOR NUMBER
+     XF_OBS_DS50UTC      =  4,     // OBSERVATION TIME IN DAYS SINCE 1950 UTC
+     XF_OBS_ELEVATION    =  5,     // ELEVATION (DEG)
+     XF_OBS_DECLINATION  =  6,     // DECLINATION (DEG)
+     XF_OBS_AZIMUTH      =  7,     // AZIMUTH (DEG)
+     XF_OBS_RA           =  8,     // RIGHT-ASCENSION (DEG)
+     XF_OBS_RANGE        =  9,     // RANGE (KM)
+     XF_OBS_RANGERATE    = 10,     // RANGE RATE (KM/S)
+     XF_OBS_ELRATE       = 11,     // ELEVATION RATE (DEG/S)
+     XF_OBS_AZRATE       = 12,     // AZIMUTH RATE (DEG/S)
+     XF_OBS_RANGEACCEL   = 13,     // RANGE ACCELERATION (KM/S^2)
+     XF_OBS_OBSTYPE      = 14,     // OBSERVATION TYPE
+     XF_OBS_TRACKIND     = 15,     // TRACK POSITION INDICATOR (3=START TRACK OB, 4=IN TRACK OB, 5=END TRACK OB)
+     XF_OBS_ASTAT        = 16,     // ASSOCIATION STATUS ASSIGNED BY SPADOC
+     XF_OBS_SITETAG      = 17,     // ORIGINAL SATELLITE NUMBER
+     XF_OBS_SPADOCTAG    = 18,     // SPADOC-ASSSIGNED TAG NUMBER
+     XF_OBS_POSE         = 19,     // POSITION X/EFG (KM)
+     XF_OBS_POSF         = 20,     // POSITION Y/EFG (KM)
+     XF_OBS_POSG         = 21,     // POSITION Z/EFG (KM)
+     XF_OBS_POSX         = 22,     // POSITION X/ECI (KM)
+     XF_OBS_POSY         = 23,     // POSITION Y/ECI (KM)
+     XF_OBS_POSZ         = 24,     // POSITION Z/ECI (KM)
+  
+     XF_OBS_RCS_PP       = 25,     // PRINCIPAL POLARIZATION RCS
+     XF_OBS_RCS_OP       = 26,     // ORTHOGONAL POLARIZATION RCS
+     XF_OBS_RCS_PPS      = 27,     // PRINCIPAL POLARIZATION RCS SIGMA
+     XF_OBS_RCS_OPS      = 28,     // ORTHOGONAL POLARIZATION RCS SIGMA
+     XF_OBS_SNR          = 29,     // RADAR SIGNAL TO NOISE RATIO
+     XF_OBS_BORE_AZ      = 30,     // AZIMUTH OF BORESITE
+     XF_OBS_BORE_EL      = 31,     // ELEVATION OF BORESITE
+     XF_OBS_VISMAG       = 32,     // APPARENT VISUAL MAGNITUDE
+     XF_OBS_VISMAG_NORM  = 33,     // GEO NORMALIZED VISUAL MAGNITUDE
+     XF_OBS_SOL_PHASE    = 34,     // SOLAR PHASE ANGLE
+     XF_OBS_FRAME        = 35,     // FRAME NUMBER
+     XF_OBS_ABERRATION   = 36,     // ABERRATION CORRECTION INDICATOR (0=YES, 1=NO)
+     XF_OBS_ASTAT_METHOD = 37;     // EITHER R" OR T; ROTAS=GENERAL PERTURBATIONS, TRACK=SPECIAL PERTURBATIONS
+  
+  // INDEXES OF OBSERVATION DATA IN AN ARRAY
+  static const int  
+     XA_OBS_SECCLASS     =  0,     // SECURITY CLASSIFICATION, 1 = UNCLASSIFIED, 2 = CONFIDENTIAL, 3 = SECRET
+     XA_OBS_SATNUM       =  1,     // SATELLITE NUMBER
+     XA_OBS_SENNUM       =  2,     // SENSOR NUMBER
+     XA_OBS_DS50UTC      =  3,     // OBSERVATION TIME IN DAYS SINCE 1950 UTC
+     XA_OBS_ELORDEC      =  4,     // ELEVATION (FOR OB TYPE 1, 2, 3, 4, 8) OR DECLINATION (FOR OB TYPE 5, 9) (DEG)
+     XA_OBS_AZORRA       =  5,     // AZIMUTH (FOR OB TYPE 1, 2, 3, 4, 8) OR RIGHT ASCESION (FOR OB TYPE 5, 9) (DEG)
+     XA_OBS_RANGE        =  6,     // RANGE (KM)
+     XA_OBS_RANGERATE    =  7,     // RANGE RATE (KM/S) FOR NON-OPTICAL OBS TYPE
+     XA_OBS_ELRATE       =  8,     // ELEVATION RATE (DEG/S)
+     XA_OBS_AZRATE       =  9,     // AZIMUTH RATE (DEG/S)
+     XA_OBS_RANGEACCEL   = 10,     // RANGE ACCELERATION (KM/S^2)
+     XA_OBS_OBSTYPE      = 11,     // OBSERVATION TYPE   
+     XA_OBS_TRACKIND     = 12,     // TRACK POSITION INDICATOR (3=START TRACK OB, 4=IN TRACK OB, 5=END TRACK OB)
+     XA_OBS_ASTAT        = 13,     // ASSOCIATION STATUS ASSIGNED BY SPADOC
+     XA_OBS_SITETAG      = 14,     // ORIGINAL SATELLITE NUMBER
+     XA_OBS_SPADOCTAG    = 15,     // SPADOC-ASSSIGNED TAG NUMBER
+     XA_OBS_POSX         = 16,     // POSITION X/ECI OR X/EFG (KM)
+     XA_OBS_POSY         = 17,     // POSITION Y/ECI OR Y/EFG (KM)
+     XA_OBS_POSZ         = 18,     // POSITION Z/ECI OR Z/EFG (KM)   
+     XA_OBS_VELX         = 19,     // VELOCITY X/ECI (KM/S)  (OR EDOT/EFG (KM) FOR OB TYPE 7 TTY)
+     XA_OBS_VELY         = 20,     // VELOCITY Y/ECI (KM/S)  (OR FDOT/EFG (KM) FOR OB TYPE 7 TTY)
+     XA_OBS_VELZ         = 21,     // VELOCITY Z/ECI (KM/S)  (OR GDOT/EFG (KM) FOR OB TYPE 7 TTY)
+     XA_OBS_YROFEQNX     = 22,     // YEAR OF EQUINOX INDICATOR FOR OBS TYPE 5/9 (0= TIME OF OBS, 1= 0 JAN OF DATE, 2= J2000, 3= B1950)
+  
+     XA_OBS_AZORRABIAS   = 33,     // AZ/RA BIAS (DEG)
+     XA_OBS_ELORDECBIAS  = 34,     // EL/DEC BIAS (DEG)
+     XA_OBS_RGBIAS       = 35,     // RANGE BIAS (KM)
+     XA_OBS_RRBIAS       = 36,     // RANGE-RATE BIAS (KM/SEC)
+     XA_OBS_TIMEBIAS     = 37,     // TIME BIAS (SEC)
+     XA_OBS_RAZORRABIAS  = 38,     // AZ/RA RATE BIAS (DEG/SEC) 
+     XA_OBS_RELORDECBIAS = 39,     // EL/DEC RATE BIAS (DEG/SEC)
+  
+     XA_OBS_SIGMATYPE    = 40,     // INDIVIDUAL OBS'S SIGMAS TYPE (0: N/A, 6: 6 ELEMENTS, 21: 21 ELEMENTS, 7: THIS IS CSV OBS)
+     XA_OBS_SIGMAEL1     = 41,     // SIGMA\COVARIANCE ELEMENT 1 - 6 ELEMENS - AZ SIGMA
+     XA_OBS_SIGMAEL2     = 42,     // SIGMA\COVARIANCE ELEMENT 2 - 6 ELEMENS - EL SIGMA
+     XA_OBS_SIGMAEL3     = 43,     // SIGMA\COVARIANCE ELEMENT 3 - 6 ELEMENS - RANGE SIGMA
+     XA_OBS_SIGMAEL4     = 44,     // SIGMA\COVARIANCE ELEMENT 4 - 6 ELEMENS - RANGE RATE SIGMA
+     XA_OBS_SIGMAEL5     = 45,     // SIGMA\COVARIANCE ELEMENT 5 - 6 ELEMENS - AZ RATE SIGMA
+     XA_OBS_SIGMAEL6     = 46,     // SIGMA\COVARIANCE ELEMENT 6 - 6 ELEMENS - EL RATE SIGMA
+     XA_OBS_SIGMAEL7     = 47,     // SIGMA\COVARIANCE ELEMENT 7 
+     XA_OBS_SIGMAEL8     = 48,     // SIGMA\COVARIANCE ELEMENT 8
+     XA_OBS_SIGMAEL9     = 49,     // SIGMA\COVARIANCE ELEMENT 9
+     XA_OBS_SIGMAEL10    = 50,     // SIGMA\COVARIANCE ELEMENT 10
+     XA_OBS_SIGMAEL11    = 51,     // SIGMA\COVARIANCE ELEMENT 11
+     XA_OBS_SIGMAEL12    = 52,     // SIGMA\COVARIANCE ELEMENT 12
+     XA_OBS_SIGMAEL13    = 53,     // SIGMA\COVARIANCE ELEMENT 13
+     XA_OBS_SIGMAEL14    = 54,     // SIGMA\COVARIANCE ELEMENT 14
+     XA_OBS_SIGMAEL15    = 55,     // SIGMA\COVARIANCE ELEMENT 15
+     XA_OBS_SIGMAEL16    = 56,     // SIGMA\COVARIANCE ELEMENT 16
+     XA_OBS_SIGMAEL17    = 57,     // SIGMA\COVARIANCE ELEMENT 17
+     XA_OBS_SIGMAEL18    = 58,     // SIGMA\COVARIANCE ELEMENT 18
+     XA_OBS_SIGMAEL19    = 59,     // SIGMA\COVARIANCE ELEMENT 19
+     XA_OBS_SIGMAEL20    = 60,     // SIGMA\COVARIANCE ELEMENT 20
+     XA_OBS_SIGMAEL21    = 61,     // SIGMA\COVARIANCE ELEMENT 21
+  
+     XA_OBS_SIZE         = 64;
+     
+  // INDEXES OF OBSERVATION DATA IN AN ARRAY (OBS TYPE CSV SPECIFIC)
+  static const int  
+     XA_OTCSV_SECCLASS     =  0,     // SECURITY CLASSIFICATION, 1 = UNCLASSIFIED, 2 = CONFIDENTIAL, 3 = SECRET
+     XA_OTCSV_SATNUM       =  1,     // SATELLITE NUMBER
+     XA_OTCSV_SENNUM       =  2,     // SENSOR NUMBER
+     XA_OTCSV_DS50UTC      =  3,     // OBSERVATION TIME IN DAYS SINCE 1950 UTC
+     XA_OTCSV_ELORDEC      =  4,     // ELEVATION (FOR OB TYPE 1, 2, 3, 4, 8) OR DECLINATION (FOR OB TYPE 5, 9) (DEG)
+     XA_OTCSV_AZORRA       =  5,     // AZIMUTH (FOR OB TYPE 1, 2, 3, 4, 8) OR RIGHT ASCESION (FOR OB TYPE 5, 9) (DEG)
+     XA_OTCSV_RANGE        =  6,     // RANGE (KM)
+     XA_OTCSV_RANGERATE    =  7,     // RANGE RATE (KM/S) FOR NON-OPTICAL OBS TYPE
+     XA_OTCSV_ELRATE       =  8,     // ELEVATION RATE (DEG/S)
+     XA_OTCSV_AZRATE       =  9,     // AZIMUTH RATE (DEG/S)
+     XA_OTCSV_RANGEACCEL   = 10,     // RANGE ACCELERATION (KM/S^2)
+     XA_OTCSV_OBSTYPE      = 11,     // OBSERVATION TYPE   
+     XA_OTCSV_TRACKIND     = 12,     // TRACK POSITION INDICATOR (3=START TRACK OB, 4=IN TRACK OB, 5=END TRACK OB)
+     XA_OTCSV_ASTAT        = 13,     // ASSOCIATION STATUS ASSIGNED BY SPADOC
+     XA_OTCSV_SITETAG      = 14,     // ORIGINAL SATELLITE NUMBER
+     XA_OTCSV_SPADOCTAG    = 15,     // SPADOC-ASSSIGNED TAG NUMBER
+     XA_OTCSV_POSX         = 16,     // POSITION X/ECI OR X/EFG (KM)
+     XA_OTCSV_POSY         = 17,     // POSITION Y/ECI OR Y/EFG (KM)
+     XA_OTCSV_POSZ         = 18,     // POSITION Z/ECI OR Z/EFG (KM)   
+     XA_OTCSV_VELX         = 19,     // VELOCITY X/ECI (KM/S)  (OR EDOT/EFG (KM) FOR OB TYPE 7 TTY)
+     XA_OTCSV_VELY         = 20,     // VELOCITY Y/ECI (KM/S)  (OR FDOT/EFG (KM) FOR OB TYPE 7 TTY)
+     XA_OTCSV_VELZ         = 21,     // VELOCITY Z/ECI (KM/S)  (OR GDOT/EFG (KM) FOR OB TYPE 7 TTY)
+     XA_OTCSV_YROFEQNX     = 22,     // YEAR OF EQUINOX INDICATOR FOR OBS TYPE 5/9 (0= TIME OF OBS, 1= 0 JAN OF DATE, 2= J2000, 3= B1950)
+  
+     XA_OTCSV_RCS_PP       = 23,     // PRINCIPAL POLARIZATION RCS
+     XA_OTCSV_RCS_OP       = 24,     // ORTHOGONAL POLARIZATION RCS
+     XA_OTCSV_RCS_PPS      = 25,     // PRINCIPAL POLARIZATION RCS SIGMA
+     XA_OTCSV_RCS_OPS      = 26,     // ORTHOGONAL POLARIZATION RCS SIGMA
+     XA_OTCSV_SNR          = 27,     // RADAR SIGNAL TO NOISE RATIO
+     XA_OTCSV_BORE_AZ      = 28,     // AZIMUTH OF BORESITE
+     XA_OTCSV_BORE_EL      = 29,     // ELEVATION OF BORESITE
+     XA_OTCSV_VISMAG       = 30,     // APPARENT VISUAL MAGNITUDE
+     XA_OTCSV_VISMAG_NORM  = 31,     // GEO NORMALIZED VISUAL MAGNITUDE
+     XA_OTCSV_SOL_PHASE    = 32,     // SOLAR PHASE ANGLE
+     XA_OTCSV_FRAME        = 33,     // FRAME NUMBER
+     XA_OTCSV_ABERRATION   = 34,     // ABERRATION CORRECTION INDICATOR (0=YES, 1=NO)
+     XA_OTCSV_ASTAT_METHOD = 35,     // 0 = ROTAS, 1 = TRACK
+     
+     XA_OTCSV_SIGMATYPE    = 40,     // MUST EQUAL TO 7 TO SIGNIFY THIS IS CSV FORMAT
+     XA_OTCSV_SIGMAEL1     = 41,     // SIGMA\COVARIANCE ELEMENT 1 - AZ SIGMA
+     XA_OTCSV_SIGMAEL2     = 42,     // SIGMA\COVARIANCE ELEMENT 2 - EL SIGMA
+     XA_OTCSV_SIGMAEL3     = 43,     // SIGMA\COVARIANCE ELEMENT 3 - RANGE SIGMA
+     XA_OTCSV_SIGMAEL4     = 44,     // SIGMA\COVARIANCE ELEMENT 4 - RANGE RATE SIGMA
+     XA_OTCSV_SIGMAEL5     = 45,     // SIGMA\COVARIANCE ELEMENT 5 - AZ RATE SIGMA
+     XA_OTCSV_SIGMAEL6     = 46,     // SIGMA\COVARIANCE ELEMENT 6 - EL RATE SIGMA
+     XA_OTCSV_SIGMAEL7     = 47,     // SIGMA\COVARIANCE ELEMENT 7 - TIME SIGMA 
+     XA_OTCSV_BIAS1        = 48,     // AZ/RA BIAS
+     XA_OTCSV_BIAS2        = 49,     // EL/DEC BIAS
+     XA_OTCSV_BIAS3        = 50,     // RANGE BIAS
+     XA_OTCSV_BIAS4        = 51,     // RANGE-RATE BIAS
+     XA_OTCSV_BIAS5        = 52,     // TIME BIAS
+  
+     
+     XA_OTCSV_SIZE         = 64;   
+     
+  // INDEXES OF OBSERVATION DATA IN AN ARRAY
+  static const int  
+     XA_OBSTATE_SATNUM       =  0,     // SATELLITE NUMBER
+     XA_OBSTATE_SENNUM       =  1,     // SENSOR NUMBER
+     XA_OBSTATE_DS50UTC      =  2,     // OBSERVATION TIME IN DAYS SINCE 1950 UTC
+     
+     XA_OBSTATE_POSX         = 10,     // POSITION X/ECI (KM)
+     XA_OBSTATE_POSY         = 11,     // POSITION Y/ECI (KM)
+     XA_OBSTATE_POSZ         = 12,     // POSITION Z/ECI (KM)   
+     XA_OBSTATE_VELX         = 13,     // VELOCITY X/ECI (KM/S)
+     XA_OBSTATE_VELY         = 14,     // VELOCITY Y/ECI (KM/S)
+     XA_OBSTATE_VELZ         = 15,     // VELOCITY Z/ECI (KM/S)   
+     XA_OBSTATE_LAT          = 16,     // GEODETIC LATITUDE (DEG)
+     XA_OBSTATE_LON          = 17,     // GEODETIC LONGITUDE (DEG)
+     XA_OBSTATE_HGHT         = 18,     // GEODETIC HEIGHT (KM)   
+     XA_OBSTATE_POSE         = 19,     // POSITION X/EFG (KM)
+     XA_OBSTATE_POSF         = 20,     // POSITION Y/EFG (KM)   
+     XA_OBSTATE_POSG         = 21,     // POSITION Z/EFG (KM)
+  
+     
+     XA_OBSTATE_SIZE         = 64;   
+     
+  // INDEXES OF OBSERVATION DATA AVAILABLE FOR EACH OBS TYPE (OT0: OBS TYPE 0, OT1: OBS TYPE 1, ...)
+  // ALL OBS TYPES HAVE THESE COMMON DATA FIELDS  XA_OBS_SECCLASS = 0, XA_OBS_SATNUM = 1, AND  XA_OBS_SENNUM = 2
+  static const int     
+     XA_OT0_DS50UTC   =  3,     // OBSERVATION TIME IN DAYS SINCE 1950 UTC
+     XA_OT0_RANGERATE =  7,     // RANGE RATE (KM/S)  
+    
+     XA_OT1_DS50UTC   =  3,     // OBSERVATION TIME IN DAYS SINCE 1950 UTC
+     XA_OT1_ELEVATION =  4,     // ELEVATION (DEG)
+     XA_OT1_AZIMUTH   =  5,     // AZIMUTH (DEG)
+  
+     XA_OT2_DS50UTC   =  3,     // OBSERVATION TIME IN DAYS SINCE 1950 UTC
+     XA_OT2_ELEVATION =  4,     // ELEVATION (DEG)
+     XA_OT2_AZIMUTH   =  5,     // AZIMUTH (DEG)
+     XA_OT2_RANGE     =  6,     // RANGE (KM)
+  
+     XA_OT3_DS50UTC   =  3,     // OBSERVATION TIME IN DAYS SINCE 1950 UTC
+     XA_OT3_ELEVATION =  4,     // ELEVATION (DEG)
+     XA_OT3_AZIMUTH   =  5,     // AZIMUTH (DEG)
+     XA_OT3_RANGE     =  6,     // RANGE (KM)
+     XA_OT3_RANGERATE =  7,     // RANGE RATE (KM/S) 
+  
+     XA_OT4_DS50UTC   =  3,     // OBSERVATION TIME IN DAYS SINCE 1950 UTC
+     XA_OT4_ELEVATION =  4,     // ELEVATION (DEG)
+     XA_OT4_AZIMUTH   =  5,     // AZIMUTH (DEG)
+     XA_OT4_RANGE     =  6,     // RANGE (KM)
+     XA_OT4_RANGERATE =  7,     // RANGE RATE (KM/S) 
+     XA_OT4_ELRATE    =  8,     // ELEVATION RATE (DEG/S)
+     XA_OT4_AZRATE    =  9,     // AZIMUTH RATE (DEG/S)
+     XA_OT4_RANGEACCEL= 10,     // RANGE ACCELERATION (KM/S^2)
+  
+     XA_OT5_DS50UTC   =  3,     // OBSERVATION TIME IN DAYS SINCE 1950 UTC
+     XA_OT5_DECL      =  4,     // DECLINATION (DEG)
+     XA_OT5_RIGHTASC  =  5,     // RIGHT ASCESION (DEG)
+     XA_OT5_YROFEQNX  = 22,     // YEAR OF EQUINOX INDICATOR (0= TIME OF OBS, 1= 0 JAN OF DATE, 2= J2000, 3= B1950)
+  
+     XA_OT6_DS50UTC   =  3,     // OBSERVATION TIME IN DAYS SINCE 1950 UTC
+     XA_OT6_RANGE     =  6,     // RANGE (KM)
+  
+     XA_OT8_DS50UTC   =  3,     // OBSERVATION TIME IN DAYS SINCE 1950 UTC
+     XA_OT8_ELEVATION =  4,     // ELEVATION (DEG)
+     XA_OT8_AZIMUTH   =  5,     // AZIMUTH (DEG)
+     XA_OT8_RANGE     =  6,     // OPTIONAL - RANGE (KM)
+     XA_OT8_POSE      = 16,     // ORBITING SENSOR POSITION X/EFG (KM)
+     XA_OT8_POSF      = 17,     // ORBITING SENSOR POSITION Y/EFG (KM)
+     XA_OT8_POSG      = 18,     // ORBITING SENSOR POSITION Z/EFG (KM)   
+  
+     XA_OT9_DS50UTC   =  3,     // OBSERVATION TIME IN DAYS SINCE 1950 UTC
+     XA_OT9_DECL      =  4,     // DECLINATION (DEG)
+     XA_OT9_RIGHTASC  =  5,     // RIGHT ASCESION (DEG)
+     XA_OT9_RANGE     =  6,     // OPTIONAL - RANGE (KM)
+     XA_OT9_POSE      = 16,     // ORBITING SENSOR POSITION X/EFG (KM)
+     XA_OT9_POSF      = 17,     // ORBITING SENSOR POSITION Y/EFG (KM)
+     XA_OT9_POSG      = 18,     // ORBITING SENSOR POSITION Z/EFG (KM)   
+     XA_OT9_YROFEQNX  = 22,     // YEAR OF EQUINOX INDICATOR (0= TIME OF OBS, 1= 0 JAN OF DATE, 2= J2000, 3= B1950)   
+  
+     XA_OTP_DS50UTC   =  3,     // OBSERVATION TIME IN DAYS SINCE 1950 UTC
+     XA_OTP_POSX      = 16,     // POSITION X/ECI OR X/EFG (KM)
+     XA_OTP_POSY      = 17,     // POSITION Y/ECI OR Y/EFG (KM)
+     XA_OTP_POSZ      = 18,     // POSITION Z/ECI OR Z/EFG (KM)   
+     
+     XA_OTV_DS50UTC   =  3,     // OBSERVATION TIME IN DAYS SINCE 1950 UTC
+     XA_OTV_POSX      = 16,     // POSITION X/ECI OR X/EFG (KM)
+     XA_OTV_POSY      = 17,     // POSITION Y/ECI OR Y/EFG (KM)
+     XA_OTV_POSZ      = 18,     // POSITION Z/ECI OR Z/EFG (KM)   
+     XA_OTV_VELX      = 19,     // VELOCITY X/ECI (KM/S)  (OR EDOT/EFG (KM) FOR OB TYPE 7 TTY)
+     XA_OTV_VELY      = 20,     // VELOCITY Y/ECI (KM/S)  (OR FDOT/EFG (KM) FOR OB TYPE 7 TTY)
+     XA_OTV_VELZ      = 21;     // VELOCITY Z/ECI (KM/S)  (OR GDOT/EFG (KM) FOR OB TYPE 7 TTY)
+     
+     
+  
+  // EQUINOX INDICATOR
+  static const int  
+     EQUINOX_OBSTIME = 0,       // TIME OF OBSERVATION
+     EQUINOX_OBSYEAR = 1,       // TIME @ 0 JAN YEAR OF DATE
+     EQUINOX_J2K     = 2,       // J2000
+     EQUINOX_B1950   = 3;       // B1950
+     
+  // INDEXES FOR SORTING OB
+  // SORT OPTIONS:
+  // (+/-) 1 = (DESCENDING/ASCENDING) TIME, SENSOR, OBSTYPE, ELEV
+  // (+/-) 2 = (DESCENDING/ASCENDING) TIME, ELEVATION
+  // (+/-) 3 = (DESCENDING/ASCENDING) TIME, SENSOR, OTYPE, EL, SATNO
+  // (+/-) 4 = (DESCENDING/ASCENDING) SENSOR, SATNO, TIME, ELEV
+  // (+/-) 5 = (DESCENDING/ASCENDING) SENSOR, TIME, ELEVATION
+  // (+/-) 6 = (DESCENDING/ASCENDING) SENSOR, SATNO, OBSTYPE, TIME, ELEV
+  // (+/-) 7 = (DESCENDING/ASCENDING) SATNO, TIME, SENSOR, OTYPE, EL
+  // (+/-)10 = (DESCENDING/ASCENDING) SATNO, SENSOR, TIME     
+     
+  static const int  
+     SORT_TIMESENTYPEEL      =  1,   // SORT ORDER IS TIME, SENSOR, OBSTYPE, ELEV (NEGATIVE VALUE FOR REVERSE ORDER)
+     SORT_TIMEEL             =  2,   // SORT ORDER IS TIME, ELEVATION (NEGATIVE VALUE FOR REVERSE ORDER)
+     SORT_TIMESENTYPEELSAT   =  3,   // SORT ORDER IS TIME, SENSOR, OTYPE, EL, SATNO (NEGATIVE VALUE FOR REVERSE ORDER)
+     SORT_SENSATTIMEEL       =  4,   // SORT ORDER IS SENSOR, SATNO, TIME, ELEV (NEGATIVE VALUE FOR REVERSE ORDER)
+     SORT_SENTIMEEL          =  5,   // SORT ORDER IS SENSOR, TIME, ELEVATION (NEGATIVE VALUE FOR REVERSE ORDER)
+     SORT_SENSATTYPETIMEEL   =  6,   // SORT ORDER IS SENSOR, SATNO, OBSTYPE, TIME, ELEV (NEGATIVE VALUE FOR REVERSE ORDER)
+     SORT_SATTIMESENTYPEEL   =  7,   // SORT ORDER IS SATNO, TIME, SENSOR, OTYPE, EL (NEGATIVE VALUE FOR REVERSE ORDER)
+     SORT_ORDERASREAD        =  8,   // SORT ORDER IS THE ORDER OF OBS WHEN THEY WERE LOADED 
+     SORT_SATSENTIME         = 10;   // SORT ORDER IS SATNO, SENSOR, TIME (NEGATIVE VALUE FOR REVERSE ORDER)    
+     
+     
+  // INDEXES OF DIFFERENT OBS FILE FORMAT
+  static const int  
+     OBSFORM_B3   = 0,   // B3 OBS FORMAT
+     OBSFORM_TTY  = 1,   // TRANSMISSION OBS FORMAT
+     OBSFORM_CSV  = 2;   // CSV OBS FORMAT
+     
+  static const int BADOBSKEY = -1;   
+  static const int DUPOBSKEY = 0;
+  
+  
+  // DIFFERENT KEY MODE OPTIONS FOR OBSKEY
+  static const int  
+     OBS_KEYMODE_NODUP  = 0,    // DEFAULT - DUPLICATE OBS CAN NOT BE LOADED IN BINARY TREE                           
+     OBS_KEYMODE_DMA    = 1;    // ALLOW DUPLICATE OBS TO BE LOADED AND HAVE DIRECT MEMORY ACCESS (DMA - NO DUPLICATION CHECK AND NO BINARY TREE)   
+  
+     
+  //*******************************************************************************   
+     
+// ObsDll's function pointers declaration
+extern fnPtrObsInit                        ObsInit;
+extern fnPtrObsGetInfo                     ObsGetInfo;
+extern fnPtrObsSetTTYYear                  ObsSetTTYYear;
+extern fnPtrObsLoadFile                    ObsLoadFile;
+extern fnPtrObsSaveFile                    ObsSaveFile;
+extern fnPtrObsRemove                      ObsRemove;
+extern fnPtrObsRemoveAll                   ObsRemoveAll;
+extern fnPtrObsGetCount                    ObsGetCount;
+extern fnPtrObsGetLoaded                   ObsGetLoaded;
+extern fnPtrObsLoadCard                    ObsLoadCard;
+extern fnPtrObsLoadTwoCards                ObsLoadTwoCards;
+extern fnPtrObsAddFrB3Card                 ObsAddFrB3Card;
+extern fnPtrObsAddFrB3CardML               ObsAddFrB3CardML;
+extern fnPtrObsB3ToCsv                     ObsB3ToCsv;
+extern fnPtrObsCsvToB3                     ObsCsvToB3;
+extern fnPtrObsAddFrTTYCards               ObsAddFrTTYCards;
+extern fnPtrObsAddFrTTYCardsML             ObsAddFrTTYCardsML;
+extern fnPtrObsTTYToCsv                    ObsTTYToCsv;
+extern fnPtrObsCsvToTTY                    ObsCsvToTTY;
+extern fnPtrObsAddFrCsv                    ObsAddFrCsv;
+extern fnPtrObsAddFrCsvML                  ObsAddFrCsvML;
+extern fnPtrObsAddFrFields                 ObsAddFrFields;
+extern fnPtrObsAddFrFieldsML               ObsAddFrFieldsML;
+extern fnPtrObsAddFrArray                  ObsAddFrArray;
+extern fnPtrObsAddFrArrayML                ObsAddFrArrayML;
+extern fnPtrObsGetAllFields                ObsGetAllFields;
+extern fnPtrObsDataToArray                 ObsDataToArray;
+extern fnPtrObsUpdateFrFields              ObsUpdateFrFields;
+extern fnPtrObsGetField                    ObsGetField;
+extern fnPtrObsSetField                    ObsSetField;
+extern fnPtrObsGetB3Card                   ObsGetB3Card;
+extern fnPtrObsGetTTYCard                  ObsGetTTYCard;
+extern fnPtrObsGetCsv                      ObsGetCsv;
+extern fnPtrObsFieldsToB3Card              ObsFieldsToB3Card;
+extern fnPtrObsFieldsToCsv                 ObsFieldsToCsv;
+extern fnPtrObsFieldsToTTYCard             ObsFieldsToTTYCard;
+extern fnPtrObsFieldsToObsKey              ObsFieldsToObsKey;
+extern fnPtrObsFieldsToObsKeyML            ObsFieldsToObsKeyML;
+extern fnPtrObsB3Parse                     ObsB3Parse;
+extern fnPtrObsParse                       ObsParse;
+extern fnPtrObsLoadFileGID                 ObsLoadFileGID;
+extern fnPtrObsSaveFileGID                 ObsSaveFileGID;
+extern fnPtrObsRemoveGID                   ObsRemoveGID;
+extern fnPtrObsGetCountGID                 ObsGetCountGID;
+extern fnPtrObsGetLoadedGID                ObsGetLoadedGID;
+extern fnPtrObsTypeCToI                    ObsTypeCToI;
+extern fnPtrObsTypeIToC                    ObsTypeIToC;
+extern fnPtrObsResetSelObs                 ObsResetSelObs;
+extern fnPtrObsGetStates                   ObsGetStates;
+extern fnPtrObsDataToStates                ObsDataToStates;
+extern fnPtrObsArrToLines                  ObsArrToLines;
+extern fnPtrSetObsKeyMode                  SetObsKeyMode;
+extern fnPtrGetObsKeyMode                  GetObsKeyMode;
+extern fnPtrSatNumFrObsKey                 SatNumFrObsKey;
+extern fnPtrSenNumFrObsKey                 SenNumFrObsKey;
 
 
 

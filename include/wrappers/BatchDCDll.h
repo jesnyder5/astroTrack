@@ -1,13 +1,15 @@
-// This wrapper file was generated automatically by the A3\GenDllWrappers program.
+// This wrapper file was generated automatically by the GenDllWrappers program.
 
 #ifndef BATCHDCDLL_H
 #define BATCHDCDLL_H
 
-#include "services/DllUtils.h"
+#include "../services/DllUtils.h"
 
-// Provide the path to the dll/so
-#ifdef _WIN32
+// Provide the path to the dll/so/dylib
+#if defined (_WIN32) || defined (__CYGWIN__)
   #define BatchDCDll "BatchDC.dll"
+#elif __APPLE__
+  #define BatchDCDll "libbatchdc.dylib"
 #else
   #define BatchDCDll "libbatchdc.so"
 #endif
@@ -334,7 +336,7 @@ typedef int (STDCALL *fnPtrBatchDCGetAccptCrit)(__int64 satKey, double xa_ac[64]
 // returns the corrected SGP4/SGP4-XP elements and related data
 // Note: No need to initialize VCM before calling this method
 // satKey             The satellite's unique key of the specified satellite (must be VCM or SPVEC) (in-Long)
-// xa_egpCtrl         Array (in/out) containing settings for SpToEGP conversion, see XA_EGPCTRL_? for array arrangement (in-Double[64])
+// xa_egpCtrl         Array (in/out) containing settings for SpToEGP conversion, see XA_EGPCTRL_? for array arrangement (inout-Double[64])
 // xai_dcElts         Array of integers containing resulting BatchDC data (out-Integer[256])
 // xar_dcElts         Array of doubles containing resulting BatchDC data (out-Double[256])
 // xas_dcElts         String containing resulting BatchDC data - not yet used (out-Character[512])
@@ -346,7 +348,7 @@ typedef int (STDCALL *fnPtrSpToEGP)(__int64 satKey, double xa_egpCtrl[64], int x
 // returns the corrected elements SGP4/SGP4-XP in form of a TLE
 // Note: No need to initialize VCM before calling this method
 // satKey             The satellite's unique key of the specified satellite (must be VCM or SPVEC) (in-Long)
-// xa_egpCtrl         Array (in/out) containing settings for SpToEGP conversion, see XA_EGPCTRL_? for array arrangement (in-Double[64])
+// xa_egpCtrl         Array (in/out) containing settings for SpToEGP conversion, see XA_EGPCTRL_? for array arrangement (inout-Double[64])
 // line1              Returned first line of a TLE. (out-Character[512])
 // line2              Returned second line of a TLE (out-Character[512])
 // returns 0 if successful, 1: dc fails, best elset returned, 2: dc fails, no eleset returned
@@ -357,7 +359,7 @@ typedef int (STDCALL *fnPtrSpToTle)(__int64 satKey, double xa_egpCtrl[64], char 
 // returns the corrected elements SGP4/SGP4-XP in form of a TLE
 // Note: No need to initialize VCM before calling this method
 // satKey             The satellite's unique key (in-Long)
-// xa_egpCtrl         Array (in/out) containing settings for SpToEGP conversion, see XA_EGPCTRL_? for array arrangement (in-Double[64])
+// xa_egpCtrl         Array (in/out) containing settings for SpToEGP conversion, see XA_EGPCTRL_? for array arrangement (inout-Double[64])
 // csvLine            A string to hold the TLE in csv format. (out-Character[512])
 // returns 0 if successful, 1: dc fails, best elset returned, 2: dc fails, no eleset returned
 typedef int (STDCALL *fnPtrSpToCsv)(__int64 satKey, double xa_egpCtrl[64], char csvLine[512]);
@@ -366,268 +368,265 @@ typedef int (STDCALL *fnPtrSpToCsv)(__int64 satKey, double xa_egpCtrl[64], char 
 // Performs batch-least-square differential corrections using the input external ephemeris and treating them as observations and
 // returns the corrected SGP4/SGP4-XP elements and related data
 // extEphFile         The name of the file containing external ephemeris data to be used in EGP (in-Character[512])
-// xa_egpCtrl         Array (in/out) containing settings for SpToEGP conversion, see XA_EGPCTRL_? for array arrangement (in-Double[64])
+// xa_egpCtrl         Array (in/out) containing settings for SpToEGP conversion, see XA_EGPCTRL_? for array arrangement (inout-Double[64])
 // xai_dcElts         Array of integers containing resulting BatchDC data (out-Integer[256])
 // xar_dcElts         Array of doubles containing resulting BatchDC data (out-Double[256])
 // xas_dcElts         String containing resulting BatchDC data - not yet used (out-Character[512])
 // returns 0 if successful, 1: dc fails, best elset returned, 2: dc fails, no eleset returned
 typedef int (STDCALL *fnPtrExtEphemToEGP)(char extEphFile[512], double xa_egpCtrl[64], int xai_dcElts[256], double xar_dcElts[256], char xas_dcElts[512]);
-
-// DC setting parameters
-
-#define MAX_PARAMS   256 
-
-
-// DC print options
-static const int  
-   DC_PRINT_FIRSTBEST   =  0,   // print first and last iteration
-   DC_PRINT_ALLPASS     =  1,   // print every pass and summary
-   DC_PRINT_SUMONLY     =  2,   // print summary only
-   DC_PRINT_ELTONLY     =  3,   // print output elemenets only 
-   DC_PRINT_NONE        =  4;   // do not print anything 
-   
-// Iteration summary options
-static const int     
-   ITER_SUM_KEP         =  1,   // print summary every iteration in Keplerian elts
-   ITER_SUM_EQNX        =  2;   // print summary every iteration in Equinoctial elts
-
-// indexes for integer data fields
-static const int  
-   XAI_CTRL_PRINTOPTION  =  0,    // DC print option
-   XAI_CTRL_DEBIASOBS    =  1,    // Apply biases from sensor file
-   XAI_CTRL_WEIGHTEDDC   =  2,    // Weighed DC flag
-   XAI_CTRL_EPOCHOPTION  =  3,    // Epoch placement control
-   XAI_CTRL_CORRECT_AG   =  4,    // Element correction flag - Ag
-   XAI_CTRL_CORRECT_AF   =  5,    // Element correction flag - Af
-   XAI_CTRL_CORRECT_PSI  =  6,    // Element correction flag - Psi
-   XAI_CTRL_CORRECT_CHI  =  7,    // Element correction flag - Chi
-   XAI_CTRL_CORRECT_L    =  8,    // Element correction flag - L
-   XAI_CTRL_CORRECT_N    =  9,    // Element correction flag - N
-   XAI_CTRL_CORRECT_B    = 10,    // Element correction flag - B* (SGP4) B (SP)
-   XAI_CTRL_CORRECT_AGOM = 11,    // Element correction flag - Agom (SP)
-   XAI_CTRL_CORRECTORDER = 12,    // Correction order
-   XAI_CTRL_FOR1ITERONLY = 13,    // Correct by the specified correction order for 1 iteration only
-   XAI_CTRL_RESIDSELECT  = 14,    // Flag specifies which residuals are used for RMS calculation and convergence
-   XAI_CTRL_SENPERFORM   = 15,    // Flag; if set, produce sensor performance analysis summary
-   XAI_CTRL_DWOBSPERTRCK = 16,    // Flag; if set, deweight according to # of obs per track 
-   XAI_CTRL_ITERSUMOPT   = 17,    // Iteration summary control
-   XAI_CTRL_PARTIALMETH  = 18,    // Partials method 
-   XAI_CTRL_LTC          = 19,    // Light time correction control
-   XAI_CTRL_BRUCE        = 20,    // Number of iteration to allow no auto rejection of residuals
-   XAI_CTRL_PROPMETHOD   = 21,    // Propagation method - GP=0, XP=4, SP=99
-   XAI_CTRL_CORRECTBVSX  = 22,    // Flag; if set, correct B* vs X
-   XAI_CTRL_MAXOFITERS   = 23,    // Max # of iterations before declaring divergence
-   XAI_CTRL_USEPREDRMS   = 24,    // Use predicted RMS versus previous RMS for convergence testing
-   XAI_CTRL_RESCOMPMETH  = 25,    // Residual computation method (GP only): DELTA/427M=1, SPADOC4=2
-   XAI_CTRL_USEANGRATES  = 26,    // Flag; if set, use angle rates (obstypes = 4, 11)
-   
-   XAI_CTRL_SIZE         = 256;  
-   
-
-
-// indexes for real data fields
-static const int  
-   XAR_CTRL_RMSMULT        =   0,    // RMS multiplier
-   XAR_CTRL_USEREPOCH      =   1,    // Time of specified epoch
-   XAR_CTRL_CNVCRITONT     =   2,    // Convergence criteria on time correction (%)
-   XAR_CTRL_1STPASDELTAT   =   3,    // First pass delta-t rejection criteria
-   XAR_CTRL_CNVCRITON7ELT  =   4,    // Convergence criteria on 7-elt correction (%)
-   XAR_CTRL_BRESET         =   5,    // reset value for B term in subset correction
-   XAR_CTRL_SIZE           = 256;
-
-
-// indexes for accessing DC's integer data
-static const int  
-   XAI_DCELTS_SATNUM       =   0,    // satellite number
-   XAI_DCELTS_ELSETNUM     =   1,    // elset number
-   XAI_DCELTS_ORBTYPE      =   2,    // elset's orbital/element type - see ELTTYPE_ constants for a list of possible values
-   XAI_DCELTS_PROPTYPE     =   3,    // propagation method - see PROPTYPE_ constants for a list of possible values (GP=1, SP=2, External Ephemeris=3)
-   XAI_DCELTS_SPECTR       =   4,    // spectr mode
-   XAI_DCELTS_REVNUM       =   5,    // epoch revolution number
-   XAI_DCELTS_CORRTYPE     =   6,    // correction type: 0=TIME, 1=PLANE", 2=7-ELT, 3=IN-TRK, 4=8-ELT, 5=SUBELT
-   
-   XAI_DCELTS_ITERCOUNT    =  10,    // total iteration count
-   XAI_DCELTS_SUBITER      =  11,    // sub iteration count
-   XAI_DCELTS_RESACC       =  12,    // # residual accepted
-   XAI_DCELTS_RESREJ       =  13,    // # residual rejected
-   
-   XAI_DCELTS_CORRFLGS     =  20,    // 20-28 correction element flags  
-   
-   XAI_DCELTS_SIZE         = 256;
-
-// indexes for accessing DC's real data   
-static const int  
-   XAR_DCELTS_EPOCHDS50UTC =   0,    // elset's epoch time in days since 1950 UTC
-   XAR_DCELTS_NDOT         =   1,    // n-dot/2  (for SGP, eph-type = 0)
-   XAR_DCELTS_N2DOT        =   2,    // n-double-dot/6  (for SGP, eph-type = 0)
-   XAR_DCELTS_BFIELD       =   3,    // either SGP4 bStar (1/er) or SGP4-XP/SP bTerm (m2/kg)
-   XAR_DCELTS_AGOM         =   4,    // SGP4-XP/SP agom (m**2/kg)
-   XAR_DCELTS_OGPARM       =   5,    // SP outgassing parameter (km/s**2)
-   XAR_DCELTS_KEP_A        =   6,    // semi major axis (km)
-   XAR_DCELTS_KEP_E        =   7,    // eccentricity 
-   XAR_DCELTS_KEP_INCLI    =   8,    // inclination (deg)
-   XAR_DCELTS_KEP_MA       =   9,    // mean anamoly (deg)
-   XAR_DCELTS_KEP_NODE     =  10,    // right ascension of the ascending node (deg)
-   XAR_DCELTS_KEP_OMEGA    =  11,    // argument of perigee (deg)
-   XAR_DCELTS_EQNX_AF      =  12,    // AF
-   XAR_DCELTS_EQNX_AG      =  13,    // AG
-   XAR_DCELTS_EQNX_CHI     =  14,    // CHI
-   XAR_DCELTS_EQNX_PSI     =  15,    // PSI
-   XAR_DCELTS_EQNX_L       =  16,    // mean longitude (deg)
-   XAR_DCELTS_EQNX_N       =  17,    // mean motion (revs/day)
-   XAR_DCELTS_POSX         =  18,    // ECI posX (km)
-   XAR_DCELTS_POSY         =  19,    // ECI posY (km)
-   XAR_DCELTS_POSZ         =  20,    // ECI posZ (km)
-   XAR_DCELTS_VELX         =  21,    // ECI velX (km/s)
-   XAR_DCELTS_VELY         =  22,    // ECI velY (km/s)
-   XAR_DCELTS_VELZ         =  23,    // ECI velZ (km/s)
-   
-   XAR_DCELTS_RMS          =  40,    // RMS (km)
-   XAR_DCELTS_RMSUNWTD     =  41,    // unweighted RMS (km)
-   XAR_DCELTS_DELTATRMS    =  42,    // delta T RMS (min)
-   XAR_DCELTS_BETARMS      =  43,    // beta RMS (deg)
-   XAR_DCELTS_DELTAHTRMS   =  44,    // delta height RMS (km)
-   XAR_DCELTS_CONVQLTY     =  45,    // convergence value (km)
-   XAR_DCELTS_RMSPD        =  46,    // predicted RMS (km)
-   
-   XAR_DCELTS_COVL         =  60,    // covariance diagonal L
-   XAR_DCELTS_COVN         =  61,    // covariance diagonal N   
-   XAR_DCELTS_COVCHI       =  62,    // covariance diagonal CHI
-   XAR_DCELTS_COVPSI       =  63,    // covariance diagonal PSI
-   XAR_DCELTS_COVAF        =  64,    // covariance diagonal AF
-   XAR_DCELTS_COVAG        =  65,    // covariance diagonal AG
-   XAR_DCELTS_COVBTERM     =  66,    // covariance diagonal BTERM
-   XAR_DCELTS_COVNA        =  67,    // covariance not used
-   XAR_DCELTS_COVAGOM      =  68,    // covariance diagonal AGOM
-   
-   XAR_DCELTS_XMAX         =  70,    // max partial residual (km) 
-   XAR_DCELTS_XMAX2        =  71,    // max velocity resid (km/sec)
-   XAR_DCELTS_XMAX3        =  72,    // max beta residual (deg)
-   XAR_DCELTS_XMAX4        =  73,    // max delta-t residual (min)
-   XAR_DCELTS_PATCL        =  74,    // low argument of latitude coverage (deg)
-   XAR_DCELTS_PATCH        =  75,    // high argument of latitude coverage (deg)
-   
-   XAR_DCELTS_EQNXCOVMTX   = 200,    // equinoctial covariance matrix - the lower triangular half 200-244
-   
-   XAR_DCELTS_SIZE         = 256;
-   
-// indexes for accessing obs rejection flags
-static const int  
-   XA_REJFLG_DECAYED      =   0,    // satellite has decayed at the time of obs
-   XA_REJFLG_ERROR        =   1,    // obs residual computation error code
-   XA_REJFLG_RA           =   2,    // right ascension residual rejected
-   XA_REJFLG_BETA         =   3,    // beta residual rejected
-   XA_REJFLG_DEC          =   4,    // declination residual rejected
-   XA_REJFLG_HEIGHT       =   5,    // delta h residual rejected
-   XA_REJFLG_RANGE        =   6,    // range residual rejected
-   XA_REJFLG_RR           =   7,    // range rate residual rejected
-   XA_REJFLG_TIME         =   8,    // delta t residual rejected
-   
-   XA_REJFLG_SIZE         =  32;
-   
-// indexes for accessing DC's acceptance criteria data   
-static const int  
-   XA_AC_STD_EPOCH    =   0,    // standard - days from epoch
-   XA_AC_STD_NORES    =   1,    // standard - number of residuals
-   XA_AC_STD_PRCNTRES =   2,    // standard - percent residual
-   XA_AC_STD_RMS      =   3,    // standard - RMS (km)
-   XA_AC_STD_OBSSPAN  =   4,    // standard - obs span (days)
-   XA_AC_STD_DELTAW   =   5,    // standard - change in plan (deg)
-   XA_AC_STD_DELTAABAR=   6,    // standard - change in abar 
-   XA_AC_STD_DELTAN   =   7,    // standard - change in N (rev/day)
-   XA_AC_STD_DELTAB   =   8,    // standard - change in B term
-
-   XA_AC_ACT_EPOCH    =  20,    // actual - days from epoch
-   XA_AC_ACT_NORES    =  21,    // actual - number of residuals
-   XA_AC_ACT_PRCNTRES =  22,    // actual - percent residual
-   XA_AC_ACT_RMS      =  23,    // actual - RMS (km)
-   XA_AC_ACT_OBSSPAN  =  24,    // actual - obs span (days)
-   XA_AC_ACT_DELTAW   =  25,    // actual - change in plan (deg)
-   XA_AC_ACT_DELTAABAR=  26,    // actual - change in abar 
-   XA_AC_ACT_DELTAN   =  27,    // actual - change in N (rev/day)
-   XA_AC_ACT_DELTAB   =  28,    // actual - change in B term
-   
-   XA_AC_SIZE         =  64; 
-   
-// Different DC propagation method
-static const int  
-   DCPROPTYPE_GP =  0,      // DC propagator method is GP
-   DCPROPTYPE_XP =  4,      // DC propagator method is SGP4-XP
-   DCPROPTYPE_SP = 99;      // DC propagator method is SP 
-
-// DC iterating returned code   
-static const int  
-   ITERCODE_DONE      = 0,     // DC was successful
-   ITERCODE_ERROR     = 1,     // DC has error
-   ITERCODE_ITERATING = 2,     // DC is still iterating
-   ITERCODE_DIVERGED  = 3;     // DC diverged but trying to recover
+  
+  // DC SETTING PARAMETERS
+  
+  #define MAX_PARAMS   256 
   
   
-// indexes for ob rejection error code
-static const int  
-   OBREJ_NONE       = 0,      // ob residual computation ok
-   OBREJ_NOSENDATA  = 1,      // sensor data retrieval error
-   OBREJ_NOSENLOC   = 2,      // no sensor location
-   OBREJ_RESCOMPERR = 3;      // residual computation error
-   
-// indexes represent epoch placement options
-static const int     
-   EPFLG_NODALXINGLATESTOB = 0,     // Nodal crossing nearest latest obs
-   EPFLG_LATESTOB          = 1,     // Exact time of latest obs
-   EPFLG_NODALXINGATTIME   = 2,     // Nodal crossing closest to specified time
-   EPFLG_ATEPOCH           = 3,     // Do not change epoch 
-   EPFLG_ATSPECIFIEDTIME   = 4,     // Exact at specified time
-   EPFLG_MIDDLEOBSSPAN     = 5,     // Middle of obs span
-   EPFLG_EARLIESTOB        = 6,     // Exact time of earliest obs 
-   EPFLG_BEGINDAYEPOCH     = 7,     // Beginning of day of Epoch, good for eGP
-   EPFLG_BEGINDAYLATESTOB  = 8,     // Beginning of day of Last obs
-   EPFLG_NODALXINGEPOCH    = 9;     // Nodal crossing nearest epoch, good for eGP
-   
-// indexes for EGP control parameters for input VCM/SPVEC-typed elsets or external ephemeris file
-static const int  
-   XA_EGPCTRL_OPTION     =  0,      // Not being used yet
-   XA_EGPCTRL_DCELTTYPE  =  1,      // DC element type: 0=SPG4, 4=SGP4-XP
-   XA_EGPCTRL_STARTMSE   =  2,      // Fit span start time (minutes since VCM's epoch/specified new epoch) (set start/stop = 0 to auto select)
-   XA_EGPCTRL_STOPMSE    =  3,      // Fit span stop time (minutes since VCM's epoch/specified new epoch) (set start/stop = 0 to auto select)
-   XA_EGPCTRL_STEPMIN    =  4,      // Step size in minutes (how often obs are generated) (set to zero to auto select and then actual step size will be returned)
-   XA_EGPCTRL_DRAGCOR    =  5,      // Drag correction: 0=no correction, 1=correct BStar(SGP4)/BTerm(SGP4-XP), 2=correct X(SGP4 only)
-   XA_EGPCTRL_AGOMCOR    =  6,      // Agom correction: 0=no correction, 1=correct agom (only when DC element = SGP4-XP)
-   XA_EGPCTRL_EPFLG      =  7,      // Epoch placement flag - see EPFLG_? for description
-   XA_EGPCTRL_NEWEPOCH   =  8,      // Time of specified Epoch in Ds50UTC (only for XA_EGPCTRL_EPFLG = 2 or 4)                 * 
-   
-   XA_EGPCTRL_BVAL       =  9,      // Addtional option if input is external ephemeris file - BStar(SGP4)/BTerm(SGP4-XP) if XA_EGPCTRL_DRAGCOR is set (= 1) 
-   XA_EGPCTRL_AGOMVAL    = 10,      // Addtional option if input is external ephemeris file - Agom value if XA_EGPCTRL_AGOMCOR is set (= 1)
-   
-   XA_EGPCTRL_SIZE       = 64;
+  // DC PRINT OPTIONS
+  static const int  
+     DC_PRINT_FIRSTBEST   =  0,   // PRINT FIRST AND LAST ITERATION
+     DC_PRINT_ALLPASS     =  1,   // PRINT EVERY PASS AND SUMMARY
+     DC_PRINT_SUMONLY     =  2,   // PRINT SUMMARY ONLY
+     DC_PRINT_ELTONLY     =  3,   // PRINT OUTPUT ELEMENETS ONLY 
+     DC_PRINT_NONE        =  4;   // DO NOT PRINT ANYTHING 
+     
+  // ITERATION SUMMARY OPTIONS
+  static const int     
+     ITER_SUM_KEP         =  1,   // PRINT SUMMARY EVERY ITERATION IN KEPLERIAN ELTS
+     ITER_SUM_EQNX        =  2;   // PRINT SUMMARY EVERY ITERATION IN EQUINOCTIAL ELTS
   
-   
-
-
-
-// BatchDCDll's function pointers
-fnPtrBatchDCInit                    BatchDCInit;
-fnPtrBatchDCGetInfo                 BatchDCGetInfo;
-fnPtrBatchDCLoadFile                BatchDCLoadFile;
-fnPtrBatchDCLoadFileAll             BatchDCLoadFileAll;
-fnPtrBatchDCLoadCard                BatchDCLoadCard;
-fnPtrBatchDCGetPCard                BatchDCGetPCard;
-fnPtrBatchDCSaveFile                BatchDCSaveFile;
-fnPtrBatchDCGetParams               BatchDCGetParams;
-fnPtrBatchDCSetParams               BatchDCSetParams;
-fnPtrBatchDCInitSat                 BatchDCInitSat;
-fnPtrBatchDCSolve                   BatchDCSolve;
-fnPtrBatchDCSolveSelObs             BatchDCSolveSelObs;
-fnPtrBatchDCRemoveSat               BatchDCRemoveSat;
-fnPtrBatchDCIterate                 BatchDCIterate;
-fnPtrBatchDCGetVcm                  BatchDCGetVcm;
-fnPtrBatchDCGetSpVOut               BatchDCGetSpVOut;
-fnPtrBatchDCSetSpVOut               BatchDCSetSpVOut;
-fnPtrBatchDCResetAll                BatchDCResetAll;
-fnPtrBatchDCGetAccptCrit            BatchDCGetAccptCrit;
-fnPtrSpToEGP                        SpToEGP;
-fnPtrSpToTle                        SpToTle;
-fnPtrSpToCsv                        SpToCsv;
-fnPtrExtEphemToEGP                  ExtEphemToEGP;
+  // INDEXES FOR INTEGER DATA FIELDS
+  static const int  
+     XAI_CTRL_PRINTOPTION  =  0,    // DC PRINT OPTION
+     XAI_CTRL_DEBIASOBS    =  1,    // APPLY BIASES FROM SENSOR FILE
+     XAI_CTRL_WEIGHTEDDC   =  2,    // WEIGHED DC FLAG
+     XAI_CTRL_EPOCHOPTION  =  3,    // EPOCH PLACEMENT CONTROL
+     XAI_CTRL_CORRECT_AG   =  4,    // ELEMENT CORRECTION FLAG - AG
+     XAI_CTRL_CORRECT_AF   =  5,    // ELEMENT CORRECTION FLAG - AF
+     XAI_CTRL_CORRECT_PSI  =  6,    // ELEMENT CORRECTION FLAG - PSI
+     XAI_CTRL_CORRECT_CHI  =  7,    // ELEMENT CORRECTION FLAG - CHI
+     XAI_CTRL_CORRECT_L    =  8,    // ELEMENT CORRECTION FLAG - L
+     XAI_CTRL_CORRECT_N    =  9,    // ELEMENT CORRECTION FLAG - N
+     XAI_CTRL_CORRECT_B    = 10,    // ELEMENT CORRECTION FLAG - B* (SGP4) B (SP)
+     XAI_CTRL_CORRECT_AGOM = 11,    // ELEMENT CORRECTION FLAG - AGOM (SP)
+     XAI_CTRL_CORRECTORDER = 12,    // CORRECTION ORDER
+     XAI_CTRL_FOR1ITERONLY = 13,    // CORRECT BY THE SPECIFIED CORRECTION ORDER FOR 1 ITERATION ONLY
+     XAI_CTRL_RESIDSELECT  = 14,    // FLAG SPECIFIES WHICH RESIDUALS ARE USED FOR RMS CALCULATION AND CONVERGENCE
+     XAI_CTRL_SENPERFORM   = 15,    // FLAG; IF SET, PRODUCE SENSOR PERFORMANCE ANALYSIS SUMMARY
+     XAI_CTRL_DWOBSPERTRCK = 16,    // FLAG; IF SET, DEWEIGHT ACCORDING TO # OF OBS PER TRACK 
+     XAI_CTRL_ITERSUMOPT   = 17,    // ITERATION SUMMARY CONTROL
+     XAI_CTRL_PARTIALMETH  = 18,    // PARTIALS METHOD 
+     XAI_CTRL_LTC          = 19,    // LIGHT TIME CORRECTION CONTROL
+     XAI_CTRL_BRUCE        = 20,    // NUMBER OF ITERATION TO ALLOW NO AUTO REJECTION OF RESIDUALS
+     XAI_CTRL_PROPMETHOD   = 21,    // PROPAGATION METHOD - GP=0, XP=4, SP=99
+     XAI_CTRL_CORRECTBVSX  = 22,    // FLAG; IF SET, CORRECT B* VS X
+     XAI_CTRL_MAXOFITERS   = 23,    // MAX # OF ITERATIONS BEFORE DECLARING DIVERGENCE
+     XAI_CTRL_USEPREDRMS   = 24,    // USE PREDICTED RMS VERSUS PREVIOUS RMS FOR CONVERGENCE TESTING
+     XAI_CTRL_RESCOMPMETH  = 25,    // RESIDUAL COMPUTATION METHOD (GP ONLY): DELTA/427M=1, SPADOC4=2
+     XAI_CTRL_USEANGRATES  = 26,    // FLAG; IF SET, USE ANGLE RATES (OBSTYPES = 4, 11)
+     
+     XAI_CTRL_SIZE         = 256;  
+     
+  
+  
+  // INDEXES FOR REAL DATA FIELDS
+  static const int  
+     XAR_CTRL_RMSMULT        =   0,    // RMS MULTIPLIER
+     XAR_CTRL_USEREPOCH      =   1,    // TIME OF SPECIFIED EPOCH
+     XAR_CTRL_CNVCRITONT     =   2,    // CONVERGENCE CRITERIA ON TIME CORRECTION (%)
+     XAR_CTRL_1STPASDELTAT   =   3,    // FIRST PASS DELTA-T REJECTION CRITERIA
+     XAR_CTRL_CNVCRITON7ELT  =   4,    // CONVERGENCE CRITERIA ON 7-ELT CORRECTION (%)
+     XAR_CTRL_BRESET         =   5,    // RESET VALUE FOR B TERM IN SUBSET CORRECTION
+     XAR_CTRL_SIZE           = 256;
+  
+  
+  // INDEXES FOR ACCESSING DC'S INTEGER DATA
+  static const int  
+     XAI_DCELTS_SATNUM       =   0,    // SATELLITE NUMBER
+     XAI_DCELTS_ELSETNUM     =   1,    // ELSET NUMBER
+     XAI_DCELTS_ORBTYPE      =   2,    // ELSET'S ORBITAL/ELEMENT TYPE - SEE ELTTYPE_ CONSTANTS FOR A LIST OF POSSIBLE VALUES
+     XAI_DCELTS_PROPTYPE     =   3,    // PROPAGATION METHOD - SEE PROPTYPE_ CONSTANTS FOR A LIST OF POSSIBLE VALUES (GP=1, SP=2, EXTERNAL EPHEMERIS=3)
+     XAI_DCELTS_SPECTR       =   4,    // SPECTR MODE
+     XAI_DCELTS_REVNUM       =   5,    // EPOCH REVOLUTION NUMBER
+     XAI_DCELTS_CORRTYPE     =   6,    // CORRECTION TYPE: 0=TIME, 1=PLANE", 2=7-ELT, 3=IN-TRK, 4=8-ELT, 5=SUBELT
+     
+     XAI_DCELTS_ITERCOUNT    =  10,    // TOTAL ITERATION COUNT
+     XAI_DCELTS_SUBITER      =  11,    // SUB ITERATION COUNT
+     XAI_DCELTS_RESACC       =  12,    // # RESIDUAL ACCEPTED
+     XAI_DCELTS_RESREJ       =  13,    // # RESIDUAL REJECTED
+     
+     XAI_DCELTS_CORRFLGS     =  20,    // 20-28 CORRECTION ELEMENT FLAGS  
+     
+     XAI_DCELTS_SIZE         = 256;
+  
+  // INDEXES FOR ACCESSING DC'S REAL DATA   
+  static const int  
+     XAR_DCELTS_EPOCHDS50UTC =   0,    // ELSET'S EPOCH TIME IN DAYS SINCE 1950 UTC
+     XAR_DCELTS_NDOT         =   1,    // N-DOT/2  (FOR SGP, EPH-TYPE = 0)
+     XAR_DCELTS_N2DOT        =   2,    // N-DOUBLE-DOT/6  (FOR SGP, EPH-TYPE = 0)
+     XAR_DCELTS_BFIELD       =   3,    // EITHER SGP4 BSTAR (1/ER) OR SGP4-XP/SP BTERM (M2/KG)
+     XAR_DCELTS_AGOM         =   4,    // SGP4-XP/SP AGOM (M**2/KG)
+     XAR_DCELTS_OGPARM       =   5,    // SP OUTGASSING PARAMETER (KM/S**2)
+     XAR_DCELTS_KEP_A        =   6,    // SEMI MAJOR AXIS (KM)
+     XAR_DCELTS_KEP_E        =   7,    // ECCENTRICITY 
+     XAR_DCELTS_KEP_INCLI    =   8,    // INCLINATION (DEG)
+     XAR_DCELTS_KEP_MA       =   9,    // MEAN ANAMOLY (DEG)
+     XAR_DCELTS_KEP_NODE     =  10,    // RIGHT ASCENSION OF THE ASCENDING NODE (DEG)
+     XAR_DCELTS_KEP_OMEGA    =  11,    // ARGUMENT OF PERIGEE (DEG)
+     XAR_DCELTS_EQNX_AF      =  12,    // AF
+     XAR_DCELTS_EQNX_AG      =  13,    // AG
+     XAR_DCELTS_EQNX_CHI     =  14,    // CHI
+     XAR_DCELTS_EQNX_PSI     =  15,    // PSI
+     XAR_DCELTS_EQNX_L       =  16,    // MEAN LONGITUDE (DEG)
+     XAR_DCELTS_EQNX_N       =  17,    // MEAN MOTION (REVS/DAY)
+     XAR_DCELTS_POSX         =  18,    // ECI POSX (KM)
+     XAR_DCELTS_POSY         =  19,    // ECI POSY (KM)
+     XAR_DCELTS_POSZ         =  20,    // ECI POSZ (KM)
+     XAR_DCELTS_VELX         =  21,    // ECI VELX (KM/S)
+     XAR_DCELTS_VELY         =  22,    // ECI VELY (KM/S)
+     XAR_DCELTS_VELZ         =  23,    // ECI VELZ (KM/S)
+     
+     XAR_DCELTS_RMS          =  40,    // RMS (KM)
+     XAR_DCELTS_RMSUNWTD     =  41,    // UNWEIGHTED RMS (KM)
+     XAR_DCELTS_DELTATRMS    =  42,    // DELTA T RMS (MIN)
+     XAR_DCELTS_BETARMS      =  43,    // BETA RMS (DEG)
+     XAR_DCELTS_DELTAHTRMS   =  44,    // DELTA HEIGHT RMS (KM)
+     XAR_DCELTS_CONVQLTY     =  45,    // CONVERGENCE VALUE (KM)
+     XAR_DCELTS_RMSPD        =  46,    // PREDICTED RMS (KM)
+     
+     XAR_DCELTS_COVL         =  60,    // COVARIANCE DIAGONAL L
+     XAR_DCELTS_COVN         =  61,    // COVARIANCE DIAGONAL N   
+     XAR_DCELTS_COVCHI       =  62,    // COVARIANCE DIAGONAL CHI
+     XAR_DCELTS_COVPSI       =  63,    // COVARIANCE DIAGONAL PSI
+     XAR_DCELTS_COVAF        =  64,    // COVARIANCE DIAGONAL AF
+     XAR_DCELTS_COVAG        =  65,    // COVARIANCE DIAGONAL AG
+     XAR_DCELTS_COVBTERM     =  66,    // COVARIANCE DIAGONAL BTERM
+     XAR_DCELTS_COVNA        =  67,    // COVARIANCE NOT USED
+     XAR_DCELTS_COVAGOM      =  68,    // COVARIANCE DIAGONAL AGOM
+     
+     XAR_DCELTS_XMAX         =  70,    // MAX PARTIAL RESIDUAL (KM) 
+     XAR_DCELTS_XMAX2        =  71,    // MAX VELOCITY RESID (KM/SEC)
+     XAR_DCELTS_XMAX3        =  72,    // MAX BETA RESIDUAL (DEG)
+     XAR_DCELTS_XMAX4        =  73,    // MAX DELTA-T RESIDUAL (MIN)
+     XAR_DCELTS_PATCL        =  74,    // LOW ARGUMENT OF LATITUDE COVERAGE (DEG)
+     XAR_DCELTS_PATCH        =  75,    // HIGH ARGUMENT OF LATITUDE COVERAGE (DEG)
+     
+     XAR_DCELTS_EQNXCOVMTX   = 200,    // EQUINOCTIAL COVARIANCE MATRIX - THE LOWER TRIANGULAR HALF 200-244
+     
+     XAR_DCELTS_SIZE         = 256;
+     
+  // INDEXES FOR ACCESSING OBS REJECTION FLAGS
+  static const int  
+     XA_REJFLG_DECAYED      =   0,    // SATELLITE HAS DECAYED AT THE TIME OF OBS
+     XA_REJFLG_ERROR        =   1,    // OBS RESIDUAL COMPUTATION ERROR CODE
+     XA_REJFLG_RA           =   2,    // RIGHT ASCENSION RESIDUAL REJECTED
+     XA_REJFLG_BETA         =   3,    // BETA RESIDUAL REJECTED
+     XA_REJFLG_DEC          =   4,    // DECLINATION RESIDUAL REJECTED
+     XA_REJFLG_HEIGHT       =   5,    // DELTA H RESIDUAL REJECTED
+     XA_REJFLG_RANGE        =   6,    // RANGE RESIDUAL REJECTED
+     XA_REJFLG_RR           =   7,    // RANGE RATE RESIDUAL REJECTED
+     XA_REJFLG_TIME         =   8,    // DELTA T RESIDUAL REJECTED
+     
+     XA_REJFLG_SIZE         =  32;
+     
+  // INDEXES FOR ACCESSING DC'S ACCEPTANCE CRITERIA DATA   
+  static const int  
+     XA_AC_STD_EPOCH    =   0,    // STANDARD - DAYS FROM EPOCH
+     XA_AC_STD_NORES    =   1,    // STANDARD - NUMBER OF RESIDUALS
+     XA_AC_STD_PRCNTRES =   2,    // STANDARD - PERCENT RESIDUAL
+     XA_AC_STD_RMS      =   3,    // STANDARD - RMS (KM)
+     XA_AC_STD_OBSSPAN  =   4,    // STANDARD - OBS SPAN (DAYS)
+     XA_AC_STD_DELTAW   =   5,    // STANDARD - CHANGE IN PLAN (DEG)
+     XA_AC_STD_DELTAABAR=   6,    // STANDARD - CHANGE IN ABAR 
+     XA_AC_STD_DELTAN   =   7,    // STANDARD - CHANGE IN N (REV/DAY)
+     XA_AC_STD_DELTAB   =   8,    // STANDARD - CHANGE IN B TERM
+  
+     XA_AC_ACT_EPOCH    =  20,    // ACTUAL - DAYS FROM EPOCH
+     XA_AC_ACT_NORES    =  21,    // ACTUAL - NUMBER OF RESIDUALS
+     XA_AC_ACT_PRCNTRES =  22,    // ACTUAL - PERCENT RESIDUAL
+     XA_AC_ACT_RMS      =  23,    // ACTUAL - RMS (KM)
+     XA_AC_ACT_OBSSPAN  =  24,    // ACTUAL - OBS SPAN (DAYS)
+     XA_AC_ACT_DELTAW   =  25,    // ACTUAL - CHANGE IN PLAN (DEG)
+     XA_AC_ACT_DELTAABAR=  26,    // ACTUAL - CHANGE IN ABAR 
+     XA_AC_ACT_DELTAN   =  27,    // ACTUAL - CHANGE IN N (REV/DAY)
+     XA_AC_ACT_DELTAB   =  28,    // ACTUAL - CHANGE IN B TERM
+     
+     XA_AC_SIZE         =  64; 
+     
+  // DIFFERENT DC PROPAGATION METHOD
+  static const int  
+     DCPROPTYPE_GP =  0,      // DC PROPAGATOR METHOD IS GP
+     DCPROPTYPE_XP =  4,      // DC PROPAGATOR METHOD IS SGP4-XP
+     DCPROPTYPE_SP = 99;      // DC PROPAGATOR METHOD IS SP 
+  
+  // DC ITERATING RETURNED CODE   
+  static const int  
+     ITERCODE_DONE      = 0,     // DC WAS SUCCESSFUL
+     ITERCODE_ERROR     = 1,     // DC HAS ERROR
+     ITERCODE_ITERATING = 2,     // DC IS STILL ITERATING
+     ITERCODE_DIVERGED  = 3;     // DC DIVERGED BUT TRYING TO RECOVER
+    
+    
+  // INDEXES FOR OB REJECTION ERROR CODE
+  static const int  
+     OBREJ_NONE       = 0,      // OB RESIDUAL COMPUTATION OK
+     OBREJ_NOSENDATA  = 1,      // SENSOR DATA RETRIEVAL ERROR
+     OBREJ_NOSENLOC   = 2,      // NO SENSOR LOCATION
+     OBREJ_RESCOMPERR = 3;      // RESIDUAL COMPUTATION ERROR
+     
+  // INDEXES REPRESENT EPOCH PLACEMENT OPTIONS
+  static const int     
+     EPFLG_NODALXINGLATESTOB = 0,     // NODAL CROSSING NEAREST LATEST OBS
+     EPFLG_LATESTOB          = 1,     // EXACT TIME OF LATEST OBS
+     EPFLG_NODALXINGATTIME   = 2,     // NODAL CROSSING CLOSEST TO SPECIFIED TIME
+     EPFLG_ATEPOCH           = 3,     // DO NOT CHANGE EPOCH 
+     EPFLG_ATSPECIFIEDTIME   = 4,     // EXACT AT SPECIFIED TIME
+     EPFLG_MIDDLEOBSSPAN     = 5,     // MIDDLE OF OBS SPAN
+     EPFLG_EARLIESTOB        = 6,     // EXACT TIME OF EARLIEST OBS 
+     EPFLG_BEGINDAYEPOCH     = 7,     // BEGINNING OF DAY OF EPOCH, GOOD FOR EGP
+     EPFLG_BEGINDAYLATESTOB  = 8,     // BEGINNING OF DAY OF LAST OBS
+     EPFLG_NODALXINGEPOCH    = 9;     // NODAL CROSSING NEAREST EPOCH, GOOD FOR EGP
+     
+  // INDEXES FOR EGP CONTROL PARAMETERS FOR INPUT VCM/SPVEC-TYPED ELSETS OR EXTERNAL EPHEMERIS FILE
+  static const int  
+     XA_EGPCTRL_OPTION     =  0,      // NOT BEING USED YET
+     XA_EGPCTRL_DCELTTYPE  =  1,      // DC ELEMENT TYPE: 0=SPG4, 4=SGP4-XP
+     XA_EGPCTRL_STARTMSE   =  2,      // FIT SPAN START TIME (MINUTES SINCE VCM'S EPOCH/SPECIFIED NEW EPOCH) (SET START/STOP = 0 TO AUTO SELECT)
+     XA_EGPCTRL_STOPMSE    =  3,      // FIT SPAN STOP TIME (MINUTES SINCE VCM'S EPOCH/SPECIFIED NEW EPOCH) (SET START/STOP = 0 TO AUTO SELECT)
+     XA_EGPCTRL_STEPMIN    =  4,      // STEP SIZE IN MINUTES (HOW OFTEN OBS ARE GENERATED) (SET TO ZERO TO AUTO SELECT AND THEN ACTUAL STEP SIZE WILL BE RETURNED)
+     XA_EGPCTRL_DRAGCOR    =  5,      // DRAG CORRECTION: 0=NO CORRECTION, 1=CORRECT BSTAR(SGP4)/BTERM(SGP4-XP), 2=CORRECT X(SGP4 ONLY)
+     XA_EGPCTRL_AGOMCOR    =  6,      // AGOM CORRECTION: 0=NO CORRECTION, 1=CORRECT AGOM (ONLY WHEN DC ELEMENT = SGP4-XP)
+     XA_EGPCTRL_EPFLG      =  7,      // EPOCH PLACEMENT FLAG - SEE EPFLG_? FOR DESCRIPTION
+     XA_EGPCTRL_NEWEPOCH   =  8,      // TIME OF SPECIFIED EPOCH IN DS50UTC (ONLY FOR XA_EGPCTRL_EPFLG = 2 OR 4)                 * 
+     
+     XA_EGPCTRL_BVAL       =  9,      // ADDTIONAL OPTION IF INPUT IS EXTERNAL EPHEMERIS FILE - BSTAR(SGP4)/BTERM(SGP4-XP) IF XA_EGPCTRL_DRAGCOR IS SET (= 1) 
+     XA_EGPCTRL_AGOMVAL    = 10,      // ADDTIONAL OPTION IF INPUT IS EXTERNAL EPHEMERIS FILE - AGOM VALUE IF XA_EGPCTRL_AGOMCOR IS SET (= 1)
+     
+     XA_EGPCTRL_SIZE       = 64;
+    
+     
+// BatchDCDll's function pointers declaration
+extern fnPtrBatchDCInit                    BatchDCInit;
+extern fnPtrBatchDCGetInfo                 BatchDCGetInfo;
+extern fnPtrBatchDCLoadFile                BatchDCLoadFile;
+extern fnPtrBatchDCLoadFileAll             BatchDCLoadFileAll;
+extern fnPtrBatchDCLoadCard                BatchDCLoadCard;
+extern fnPtrBatchDCGetPCard                BatchDCGetPCard;
+extern fnPtrBatchDCSaveFile                BatchDCSaveFile;
+extern fnPtrBatchDCGetParams               BatchDCGetParams;
+extern fnPtrBatchDCSetParams               BatchDCSetParams;
+extern fnPtrBatchDCInitSat                 BatchDCInitSat;
+extern fnPtrBatchDCSolve                   BatchDCSolve;
+extern fnPtrBatchDCSolveSelObs             BatchDCSolveSelObs;
+extern fnPtrBatchDCRemoveSat               BatchDCRemoveSat;
+extern fnPtrBatchDCIterate                 BatchDCIterate;
+extern fnPtrBatchDCGetVcm                  BatchDCGetVcm;
+extern fnPtrBatchDCGetSpVOut               BatchDCGetSpVOut;
+extern fnPtrBatchDCSetSpVOut               BatchDCSetSpVOut;
+extern fnPtrBatchDCResetAll                BatchDCResetAll;
+extern fnPtrBatchDCGetAccptCrit            BatchDCGetAccptCrit;
+extern fnPtrSpToEGP                        SpToEGP;
+extern fnPtrSpToTle                        SpToTle;
+extern fnPtrSpToCsv                        SpToCsv;
+extern fnPtrExtEphemToEGP                  ExtEphemToEGP;
 
 
 

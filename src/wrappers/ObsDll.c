@@ -1,7 +1,65 @@
-// This wrapper file was generated automatically by the A3\GenDllWrappers program.
+// This wrapper file was generated automatically by the GenDllWrappers program.
 
-#include "services/DllUtils.h"
-#include "wrappers/ObsDll.h"
+#include "../services/DllUtils.h"
+#include "ObsDll.h"
+
+
+// ObsDll's function pointers definition
+fnPtrObsInit                        ObsInit;
+fnPtrObsGetInfo                     ObsGetInfo;
+fnPtrObsSetTTYYear                  ObsSetTTYYear;
+fnPtrObsLoadFile                    ObsLoadFile;
+fnPtrObsSaveFile                    ObsSaveFile;
+fnPtrObsRemove                      ObsRemove;
+fnPtrObsRemoveAll                   ObsRemoveAll;
+fnPtrObsGetCount                    ObsGetCount;
+fnPtrObsGetLoaded                   ObsGetLoaded;
+fnPtrObsLoadCard                    ObsLoadCard;
+fnPtrObsLoadTwoCards                ObsLoadTwoCards;
+fnPtrObsAddFrB3Card                 ObsAddFrB3Card;
+fnPtrObsAddFrB3CardML               ObsAddFrB3CardML;
+fnPtrObsB3ToCsv                     ObsB3ToCsv;
+fnPtrObsCsvToB3                     ObsCsvToB3;
+fnPtrObsAddFrTTYCards               ObsAddFrTTYCards;
+fnPtrObsAddFrTTYCardsML             ObsAddFrTTYCardsML;
+fnPtrObsTTYToCsv                    ObsTTYToCsv;
+fnPtrObsCsvToTTY                    ObsCsvToTTY;
+fnPtrObsAddFrCsv                    ObsAddFrCsv;
+fnPtrObsAddFrCsvML                  ObsAddFrCsvML;
+fnPtrObsAddFrFields                 ObsAddFrFields;
+fnPtrObsAddFrFieldsML               ObsAddFrFieldsML;
+fnPtrObsAddFrArray                  ObsAddFrArray;
+fnPtrObsAddFrArrayML                ObsAddFrArrayML;
+fnPtrObsGetAllFields                ObsGetAllFields;
+fnPtrObsDataToArray                 ObsDataToArray;
+fnPtrObsUpdateFrFields              ObsUpdateFrFields;
+fnPtrObsGetField                    ObsGetField;
+fnPtrObsSetField                    ObsSetField;
+fnPtrObsGetB3Card                   ObsGetB3Card;
+fnPtrObsGetTTYCard                  ObsGetTTYCard;
+fnPtrObsGetCsv                      ObsGetCsv;
+fnPtrObsFieldsToB3Card              ObsFieldsToB3Card;
+fnPtrObsFieldsToCsv                 ObsFieldsToCsv;
+fnPtrObsFieldsToTTYCard             ObsFieldsToTTYCard;
+fnPtrObsFieldsToObsKey              ObsFieldsToObsKey;
+fnPtrObsFieldsToObsKeyML            ObsFieldsToObsKeyML;
+fnPtrObsB3Parse                     ObsB3Parse;
+fnPtrObsParse                       ObsParse;
+fnPtrObsLoadFileGID                 ObsLoadFileGID;
+fnPtrObsSaveFileGID                 ObsSaveFileGID;
+fnPtrObsRemoveGID                   ObsRemoveGID;
+fnPtrObsGetCountGID                 ObsGetCountGID;
+fnPtrObsGetLoadedGID                ObsGetLoadedGID;
+fnPtrObsTypeCToI                    ObsTypeCToI;
+fnPtrObsTypeIToC                    ObsTypeIToC;
+fnPtrObsResetSelObs                 ObsResetSelObs;
+fnPtrObsGetStates                   ObsGetStates;
+fnPtrObsDataToStates                ObsDataToStates;
+fnPtrObsArrToLines                  ObsArrToLines;
+fnPtrSetObsKeyMode                  SetObsKeyMode;
+fnPtrGetObsKeyMode                  GetObsKeyMode;
+fnPtrSatNumFrObsKey                 SatNumFrObsKey;
+fnPtrSenNumFrObsKey                 SenNumFrObsKey;
 
 
 static void* hLib = NULL; // handle to the dll
@@ -65,6 +123,10 @@ void LoadObsDll()
    ObsGetStates = (fnPtrObsGetStates)GetFnPtr(hLib, (char*)"ObsGetStates");
    ObsDataToStates = (fnPtrObsDataToStates)GetFnPtr(hLib, (char*)"ObsDataToStates");
    ObsArrToLines = (fnPtrObsArrToLines)GetFnPtr(hLib, (char*)"ObsArrToLines");
+   SetObsKeyMode = (fnPtrSetObsKeyMode)GetFnPtr(hLib, (char*)"SetObsKeyMode");
+   GetObsKeyMode = (fnPtrGetObsKeyMode)GetFnPtr(hLib, (char*)"GetObsKeyMode");
+   SatNumFrObsKey = (fnPtrSatNumFrObsKey)GetFnPtr(hLib, (char*)"SatNumFrObsKey");
+   SenNumFrObsKey = (fnPtrSenNumFrObsKey)GetFnPtr(hLib, (char*)"SenNumFrObsKey");
 }
 
 

@@ -1,7 +1,72 @@
-// This wrapper file was generated automatically by the A3\GenDllWrappers program.
+// This wrapper file was generated automatically by the GenDllWrappers program.
 
-#include "services/DllUtils.h"
-#include "wrappers/AstroFuncDll.h"
+#include "../services/DllUtils.h"
+#include "AstroFuncDll.h"
+
+
+// AstroFuncDll's function pointers definition
+fnPtrAstroFuncInit                  AstroFuncInit;
+fnPtrAstroFuncGetInfo               AstroFuncGetInfo;
+fnPtrKepToEqnx                      KepToEqnx;
+fnPtrKepToPosVel                    KepToPosVel;
+fnPtrKepToUVW                       KepToUVW;
+fnPtrClassToEqnx                    ClassToEqnx;
+fnPtrEqnxToClass                    EqnxToClass;
+fnPtrEqnxToKep                      EqnxToKep;
+fnPtrEqnxToPosVel                   EqnxToPosVel;
+fnPtrPosVelToEqnx                   PosVelToEqnx;
+fnPtrPosVelMuToEqnx                 PosVelMuToEqnx;
+fnPtrPosVelToKep                    PosVelToKep;
+fnPtrPosVelMuToKep                  PosVelMuToKep;
+fnPtrPosVelToUUVW                   PosVelToUUVW;
+fnPtrPosVelToPTW                    PosVelToPTW;
+fnPtrSolveKepEqtn                   SolveKepEqtn;
+fnPtrCompTrueAnomaly                CompTrueAnomaly;
+fnPtrNToA                           NToA;
+fnPtrAToN                           AToN;
+fnPtrKozaiToBrouwer                 KozaiToBrouwer;
+fnPtrBrouwerToKozai                 BrouwerToKozai;
+fnPtrKepOscToMean                   KepOscToMean;
+fnPtrXYZToLLH                       XYZToLLH;
+fnPtrXYZToLLHTime                   XYZToLLHTime;
+fnPtrLLHToXYZ                       LLHToXYZ;
+fnPtrLLHToXYZTime                   LLHToXYZTime;
+fnPtrEFGToECI                       EFGToECI;
+fnPtrEFGToECITime                   EFGToECITime;
+fnPtrECIToEFG                       ECIToEFG;
+fnPtrECIToEFGTime                   ECIToEFGTime;
+fnPtrECRToEFG                       ECRToEFG;
+fnPtrECRToEFGTime                   ECRToEFGTime;
+fnPtrEFGToECR                       EFGToECR;
+fnPtrEFGToECRTime                   EFGToECRTime;
+fnPtrEFGPosToLLH                    EFGPosToLLH;
+fnPtrLLHToEFGPos                    LLHToEFGPos;
+fnPtrRotJ2KToDate                   RotJ2KToDate;
+fnPtrRotDateToJ2K                   RotDateToJ2K;
+fnPtrCompSunMoonPos                 CompSunMoonPos;
+fnPtrCompSunPos                     CompSunPos;
+fnPtrCompMoonPos                    CompMoonPos;
+fnPtrAstroConvFrTo                  AstroConvFrTo;
+fnPtrRADecToLAD                     RADecToLAD;
+fnPtrAzElToLAD                      AzElToLAD;
+fnPtrECIToTopoComps                 ECIToTopoComps;
+fnPtrRaDecToAzEl                    RaDecToAzEl;
+fnPtrRaDecToAzElTime                RaDecToAzElTime;
+fnPtrAzElToRaDec                    AzElToRaDec;
+fnPtrAzElToRaDecTime                AzElToRaDecTime;
+fnPtrRAEToECI                       RAEToECI;
+fnPtrGetInitialDrag                 GetInitialDrag;
+fnPtrCovMtxPTWToUVW                 CovMtxPTWToUVW;
+fnPtrCovMtxUVWToPTW                 CovMtxUVWToPTW;
+fnPtrEarthObstructionAngles         EarthObstructionAngles;
+fnPtrIsPointSunlit                  IsPointSunlit;
+fnPtrRotRADecl                      RotRADecl;
+fnPtrRotRADec_DateToEqnx            RotRADec_DateToEqnx;
+fnPtrRotRADec_EqnxToDate            RotRADec_EqnxToDate;
+fnPtrCovMtxEqnxToUVW                CovMtxEqnxToUVW;
+fnPtrCovMtxUVWToEqnx                CovMtxUVWToEqnx;
+fnPtrCovMtxECIToUVW                 CovMtxECIToUVW;
+fnPtrCovMtxUVWToECI                 CovMtxUVWToECI;
 
 
 static void* hLib = NULL; // handle to the dll

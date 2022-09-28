@@ -1,13 +1,15 @@
-// This wrapper file was generated automatically by the A3\GenDllWrappers program.
+// This wrapper file was generated automatically by the GenDllWrappers program.
 
 #ifndef EXTEPHEMDLL_H
 #define EXTEPHEMDLL_H
 
-#include "services/DllUtils.h"
+#include "../services/DllUtils.h"
 
-// Provide the path to the dll/so
-#ifdef _WIN32
+// Provide the path to the dll/so/dylib
+#if defined (_WIN32) || defined (__CYGWIN__)
   #define ExtEphemDll "ExtEphem.dll"
+#elif __APPLE__
+  #define ExtEphemDll "libextephem.dylib"
 #else
   #define ExtEphemDll "libextephem.so"
 #endif
@@ -89,7 +91,7 @@ typedef void (STDCALL *fnPtrExtEphGetLoaded)(int order, __int64 satKeys[]);
 // epochDs50UTC       Epoch time in ds50UTC (in-Double)
 // AE                 Mean Earth radius (km) (in-Double)
 // Ke                 Earth gravitational constant (in-Double)
-// coordSys           Ephemeris coordinate: 1=ECI, 2=EFG, 3=ECR, 4=J2K (in-Integer)
+// coordSys           Ephemeris coordinate system, see COORD_? for avaialble coordinate sytems (in-Integer)
 // returns The satKey of the newly added EXTEPHEM on success, a negative value on error
 typedef __int64 (STDCALL *fnPtrExtEphAddSat)(int satNum, double epochDs50UTC, double AE, double Ke, int coordSys);
 
@@ -138,7 +140,7 @@ typedef int (STDCALL *fnPtrExtEphAddSatEphemExt)(__int64 satKey, double ds50UTC,
 // Ke                 Earth gravitational constant (er**3/2 per minute) (out-Double)
 // pos                Position at epoch (km) (out-Double[3])
 // vel                Velocity at epoch (km/s) (out-Double[3])
-// coordSys           Ephemeris coordinate: 1=ECI, 2=EFG, 3=ECR, 4=J2K (out-Integer)
+// coordSys           Ephemeris coordinate, see COORD_? for avaialble coordinate sytems (out-Integer)
 // numOfPts           Number of ephemeris points (out-Integer)
 // fileLoc            File location (out-Character[512])
 // returns 0 if the data is successfully retrieved, non-0 if there is an error
@@ -319,94 +321,91 @@ typedef __int64 (STDCALL *fnPtrExtEphGetSatKey)(int satNum);
 // epochDtg           input date time group string: [yy]yydddhhmmss.sss or [yy]yyddd.ddddddd or DTG15, DTG17, DTG20 (in-Character[20])
 // returns The satellite's unique key
 typedef __int64 (STDCALL *fnPtrExtEphFieldsToSatKey)(int satNum, char epochDtg[20]);
+    
+  // INDEXES OF EXTEPH DATA FIELDS
+  static const int  
+     XF_EXTEPH_SATNUM    =  1,      // SATELLITE NUMBER I5
+     XF_EXTEPH_EPOCH     =  2,      // EPOCH YYDDDHHMMSS.SSS
+     XF_EXTEPH_AE        =  3,      // EARTH RADIUS (KM)
+     XF_EXTEPH_KE        =  4,      // KE
+     XF_EXTEPH_POSX      =  5,      // POSITION X (KM) F16.8 
+     XF_EXTEPH_POSY      =  6,      // POSITION Y (KM) F16.8 
+     XF_EXTEPH_POSZ      =  7,      // POSITION Z (KM) F16.8   
+     XF_EXTEPH_VELX      =  8,      // VELOCITY X (KM/S) F16.12
+     XF_EXTEPH_VELY      =  9,      // VELOCITY Y (KM/S) F16.12
+     XF_EXTEPH_VELZ      = 10,      // VELOCITY Z (KM/S) F16.12
+     XF_EXTEPH_COORD     = 11,      // INPUT COORDINATE SYSTEMS
+     XF_EXTEPH_NUMOFPTS  = 12,      // NUM OF EPHEMERIS POINTS
+     XF_EXTEPH_FILEPATH  = 13,      // EPHEMERIS FILE PATH
+     XF_EXTEPH_SATNAME   = 14,      // INTERNATIONAL DESIGNATOR
+     XF_EXTEPH_RECNAME   = 15;      // RECORD NAME
+     
   
-// Indexes of EXTEPH data fields
-static const int  
-   XF_EXTEPH_SATNUM    =  1,      // Satellite number I5
-   XF_EXTEPH_EPOCH     =  2,      // Epoch YYDDDHHMMSS.SSS
-   XF_EXTEPH_AE        =  3,      // Earth radius (km)
-   XF_EXTEPH_KE        =  4,      // Ke
-   XF_EXTEPH_POSX      =  5,      // position X (km) F16.8 
-   XF_EXTEPH_POSY      =  6,      // position Y (km) F16.8 
-   XF_EXTEPH_POSZ      =  7,      // position Z (km) F16.8   
-   XF_EXTEPH_VELX      =  8,      // velocity X (km/s) F16.12
-   XF_EXTEPH_VELY      =  9,      // velocity Y (km/s) F16.12
-   XF_EXTEPH_VELZ      = 10,      // velocity Z (km/s) F16.12
-   XF_EXTEPH_COORD     = 11,      // Input coordinate systems
-   XF_EXTEPH_NUMOFPTS  = 12,      // Num of ephemeris points
-   XF_EXTEPH_FILEPATH  = 13,      // Ephemeris file path
-   XF_EXTEPH_SATNAME   = 14,      // International Designator
-   XF_EXTEPH_RECNAME   = 15;      // Record name
-   
-
-// Indexes of coordinate systems
-static const int  
-   COORD_ECI   = 1,          // ECI TEME of DATE
-   COORD_J2K   = 2,          // MEME of J2K
-   COORD_EFG   = 3,          // Earth Fixed Greenwich (EFG)
-   COORD_ECR   = 4,          // Earch Centered Rotation (ECR)
-   COORD_LLH   = 5,          // Lat Lon Height and a vector offset (range, azimuth, elevation)
-   COORD_SEN   = 6,          // Sensor site (ECR) and a vector offset (range, azimuth, elevation)
-   
-   COORD_ECIFP = 11,         // ECI TEME of DATE, fixed point
-   COORD_J2KFP = 12,         // MEME of J2K, fixed point
-   COORD_EFGFP = 13,         // Earth Fixed Greenwich (EFG), fixed point
-   COORD_ECRFP = 14,         // Earch Centered Rotation (ECR), fixed point
-   COORD_LLHOV = 15,         // Lat Lon Height and an offset vector (range, azimuth, elevation)
-   COORD_SENOV = 16,         // Sensor site (ECR) and an offset vector (range, azimuth, elevation)
-   COORD_HCSRL = 17,         // Current position (LLH), heading (azimuth), and constant speed of an mobile object that travels in a rhumb line course
-   COORD_WPTRL = 18,         // List of waypoints (LLH) that describes the movement of an object that travels in a rhumb line course
-   COORD_HCSGC = 19,         // Current position (LLH), initial heading (azimuth), and constant speed of an mobile object that travels in a great circle course
-   COORD_WPTGC = 20,         // List of waypoints (LLH) that describes the movement of an object that travels in a great circle course
-   
-   
-   COORD_INVALID = 100;   
-
-static const int   
-   COVMTX_UVW_DATE  =  0,   // UVW convariance matrix - TEME of DATE
-   COVMTX_XYZ_DATE  = 10,   // Cartesian covariance matrix - TEME of DATE 
-   COVMTX_EQNX_DATE = 20,   // Equinoctial covariance matrix - TEME of DATE
-   COVMTX_UVW_J2K   = 30,   // UVW convariance matrix - MEME of J2K
-   COVMTX_XYZ_J2K   = 40,   // Cartesian covariance matrix - MEME of J2K
-   COVMTX_EQNX_J2K  = 50;   // Equinoctial covariance matrix - MEME of J2K   
-   
-   
-static const int  
-   XF_GETEPH_MSE = 1,     // Get ephemeris data using time in minutes since epoch 
-   XF_GETEPH_UTC = 2,     // Get ephemeris data using time in days since 1950 UTC
-   XF_GETEPH_IDX = 3;     // Get ephemeris data using index of the element in the array 
-
-   
-
-
-
-// ExtEphemDll's function pointers
-fnPtrExtEphInit                     ExtEphInit;
-fnPtrExtEphGetInfo                  ExtEphGetInfo;
-fnPtrExtEphLoadFile                 ExtEphLoadFile;
-fnPtrExtEphSaveFile                 ExtEphSaveFile;
-fnPtrExtEphRemoveSat                ExtEphRemoveSat;
-fnPtrExtEphRemoveAllSats            ExtEphRemoveAllSats;
-fnPtrExtEphGetCount                 ExtEphGetCount;
-fnPtrExtEphGetLoaded                ExtEphGetLoaded;
-fnPtrExtEphAddSat                   ExtEphAddSat;
-fnPtrExtEphAddSatEphem              ExtEphAddSatEphem;
-fnPtrExtEphAddSatEphemCovMtx        ExtEphAddSatEphemCovMtx;
-fnPtrExtEphAddSatEphemExt           ExtEphAddSatEphemExt;
-fnPtrExtEphGetAllFields             ExtEphGetAllFields;
-fnPtrExtEphGetField                 ExtEphGetField;
-fnPtrExtEphSetField                 ExtEphSetField;
-fnPtrExtEphStartEndTime             ExtEphStartEndTime;
-fnPtrExtEphGetEphemeris             ExtEphGetEphemeris;
-fnPtrExtEphGetCovMtx                ExtEphGetCovMtx;
-fnPtrExtEphMse                      ExtEphMse;
-fnPtrExtEphMseCovMtx                ExtEphMseCovMtx;
-fnPtrExtEphDs50UTC                  ExtEphDs50UTC;
-fnPtrExtEphDs50UTCCovMtx            ExtEphDs50UTCCovMtx;
-fnPtrExtEphXten                     ExtEphXten;
-fnPtrExtEphGetLine                  ExtEphGetLine;
-fnPtrExtEphGetSatKey                ExtEphGetSatKey;
-fnPtrExtEphFieldsToSatKey           ExtEphFieldsToSatKey;
+  // INDEXES OF COORDINATE SYSTEMS
+  static const int  
+     COORD_ECI   = 1,          // ECI TEME OF DATE
+     COORD_J2K   = 2,          // MEME OF J2K
+     COORD_EFG   = 3,          // EARTH FIXED GREENWICH (EFG)
+     COORD_ECR   = 4,          // EARCH CENTERED ROTATION (ECR)
+     COORD_LLH   = 5,          // LAT LON HEIGHT AND A VECTOR OFFSET (RANGE, AZIMUTH, ELEVATION)
+     COORD_SEN   = 6,          // SENSOR SITE (ECR) AND A VECTOR OFFSET (RANGE, AZIMUTH, ELEVATION)
+     
+     COORD_ECIFP = 11,         // ECI TEME OF DATE, FIXED POINT
+     COORD_J2KFP = 12,         // MEME OF J2K, FIXED POINT
+     COORD_EFGFP = 13,         // EARTH FIXED GREENWICH (EFG), FIXED POINT
+     COORD_ECRFP = 14,         // EARCH CENTERED ROTATION (ECR), FIXED POINT
+     COORD_LLHOV = 15,         // LAT LON HEIGHT AND AN OFFSET VECTOR (RANGE, AZIMUTH, ELEVATION)
+     COORD_SENOV = 16,         // SENSOR SITE (ECR) AND AN OFFSET VECTOR (RANGE, AZIMUTH, ELEVATION)
+     COORD_HCSRL = 17,         // CURRENT POSITION (LLH), HEADING (AZIMUTH), AND CONSTANT SPEED OF AN MOBILE OBJECT THAT TRAVELS IN A RHUMB LINE COURSE
+     COORD_WPTRL = 18,         // LIST OF WAYPOINTS (LLH) THAT DESCRIBES THE MOVEMENT OF AN OBJECT THAT TRAVELS IN A RHUMB LINE COURSE
+     COORD_HCSGC = 19,         // CURRENT POSITION (LLH), INITIAL HEADING (AZIMUTH), AND CONSTANT SPEED OF AN MOBILE OBJECT THAT TRAVELS IN A GREAT CIRCLE COURSE
+     COORD_WPTGC = 20,         // LIST OF WAYPOINTS (LLH) THAT DESCRIBES THE MOVEMENT OF AN OBJECT THAT TRAVELS IN A GREAT CIRCLE COURSE
+     
+     
+     COORD_INVALID = 100;      // INVALID COORDINATE SYSTEM
+  
+  static const int   
+     COVMTX_UVW_DATE  =  0,   // UVW CONVARIANCE MATRIX - TEME OF DATE
+     COVMTX_XYZ_DATE  = 10,   // CARTESIAN COVARIANCE MATRIX - TEME OF DATE 
+     COVMTX_EQNX_DATE = 20,   // EQUINOCTIAL COVARIANCE MATRIX - TEME OF DATE
+     COVMTX_UVW_J2K   = 30,   // UVW CONVARIANCE MATRIX - MEME OF J2K
+     COVMTX_XYZ_J2K   = 40,   // CARTESIAN COVARIANCE MATRIX - MEME OF J2K
+     COVMTX_EQNX_J2K  = 50;   // EQUINOCTIAL COVARIANCE MATRIX - MEME OF J2K   
+     
+     
+  static const int  
+     XF_GETEPH_MSE = 1,     // GET EPHEMERIS DATA USING TIME IN MINUTES SINCE EPOCH 
+     XF_GETEPH_UTC = 2,     // GET EPHEMERIS DATA USING TIME IN DAYS SINCE 1950 UTC
+     XF_GETEPH_IDX = 3;     // GET EPHEMERIS DATA USING INDEX OF THE ELEMENT IN THE ARRAY 
+  
+     
+// ExtEphemDll's function pointers declaration
+extern fnPtrExtEphInit                     ExtEphInit;
+extern fnPtrExtEphGetInfo                  ExtEphGetInfo;
+extern fnPtrExtEphLoadFile                 ExtEphLoadFile;
+extern fnPtrExtEphSaveFile                 ExtEphSaveFile;
+extern fnPtrExtEphRemoveSat                ExtEphRemoveSat;
+extern fnPtrExtEphRemoveAllSats            ExtEphRemoveAllSats;
+extern fnPtrExtEphGetCount                 ExtEphGetCount;
+extern fnPtrExtEphGetLoaded                ExtEphGetLoaded;
+extern fnPtrExtEphAddSat                   ExtEphAddSat;
+extern fnPtrExtEphAddSatEphem              ExtEphAddSatEphem;
+extern fnPtrExtEphAddSatEphemCovMtx        ExtEphAddSatEphemCovMtx;
+extern fnPtrExtEphAddSatEphemExt           ExtEphAddSatEphemExt;
+extern fnPtrExtEphGetAllFields             ExtEphGetAllFields;
+extern fnPtrExtEphGetField                 ExtEphGetField;
+extern fnPtrExtEphSetField                 ExtEphSetField;
+extern fnPtrExtEphStartEndTime             ExtEphStartEndTime;
+extern fnPtrExtEphGetEphemeris             ExtEphGetEphemeris;
+extern fnPtrExtEphGetCovMtx                ExtEphGetCovMtx;
+extern fnPtrExtEphMse                      ExtEphMse;
+extern fnPtrExtEphMseCovMtx                ExtEphMseCovMtx;
+extern fnPtrExtEphDs50UTC                  ExtEphDs50UTC;
+extern fnPtrExtEphDs50UTCCovMtx            ExtEphDs50UTCCovMtx;
+extern fnPtrExtEphXten                     ExtEphXten;
+extern fnPtrExtEphGetLine                  ExtEphGetLine;
+extern fnPtrExtEphGetSatKey                ExtEphGetSatKey;
+extern fnPtrExtEphFieldsToSatKey           ExtEphFieldsToSatKey;
 
 
 

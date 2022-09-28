@@ -1,5 +1,5 @@
 #ifndef EXTEPHEMDLL_SERVICE_H
-#define EXTEPHEMDLL_SERVICEH
+#define EXTEPHEMDLL_SERVICE_H
 
 #include <stdio.h>
 

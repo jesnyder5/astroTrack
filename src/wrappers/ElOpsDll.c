@@ -1,7 +1,17 @@
-// This wrapper file was generated automatically by the A3\GenDllWrappers program.
+// This wrapper file was generated automatically by the GenDllWrappers program.
 
-#include "services/DllUtils.h"
-#include "wrappers/ElOpsDll.h"
+#include "../services/DllUtils.h"
+#include "ElOpsDll.h"
+
+
+// ElOpsDll's function pointers definition
+fnPtrElOpsInit                      ElOpsInit;
+fnPtrElOpsGetInfo                   ElOpsGetInfo;
+fnPtrIsGeoOrbit                     IsGeoOrbit;
+fnPtrCompLonEastSubPt               CompLonEastSubPt;
+fnPtrFindSatDecayTime               FindSatDecayTime;
+fnPtrGetSatParameters               GetSatParameters;
+fnPtrSatNumOf                       SatNumOf;
 
 
 static void* hLib = NULL; // handle to the dll

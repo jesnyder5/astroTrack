@@ -1,7 +1,43 @@
-// This wrapper file was generated automatically by the A3\GenDllWrappers program.
+// This wrapper file was generated automatically by the GenDllWrappers program.
 
-#include "services/DllUtils.h"
-#include "wrappers/TimeFuncDll.h"
+#include "../services/DllUtils.h"
+#include "TimeFuncDll.h"
+
+
+// TimeFuncDll's function pointers definition
+fnPtrTimeFuncInit                   TimeFuncInit;
+fnPtrTimeFuncGetInfo                TimeFuncGetInfo;
+fnPtrTConLoadFile                   TConLoadFile;
+fnPtrTimeFuncLoadFile               TimeFuncLoadFile;
+fnPtrIsTConFileLoaded               IsTConFileLoaded;
+fnPtrTConSaveFile                   TConSaveFile;
+fnPtrTConAddARec                    TConAddARec;
+fnPtrTConAddOne                     TConAddOne;
+fnPtrUTCToTConRec                   UTCToTConRec;
+fnPtrTConRemoveAll                  TConRemoveAll;
+fnPtrUTCToDTG20                     UTCToDTG20;
+fnPtrUTCToDTG19                     UTCToDTG19;
+fnPtrUTCToDTG17                     UTCToDTG17;
+fnPtrUTCToDTG15                     UTCToDTG15;
+fnPtrDTGToUTC                       DTGToUTC;
+fnPtrUTCToTAI                       UTCToTAI;
+fnPtrUTCToUT1                       UTCToUT1;
+fnPtrUTCToET                        UTCToET;
+fnPtrTAIToUTC                       TAIToUTC;
+fnPtrTAIToUT1                       TAIToUT1;
+fnPtrYrDaysToUTC                    YrDaysToUTC;
+fnPtrUTCToYrDays                    UTCToYrDays;
+fnPtrTimeComps1ToUTC                TimeComps1ToUTC;
+fnPtrUTCToTimeComps1                UTCToTimeComps1;
+fnPtrTimeComps2ToUTC                TimeComps2ToUTC;
+fnPtrUTCToTimeComps2                UTCToTimeComps2;
+fnPtrThetaGrnwch                    ThetaGrnwch;
+fnPtrThetaGrnwchFK4                 ThetaGrnwchFK4;
+fnPtrThetaGrnwchFK5                 ThetaGrnwchFK5;
+fnPtrTimeConvFrTo                   TimeConvFrTo;
+fnPtrGet6P                          Get6P;
+fnPtrSet6P                          Set6P;
+fnPtrGet6PCardLine                  Get6PCardLine;
 
 
 static void* hLib = NULL; // handle to the dll

@@ -1,20 +1,20 @@
 
-#include "services/DllUtils.h"
-#include "services/BatchDCDll_Service.h"
-#include "services/DllMainDll_Service.h"
-#include "services/TimeFuncDll_Service.h"
-#include "services/RotasDll_Service.h"
+#include "DllUtils.h"
+#include "BatchDCDll_Service.h"
+#include "DllMainDll_Service.h"
+#include "TimeFuncDll_Service.h"
+#include "RotasDll_Service.h"
 
 
-#include "wrappers/DllMainDll.h"
-#include "wrappers/EnvConstDll.h"
-#include "wrappers/AstroFuncDll.h"
-#include "wrappers/BatchDCDll.h"
-#include "wrappers/TimeFuncDll.h"
-#include "wrappers/SpVecDll.h"
-#include "wrappers/TleDll.h"
-#include "wrappers/SpPropDll.h"
-#include "wrappers/ElOpsDll.h"
+#include "../wrappers/DllMainDll.h"
+#include "../wrappers/EnvConstDll.h"
+#include "../wrappers/AstroFuncDll.h"
+#include "../wrappers/BatchDCDll.h"
+#include "../wrappers/TimeFuncDll.h"
+#include "../wrappers/SpVecDll.h"
+#include "../wrappers/TleDll.h"
+#include "../wrappers/SpPropDll.h"
+#include "../wrappers/ElOpsDll.h"
  
 
 // Retrieve BatchDC control data from the dll
@@ -136,7 +136,7 @@ void PrintBatchDCCtrls(FILE* fpOut, BatchDCCtrl* batchDCCtrl, int isSpectr)
    fprintf(fpOut, " F.  ITER. or PERFORMANCE AN.SUMM : %s; %sPerf Anal Summary\n", iterSumOptStrs[batchDCCtrl->iterSumOpt], batchDCCtrl->senPerform ? "" : "no ");
    fprintf(fpOut, " G.  ELT CORRECTION FLAGS       L : %s\n", yesNo[batchDCCtrl->correct_l]);
    fprintf(fpOut, " H.                             N : %s\n", yesNo[batchDCCtrl->correct_n]);
-   fprintf(fpOut, " I.                         %4s : %s\n", (isSP || isXP) ? "BTERM" : "BSTAR", yesNo[batchDCCtrl->correct_b]);
+   fprintf(fpOut, " I.                         %5s : %s\n", (isSP || isXP) ? "BTERM" : "BSTAR", yesNo[batchDCCtrl->correct_b]);
    fprintf(fpOut, " J.                     CHI & PSI : %s\n", yesNo[batchDCCtrl->correct_chi]);
    fprintf(fpOut, " K.                       AF & AG : %s\n", yesNo[batchDCCtrl->correct_psi]);
 
@@ -339,7 +339,7 @@ void PrintObResiduals(FILE* fpOut, BatchDCCtrl* batchDCCtrl, ObsRecord* obs, Res
    char* formatStr;
    char  obRejErrStr[][28] = { "Sensor data retrieval error", "No sensor location found", "Residual computation error" };
 
-   int obsType = residuals->ObsType;
+   int obsType = residuals->obsType;
 
    // no residual data avaialable due to error
    if (obsRej->error != 0)
@@ -370,25 +370,25 @@ void PrintObResiduals(FILE* fpOut, BatchDCCtrl* batchDCCtrl, ObsRecord* obs, Res
       obs->satNum,                                    // 1. tag no.
       obs->senNum,                                    // 2. sta no.
       UTCToDtg18Str(obs->obsTimeDs50UTC),             // 3. date time YY/DDD HHMM SS.SSS
-      (int)residuals->RevNum,                         // 4. rev no.
-      residuals->SatArgOfLatitude,                    // 6. u deg
+      (int)residuals->revNum,                         // 4. rev no.
+      residuals->satArgOfLatitude,                    // 6. u deg
       obsRej->time == 1 ? '*' : ' ',                  // 7. time rejection
-      NonNegativeZero(residuals->DeltaT, 4),          // 8. delta t (min)
+      NonNegativeZero(residuals->deltaT, 4),          // 8. delta t (min)
       obsRej->beta == 1 ? '*' : ' ',                  // 9. delta beta rejection flag
-      NonNegativeZero(residuals->Beta, 4),            //10. beta (deg)
+      NonNegativeZero(residuals->beta, 4),            //10. beta (deg)
       obsRej->height == 1 ? '*' : ' ',                //11. delta height rejection flag 
-      NonNegativeZero(residuals->Height, 3),          //12. delta height (km)
+      NonNegativeZero(residuals->height, 3),          //12. delta height (km)
       obsRej->range == 1 ? '*' : ' ',                 //13. range residual rejection flag
-      NonNegativeZero(residuals->Range, 3),           //14. range residual (km)
+      NonNegativeZero(residuals->range, 3),           //14. range residual (km)
       obsRej->azimuth == 1 ? '*' : ' ',               //15. azimuth or RA residual rejection flag
-      NonNegativeZero(residuals->RightAscension, 3),  //16. azimuth or RA residual (deg)
+      NonNegativeZero(residuals->rightAscension, 3),  //16. azimuth or RA residual (deg)
       obsRej->elevation == 1 ? '*' : ' ',             //17. elevation or declination residual rejection flag
-      NonNegativeZero(residuals->Declination, 3),     //18. elevation or declination residual (deg)
+      NonNegativeZero(residuals->declination, 3),     //18. elevation or declination residual (deg)
       obsRej->rangeRate == 1 ? '*' : ' ',             //19. range rate residual rejection flag
-      NonNegativeZero(residuals->RangeRate, 4),       //20. range rate residual (km/sec)
-      NonNegativeZero(residuals->VMag, 3),            //21. vector magnitude (km)
+      NonNegativeZero(residuals->rangeRate, 4),       //20. range rate residual (km/sec)
+      NonNegativeZero(residuals->vmag, 3),            //21. vector magnitude (km)
       rejFlg,                                         //22. rejection flag: 'NR'=no rejection
-      residuals->ObsType);                            //23. obs type      
+      residuals->obsType);                            //23. obs type      
 }
 
 void PrintAllObResiduals(FILE* fpOut, BatchDCCtrl* batchDCCtrl, int iterCount, __int64 satKey, __int64* pObsKeys, int numObs, double (*obsResArr)[100], int (*obsRejFlags)[32])
@@ -449,8 +449,9 @@ void PrintIterSum(FILE* fpOut, int satNum, BatchDCCtrl* batchDCCtrl, DcElts* upd
    fprintf(fpOut, "%5d Residuals Accepted, %5d Residuals Rejected, RMS = %9.3f, Predicted RMS = %9.3f", 
       itDat->numResAccepted, itDat->numResRejected, itDat->RMS, itDat->predRMS);
 
-   if (batchDCCtrl->usePredRMS)
-      fprintf(fpOut, ", Predicted RMS = %9.3f", itDat->predRMS);
+   // DHN 25Jul2022 - this value has already been displayed in previous statement
+   //if (batchDCCtrl->usePredRMS)
+   //   fprintf(fpOut, ", Predicted RMS = %9.3f", itDat->predRMS);
 
    if (batchDCCtrl->weightedDC)
       fprintf(fpOut, ", Unweighted RMS = %9.3f km", itDat->unweightedRMS);
@@ -544,6 +545,7 @@ void PrintOutputElements(FILE* fpOut, DcElts* dcElts)
    {
       // TLE type 0 - GP
       CreateNewGpTle(dcElts, line1, line2);
+      printf("%s\n%s\n", line1, line2);
       fprintf(fpOut, "%s\n", line1);
       fprintf(fpOut, "%s\n", line2);
 
@@ -562,6 +564,7 @@ void PrintOutputElements(FILE* fpOut, DcElts* dcElts)
 
       // SP vector
       CreateNewSpVec(dcElts, line1, line2, card4P);
+      printf("%s\n%s\n%s\n", line1, line2, card4P);
       fprintf(fpOut, "%s\n", line1);
       fprintf(fpOut, "%s\n", line2);
       fprintf(fpOut, "%s\n", card4P);
@@ -675,8 +678,8 @@ void PrintAcceptCrit(FILE* fpOut, __int64 satKey)
 
    fprintf(fpOut, " ACCEPTANCE    NEW      NO.   PERCENT   RMS     OBSPAN     CHANGE      CHANGE      CHANGE               CHANGE\n");
    fprintf(fpOut, "  CRITERIA    EPOCH     RES     RES              DAYS     IN PLANE     IN ABAR      IN N                IN BTERM\n");
-   fprintf(fpOut, "  STANDARD  %4.1f DAY    %3d     %3.0f   %4.0f KM   %5.1f    %6.3f DEG  %8.4f    %9.2e REV/DAY    %10.3e   m**2/kg\n",
+   fprintf(fpOut, "  STANDARD  %4.1f DAY %6d     %3.0f %6.1f KM   %5.1f    %6.3f DEG  %8.4f    %9.2e REV/DAY    %10.3e   m**2/kg\n",
       ac.std_deltaEpoch, ac.std_numRes, ac.std_acptPct, ac.std_RMS, ac.std_obsSpan, ac.std_deltaW, ac.std_deltaAbar, ac.std_deltaN, ac.std_deltaBTerm);
-   fprintf(fpOut, "  ACTUAL    %4.1f DAY    %3d     %3.0f   %4d KM   %5.1f    %6.3f DEG  %8.4f    %9.2e REV/DAY    %10.3e   m**2/kg\n\n",
-      ac.act_deltaEpoch, ac.act_numRes, ac.act_acptPct, (int)ac.act_RMS, ac.act_obsSpan, ac.act_deltaW, ac.act_deltaAbar, ac.act_deltaN, ac.act_deltaBTerm);
+   fprintf(fpOut, "  ACTUAL    %4.1f DAY %6d     %3.0f %6.1f KM   %5.1f    %6.3f DEG  %8.4f    %9.2e REV/DAY    %10.3e   m**2/kg\n\n",
+      ac.act_deltaEpoch, ac.act_numRes, ac.act_acptPct, ac.act_RMS, ac.act_obsSpan, ac.act_deltaW, ac.act_deltaAbar, ac.act_deltaN, ac.act_deltaBTerm);
 }

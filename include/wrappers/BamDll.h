@@ -1,13 +1,15 @@
-// This wrapper file was generated automatically by the A3\GenDllWrappers program.
+// This wrapper file was generated automatically by the GenDllWrappers program.
 
 #ifndef BAMDLL_H
 #define BAMDLL_H
 
-#include "services/DllUtils.h"
+#include "../services/DllUtils.h"
 
-// Provide the path to the dll/so
-#ifdef _WIN32
+// Provide the path to the dll/so/dylib
+#if defined (_WIN32) || defined (__CYGWIN__)
   #define BamDll "Bam.dll"
+#elif __APPLE__
+  #define BamDll "libbam.dylib"
 #else
   #define BamDll "libbam.so"
 #endif
@@ -78,9 +80,9 @@ typedef int (STDCALL *fnPtrBamCompNumTSs)(double startDs50UTC, double stopDs50UT
 // stepSizeMin        step size in minutes (in-Double)
 // avgSDs             average separate distances of all time steps (out-Double[*])
 // avgMDs             average missed distances of all time steps (out-Double[*])
-// extBamArr          other BAM resulting data (out-Double[*])
+// extBamArr          other BAM resulting data (out-Double[64])
 // errCode            0 if Bam is successful, non-0 if there is an error (out-Integer)
-typedef void (STDCALL *fnPtrBamCompute)(__int64 satKeys[], int numSats, double startDs50UTC, double stopDs50UTC, double stepSizeMin, double avgSDs[], double avgMDs[], double extBamArr[], int* errCode);
+typedef void (STDCALL *fnPtrBamCompute)(__int64 satKeys[], int numSats, double startDs50UTC, double stopDs50UTC, double stepSizeMin, double avgSDs[], double avgMDs[], double extBamArr[64], int* errCode);
 
 
 // Retrieves other BAM data
@@ -107,59 +109,56 @@ typedef void (STDCALL *fnPtrBamCompute)(__int64 satKeys[], int numSats, double s
 // xf_bam             Predefined number specifying which BAM array to retrieve (in-Integer)
 // bamArr             An array to store the retrieved result (out-Double[*])
 typedef void (STDCALL *fnPtrBamGetResults)(int xf_bam, double bamArr[]);
-
-static const int  
-   BAM_SD_TIME    =  0,    // time at mininum average separate distances (ds50UTC)
-   BAM_SD_DIST    =  1,    // minimum average separate distance (km)
-   BAM_SD_POSX    =  2,    // average position X at minimum average separate distance (km) 
-   BAM_SD_POSY    =  3,    // average position Y at minimum average separate distance (km) 
-   BAM_SD_POSZ    =  4,    // average position Z at minimum average separate distance (km) 
-   BAM_SD_VELX    =  5,    // average velocity X at minimum average separate distance (km/s)
-   BAM_SD_VELY    =  6,    // average velocity Y at minimum average separate distance (km/s)
-   BAM_SD_VELZ    =  7,    // average velocity Z at minimum average separate distance (km/s)
-   BAM_SD_LAT     =  8,    // average latitude at minimum average separate distance (deg) 
-   BAM_SD_LON     =  9,    // average longitude at minimum average separate distance (deg)  
-   BAM_SD_HEIGHT  = 10,    // average height at minimum average separate distance (km) 
-
-   BAM_MD_TIME    = 20,    // time at mininum average missed distances (ds50UTC)
-   BAM_MD_DIST    = 21,    // minimum average missed distance (km)
-   BAM_MD_POSX    = 22,    // average position X of satellites when they cross the pinch point plan (km) 
-   BAM_MD_POSY    = 23,    // average position Y of satellites when they cross the pinch point plan (km) 
-   BAM_MD_POSZ    = 24,    // average position Z of satellites when they cross the pinch point plan (km) 
-   BAM_MD_VELX    = 25,    // average velocity X of satellites when they cross the pinch point plan (km/s)
-   BAM_MD_VELY    = 26,    // average velocity Y of satellites when they cross the pinch point plan (km/s)
-   BAM_MD_VELZ    = 27,    // average velocity Z of satellites when they cross the pinch point plan (km/s)
-   BAM_MD_LAT     = 28,    // average latitude of satellites when they cross the pinch point plan (deg) 
-   BAM_MD_LON     = 29,    // average longitude of satellites when they cross the pinch point plan (deg)  
-   BAM_MD_HEIGHT  = 30,    // average height of satellites when they cross the pinch point plan (km) 
-
-   BAM_MD_END     = 63; 
-   
-static const int  
-   XF_BAM_MDTIME  =  0,    // times when satellites cross the pinch point plan (ds50UTC) 
-   XF_BAM_RANGE   =  1,    // missed distances from satellites to the pinch point (km)
-   XF_BAM_NADIR   =  2,    // nadir angles of satellites when they cross the pinch point plan
-   XF_BAM_POSX    =  3,    // position Xs of satellites when they cross the pinch point plan (km)   
-   XF_BAM_POSY    =  4,    // position Ys of satellites when they cross the pinch point plan (km) 
-   XF_BAM_POSZ    =  5,    // position Zs of satellites when they cross the pinch point plan (km) 
-   XF_BAM_VELX    =  6,    // velocity Xs of satellites when they cross the pinch point plan (km/s)
-   XF_BAM_VELY    =  7,    // velocity Ys of satellites when they cross the pinch point plan (km/s)
-   XF_BAM_VELZ    =  8,    // velocity Zs of satellites when they cross the pinch point plan (km/s)
-   XF_BAM_LAT     =  9,    // latitude of satellites when they cross the pinch point plan (deg) 
-   XF_BAM_LON     = 10,    // longitude of satellites when they cross the pinch point plan (deg)  
-   XF_BAM_HEIGHT  = 11;    // height of satellites when they cross the pinch point plan (km) 
-   
-
-   
-
-
-
-// BamDll's function pointers
-fnPtrBamInit                        BamInit;
-fnPtrBamGetInfo                     BamGetInfo;
-fnPtrBamCompNumTSs                  BamCompNumTSs;
-fnPtrBamCompute                     BamCompute;
-fnPtrBamGetResults                  BamGetResults;
+  
+  static const int  
+     BAM_SD_TIME    =  0,    // TIME AT MININUM AVERAGE SEPARATE DISTANCES (DS50UTC)
+     BAM_SD_DIST    =  1,    // MINIMUM AVERAGE SEPARATE DISTANCE (KM)
+     BAM_SD_POSX    =  2,    // AVERAGE POSITION X AT MINIMUM AVERAGE SEPARATE DISTANCE (KM) 
+     BAM_SD_POSY    =  3,    // AVERAGE POSITION Y AT MINIMUM AVERAGE SEPARATE DISTANCE (KM) 
+     BAM_SD_POSZ    =  4,    // AVERAGE POSITION Z AT MINIMUM AVERAGE SEPARATE DISTANCE (KM) 
+     BAM_SD_VELX    =  5,    // AVERAGE VELOCITY X AT MINIMUM AVERAGE SEPARATE DISTANCE (KM/S)
+     BAM_SD_VELY    =  6,    // AVERAGE VELOCITY Y AT MINIMUM AVERAGE SEPARATE DISTANCE (KM/S)
+     BAM_SD_VELZ    =  7,    // AVERAGE VELOCITY Z AT MINIMUM AVERAGE SEPARATE DISTANCE (KM/S)
+     BAM_SD_LAT     =  8,    // AVERAGE LATITUDE AT MINIMUM AVERAGE SEPARATE DISTANCE (DEG) 
+     BAM_SD_LON     =  9,    // AVERAGE LONGITUDE AT MINIMUM AVERAGE SEPARATE DISTANCE (DEG)  
+     BAM_SD_HEIGHT  = 10,    // AVERAGE HEIGHT AT MINIMUM AVERAGE SEPARATE DISTANCE (KM) 
+  
+     BAM_MD_TIME    = 20,    // TIME AT MININUM AVERAGE MISSED DISTANCES (DS50UTC)
+     BAM_MD_DIST    = 21,    // MINIMUM AVERAGE MISSED DISTANCE (KM)
+     BAM_MD_POSX    = 22,    // AVERAGE POSITION X OF SATELLITES WHEN THEY CROSS THE PINCH POINT PLAN (KM) 
+     BAM_MD_POSY    = 23,    // AVERAGE POSITION Y OF SATELLITES WHEN THEY CROSS THE PINCH POINT PLAN (KM) 
+     BAM_MD_POSZ    = 24,    // AVERAGE POSITION Z OF SATELLITES WHEN THEY CROSS THE PINCH POINT PLAN (KM) 
+     BAM_MD_VELX    = 25,    // AVERAGE VELOCITY X OF SATELLITES WHEN THEY CROSS THE PINCH POINT PLAN (KM/S)
+     BAM_MD_VELY    = 26,    // AVERAGE VELOCITY Y OF SATELLITES WHEN THEY CROSS THE PINCH POINT PLAN (KM/S)
+     BAM_MD_VELZ    = 27,    // AVERAGE VELOCITY Z OF SATELLITES WHEN THEY CROSS THE PINCH POINT PLAN (KM/S)
+     BAM_MD_LAT     = 28,    // AVERAGE LATITUDE OF SATELLITES WHEN THEY CROSS THE PINCH POINT PLAN (DEG) 
+     BAM_MD_LON     = 29,    // AVERAGE LONGITUDE OF SATELLITES WHEN THEY CROSS THE PINCH POINT PLAN (DEG)  
+     BAM_MD_HEIGHT  = 30,    // AVERAGE HEIGHT OF SATELLITES WHEN THEY CROSS THE PINCH POINT PLAN (KM) 
+  
+     BAM_MD_SIZE    = 64;    
+     
+  static const int  
+     XF_BAM_MDTIME  =  0,    // TIMES WHEN SATELLITES CROSS THE PINCH POINT PLAN (DS50UTC) 
+     XF_BAM_RANGE   =  1,    // MISSED DISTANCES FROM SATELLITES TO THE PINCH POINT (KM)
+     XF_BAM_NADIR   =  2,    // NADIR ANGLES OF SATELLITES WHEN THEY CROSS THE PINCH POINT PLAN
+     XF_BAM_POSX    =  3,    // POSITION XS OF SATELLITES WHEN THEY CROSS THE PINCH POINT PLAN (KM)   
+     XF_BAM_POSY    =  4,    // POSITION YS OF SATELLITES WHEN THEY CROSS THE PINCH POINT PLAN (KM) 
+     XF_BAM_POSZ    =  5,    // POSITION ZS OF SATELLITES WHEN THEY CROSS THE PINCH POINT PLAN (KM) 
+     XF_BAM_VELX    =  6,    // VELOCITY XS OF SATELLITES WHEN THEY CROSS THE PINCH POINT PLAN (KM/S)
+     XF_BAM_VELY    =  7,    // VELOCITY YS OF SATELLITES WHEN THEY CROSS THE PINCH POINT PLAN (KM/S)
+     XF_BAM_VELZ    =  8,    // VELOCITY ZS OF SATELLITES WHEN THEY CROSS THE PINCH POINT PLAN (KM/S)
+     XF_BAM_LAT     =  9,    // LATITUDE OF SATELLITES WHEN THEY CROSS THE PINCH POINT PLAN (DEG) 
+     XF_BAM_LON     = 10,    // LONGITUDE OF SATELLITES WHEN THEY CROSS THE PINCH POINT PLAN (DEG)  
+     XF_BAM_HEIGHT  = 11;    // HEIGHT OF SATELLITES WHEN THEY CROSS THE PINCH POINT PLAN (KM) 
+     
+  
+     
+// BamDll's function pointers declaration
+extern fnPtrBamInit                        BamInit;
+extern fnPtrBamGetInfo                     BamGetInfo;
+extern fnPtrBamCompNumTSs                  BamCompNumTSs;
+extern fnPtrBamCompute                     BamCompute;
+extern fnPtrBamGetResults                  BamGetResults;
 
 
 

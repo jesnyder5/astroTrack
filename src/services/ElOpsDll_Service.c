@@ -1,9 +1,9 @@
-#include "services/DllUtils.h"
-#include "services/ElOpsDll_Service.h"
+#include "DllUtils.h"
+#include "ElOpsDll_Service.h"
 
-#include "wrappers/EnvConstDll.h"
-#include "wrappers/AstroFuncDll.h"
-#include "wrappers/ElOpsDll.h"
+#include "../wrappers/EnvConstDll.h"
+#include "../wrappers/AstroFuncDll.h"
+#include "../wrappers/ElOpsDll.h"
 
 // Returns all currently loaded satKeys
 void GetCurrLoadedSatKeys(int fileType, __int64** pSatKeys, int* numSats)

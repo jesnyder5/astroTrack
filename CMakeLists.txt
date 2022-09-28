@@ -7,8 +7,8 @@ enable_testing()
 set (SRC_FILES 
         main.cpp 
         ${CMAKE_CURRENT_SOURCE_DIR}/src/astroTracker.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/frameLib.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/timeLib.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/satellite.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/kinematicState.cpp
 )
 
 set(WRAPPER_FILES

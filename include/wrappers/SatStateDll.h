@@ -1,13 +1,15 @@
-// This wrapper file was generated automatically by the A3\GenDllWrappers program.
+// This wrapper file was generated automatically by the GenDllWrappers program.
 
 #ifndef SATSTATEDLL_H
 #define SATSTATEDLL_H
 
-#include "services/DllUtils.h"
+#include "../services/DllUtils.h"
 
-// Provide the path to the dll/so
-#ifdef _WIN32
+// Provide the path to the dll/so/dylib
+#if defined (_WIN32) || defined (__CYGWIN__)
   #define SatStateDll "SatState.dll"
+#elif __APPLE__
+  #define SatStateDll "libsatstate.dylib"
 #else
   #define SatStateDll "libsatstate.so"
 #endif
@@ -283,130 +285,128 @@ typedef int (STDCALL *fnPtrSatStateGetCovUVW)(__int64 satKey, double ds50UTC, do
 
 
 // Generate external ephemeris file for the specified satellite (via its unique satKey) 
+// Note: No need to initialize the satellite before this call. If it was intialized, it will be removed after this call
 // satKey             The satellite's unique key (in-Long)
 // startDs50UTC       Start time in days since 1950 UTC (in-Double)
 // stopDs50UTC        Stop time in days since 1950 UTC (in-Double)
 // stepSizeSecs       Step size in seconds. Set to zero if natural integration step size (auto adjust) is desired for SP propagator (in-Double)
 // ephFileName        The generated external ephemeris file name (in-Character[512])
-// ephFileType        External ephemeris file type: 1=ITC (in-Integer)
+// ephFileType        External ephemeris file type: 1=ITC, 2=ITC without CovMtx (in-Integer)
 // returns 0 if the external ephemeris file was generated successfully, non-0 if there is an error
 typedef int (STDCALL *fnPtrSatStateGenEphFile)(__int64 satKey, double startDs50UTC, double stopDs50UTC, double stepSizeSecs, char ephFileName[512], int ephFileType);
-
-// Indexes of Satellite data fields
-static const int  
-   XF_SAT_NUM      =  1,      // Satellite number I5
-   XF_SAT_NAME     =  2,      // Satellite international designator A8
-   XF_SAT_EPHTYPE  =  3,      // Element type I1 
-   XF_SAT_REVNUM   =  4,      // Epoch revolution number I6
-   XF_SAT_EPOCH    =  5,      // Epoch time in days since 1950
-   XF_SAT_BFIELD   =  6,      // BStar drag component (GP) or Ballistic coefficient-BTerm (SP) (m^2/kg)
-   XF_SAT_ELSETNUM =  7,      // Element set number
-   XF_SAT_INCLI    =  8,      // Inclination (deg)
-   XF_SAT_NODE     =  9,      // Right ascension of ascending node (deg)
-   XF_SAT_ECCEN    = 10,      // Eccentricity
-   XF_SAT_OMEGA    = 11,      // Argument of perigee (deg)
-   XF_SAT_MNANOM   = 12,      // Mean anomaly (deg)
-   XF_SAT_MNMOTN   = 13,      // Mean motion (revs/day)
-   XF_SAT_PERIOD   = 14,      // Satellite period (min)
-   XF_SAT_PERIGEEHT= 15,      // Perigee Height(km)
-   XF_SAT_APOGEEHT = 16,      // Apogee Height (km)
-   XF_SAT_PERIGEE  = 17,      // Perigee(km)
-   XF_SAT_APOGEE   = 18,      // Apogee (km)
-   XF_SAT_A        = 19;      // Semi-major axis (km)
-
-
-// Indexes of SatState's load/save file task mode
-static const int  
-   XF_TASK_CTRLONLY = 1,     // Only load/save propagator control parameters
-   XF_TASK_SATONLY  = 2,     // Only load/save orbital elements/external ephemeris data
-   XF_TASK_BOTH     = 3;     // Load/Save both 1 and 2
-
-
-// Indexes of available satellite data fields
-static const int  
-   XF_SATFIELD_EPOCHUTC =  1,    // Satellite number
-   XF_SATFIELD_MNANOM   =  2,    // Mean anomaly (deg)
-   XF_SATFIELD_NODE     =  3,    // Right ascension of asending node (deg) 
-   XF_SATFIELD_OMEGA    =  4,    // Argument of perigee (deg)
-   XF_SATFIELD_PERIOD   =  5,    // Satellite's period (min)
-   XF_SATFIELD_ECCEN    =  6,    // Eccentricity
-   XF_SATFIELD_INCLI    =  7,    // Orbit inclination (deg)
-   XF_SATFIELD_MNMOTION =  8,    // Mean motion (rev/day)
-   XF_SATFIELD_BFIELD   =  9,    // GP B* drag term (1/er)  or SP Radiation Pressure Coefficient
-   XF_SATFIELD_PERIGEEHT= 10,    // Perigee height above the geoid (km)
-   XF_SATFIELD_APOGEEHT = 11,    // Apogee height above the geoid (km)
-   XF_SATFIELD_PERIGEE  = 12,    // Perigee height above the center of the earth (km)
-   XF_SATFIELD_APOGEE   = 13,    // Apogee height above the center of the earth (km)
-   XF_SATFIELD_A        = 14,    // Semimajor axis (km)
-   XF_SATFIELD_NDOT     = 15,    // Mean motion derivative (rev/day /2)
-   XF_SATFIELD_SATCAT   = 16,    // Satellite category (Synchronous, Deep space, Decaying, Routine)
-   XF_SATFIELD_HTM3     = 17,    // Astat 3 Height multiplier
-   XF_SATFIELD_CMOFFSET = 18,    // Center of mass offset (m)
-   XF_SATFIELD_N2DOT    = 19,    // Unused
-   XF_SATFIELD_NODEDOT  = 20,    // GP node dot (deg/s)
-   XF_SATFIELD_ERRORTIME= 21,    // GP only - the last time when propagation has error
-   XF_SATFIELD_MU       = 22;    // value of mu
-
   
-//*******************************************************************************
-
-// Indexes of available deltas
-static const int  
-   XA_DELTA_POS         =  0,     // delta position (km)
-   XA_DELTA_TIME        =  1,     // delta time (sec)
-   XA_DELTA_PRADIAL     =  2,     // delta position in radial direction (km)
-   XA_DELTA_PINTRCK     =  3,     // delta position in in-track direction (km)
-   XA_DELTA_PCRSSTRCK   =  4,     // delta position in cross-track direction (km)
-   XA_DELTA_VEL         =  5,     // delta velocity (km/sec)
-   XA_DELTA_VRADIAL     =  6,     // delta velocity in radial direction (km/sec)
-   XA_DELTA_VINTRCK     =  7,     // delta velocity in in-track direction (km/sec)
-   XA_DELTA_VCRSSTRCK   =  8,     // delta velocity in cross-track direction (km/sec)
-   XA_DELTA_BETA        =  9,     // delta Beta (deg)
-   XA_DELTA_HEIGHT      = 10,     // delta height (km)
-   XA_DELTA_ANGMOM      = 11,     // delta angular momentum (deg)
-   XA_DELTA_MHLNBS_UVW  = 12,     // 3D position Mahalanobis distance in UVW Space (Bubble Covariance, only if covariance propagation is available or turned on)
-   XA_DELTA_MHLNBS_HTB  = 13,     // 3D position Mahalanobis distance in Height-Time_Beta Space (Banana Covariance, only if covariance propagation is available or turned on)
-   
-   XA_DELTA_SIZE        =100; 
-   
-   
-
-//*******************************************************************************
-
-static const int  
-   TIME_IS_MSE = 1,     // Input time is in minutes since epoch 
-   TIME_IS_TAI = 2,     // Input time is in days since 1950 TAI
-   TIME_IS_UTC = 3;     // Input time is in days since 1950 UTC
-   
-//*******************************************************************************
-
-
-
-
-
-// SatStateDll's function pointers
-fnPtrSatStateInit                   SatStateInit;
-fnPtrSatStateGetInfo                SatStateGetInfo;
-fnPtrSatStateLoadFile               SatStateLoadFile;
-fnPtrSatStateSaveFile               SatStateSaveFile;
-fnPtrSatStateRemoveSat              SatStateRemoveSat;
-fnPtrSatStateRemoveSatAll           SatStateRemoveSatAll;
-fnPtrSatStateRemoveAllSats          SatStateRemoveAllSats;
-fnPtrSatStateReset                  SatStateReset;
-fnPtrSatStateGetCount               SatStateGetCount;
-fnPtrSatStateGetLoaded              SatStateGetLoaded;
-fnPtrSatStateNumToKey               SatStateNumToKey;
-fnPtrSatStateGetSatDataAll          SatStateGetSatDataAll;
-fnPtrSatStateGetSatDataField        SatStateGetSatDataField;
-fnPtrSatStateInitSat                SatStateInitSat;
-fnPtrSatStateMse                    SatStateMse;
-fnPtrSatStateDs50UTC                SatStateDs50UTC;
-fnPtrSatStateGetPropOut             SatStateGetPropOut;
-fnPtrSatStateEphCom                 SatStateEphCom;
-fnPtrSatStateEphCom_OS              SatStateEphCom_OS;
-fnPtrSatStateHasCovMtx              SatStateHasCovMtx;
-fnPtrSatStateGetCovUVW              SatStateGetCovUVW;
-fnPtrSatStateGenEphFile             SatStateGenEphFile;
+  // INDEXES OF SATELLITE DATA FIELDS
+  static const int  
+     XF_SAT_NUM      =  1,      // SATELLITE NUMBER I5
+     XF_SAT_NAME     =  2,      // SATELLITE INTERNATIONAL DESIGNATOR A8
+     XF_SAT_EPHTYPE  =  3,      // ELEMENT TYPE I1 
+     XF_SAT_REVNUM   =  4,      // EPOCH REVOLUTION NUMBER I6
+     XF_SAT_EPOCH    =  5,      // EPOCH TIME IN DAYS SINCE 1950
+     XF_SAT_BFIELD   =  6,      // BSTAR DRAG COMPONENT (GP) OR BALLISTIC COEFFICIENT-BTERM (SP) (M^2/KG)
+     XF_SAT_ELSETNUM =  7,      // ELEMENT SET NUMBER
+     XF_SAT_INCLI    =  8,      // INCLINATION (DEG)
+     XF_SAT_NODE     =  9,      // RIGHT ASCENSION OF ASCENDING NODE (DEG)
+     XF_SAT_ECCEN    = 10,      // ECCENTRICITY
+     XF_SAT_OMEGA    = 11,      // ARGUMENT OF PERIGEE (DEG)
+     XF_SAT_MNANOM   = 12,      // MEAN ANOMALY (DEG)
+     XF_SAT_MNMOTN   = 13,      // MEAN MOTION (REVS/DAY)
+     XF_SAT_PERIOD   = 14,      // SATELLITE PERIOD (MIN)
+     XF_SAT_PERIGEEHT= 15,      // PERIGEE HEIGHT(KM)
+     XF_SAT_APOGEEHT = 16,      // APOGEE HEIGHT (KM)
+     XF_SAT_PERIGEE  = 17,      // PERIGEE(KM)
+     XF_SAT_APOGEE   = 18,      // APOGEE (KM)
+     XF_SAT_A        = 19;      // SEMI-MAJOR AXIS (KM)
+  
+  
+  // INDEXES OF SATSTATE'S LOAD/SAVE FILE TASK MODE
+  static const int  
+     XF_TASK_CTRLONLY = 1,     // ONLY LOAD/SAVE PROPAGATOR CONTROL PARAMETERS
+     XF_TASK_SATONLY  = 2,     // ONLY LOAD/SAVE ORBITAL ELEMENTS/EXTERNAL EPHEMERIS DATA
+     XF_TASK_BOTH     = 3;     // LOAD/SAVE BOTH 1 AND 2
+  
+  
+  // INDEXES OF AVAILABLE SATELLITE DATA FIELDS
+  static const int  
+     XF_SATFIELD_EPOCHUTC =  1,    // SATELLITE NUMBER
+     XF_SATFIELD_MNANOM   =  2,    // MEAN ANOMALY (DEG)
+     XF_SATFIELD_NODE     =  3,    // RIGHT ASCENSION OF ASENDING NODE (DEG) 
+     XF_SATFIELD_OMEGA    =  4,    // ARGUMENT OF PERIGEE (DEG)
+     XF_SATFIELD_PERIOD   =  5,    // SATELLITE'S PERIOD (MIN)
+     XF_SATFIELD_ECCEN    =  6,    // ECCENTRICITY
+     XF_SATFIELD_INCLI    =  7,    // ORBIT INCLINATION (DEG)
+     XF_SATFIELD_MNMOTION =  8,    // MEAN MOTION (REV/DAY)
+     XF_SATFIELD_BFIELD   =  9,    // GP B* DRAG TERM (1/ER)  OR SP RADIATION PRESSURE COEFFICIENT
+     XF_SATFIELD_PERIGEEHT= 10,    // PERIGEE HEIGHT ABOVE THE GEOID (KM)
+     XF_SATFIELD_APOGEEHT = 11,    // APOGEE HEIGHT ABOVE THE GEOID (KM)
+     XF_SATFIELD_PERIGEE  = 12,    // PERIGEE HEIGHT ABOVE THE CENTER OF THE EARTH (KM)
+     XF_SATFIELD_APOGEE   = 13,    // APOGEE HEIGHT ABOVE THE CENTER OF THE EARTH (KM)
+     XF_SATFIELD_A        = 14,    // SEMIMAJOR AXIS (KM)
+     XF_SATFIELD_NDOT     = 15,    // MEAN MOTION DERIVATIVE (REV/DAY /2)
+     XF_SATFIELD_SATCAT   = 16,    // SATELLITE CATEGORY (SYNCHRONOUS, DEEP SPACE, DECAYING, ROUTINE)
+     XF_SATFIELD_HTM3     = 17,    // ASTAT 3 HEIGHT MULTIPLIER
+     XF_SATFIELD_CMOFFSET = 18,    // CENTER OF MASS OFFSET (M)
+     XF_SATFIELD_N2DOT    = 19,    // UNUSED
+     XF_SATFIELD_NODEDOT  = 20,    // GP NODE DOT (DEG/S)
+     XF_SATFIELD_ERRORTIME= 21,    // GP ONLY - THE LAST TIME WHEN PROPAGATION HAS ERROR
+     XF_SATFIELD_MU       = 22;    // VALUE OF MU
+  
+    
+  //*******************************************************************************
+  
+  // INDEXES OF AVAILABLE DELTAS
+  static const int  
+     XA_DELTA_POS         =  0,     // DELTA POSITION (KM)
+     XA_DELTA_TIME        =  1,     // DELTA TIME (SEC)
+     XA_DELTA_PRADIAL     =  2,     // DELTA POSITION IN RADIAL DIRECTION (KM)
+     XA_DELTA_PINTRCK     =  3,     // DELTA POSITION IN IN-TRACK DIRECTION (KM)
+     XA_DELTA_PCRSSTRCK   =  4,     // DELTA POSITION IN CROSS-TRACK DIRECTION (KM)
+     XA_DELTA_VEL         =  5,     // DELTA VELOCITY (KM/SEC)
+     XA_DELTA_VRADIAL     =  6,     // DELTA VELOCITY IN RADIAL DIRECTION (KM/SEC)
+     XA_DELTA_VINTRCK     =  7,     // DELTA VELOCITY IN IN-TRACK DIRECTION (KM/SEC)
+     XA_DELTA_VCRSSTRCK   =  8,     // DELTA VELOCITY IN CROSS-TRACK DIRECTION (KM/SEC)
+     XA_DELTA_BETA        =  9,     // DELTA BETA (DEG)
+     XA_DELTA_HEIGHT      = 10,     // DELTA HEIGHT (KM)
+     XA_DELTA_ANGMOM      = 11,     // DELTA ANGULAR MOMENTUM (DEG)
+     XA_DELTA_MHLNBS_UVW  = 12,     // 3D POSITION MAHALANOBIS DISTANCE IN UVW SPACE (BUBBLE COVARIANCE, ONLY IF COVARIANCE PROPAGATION IS AVAILABLE OR TURNED ON)
+     XA_DELTA_MHLNBS_HTB  = 13,     // 3D POSITION MAHALANOBIS DISTANCE IN HEIGHT-TIME_BETA SPACE (BANANA COVARIANCE, ONLY IF COVARIANCE PROPAGATION IS AVAILABLE OR TURNED ON)
+     
+     XA_DELTA_SIZE        =100; 
+     
+     
+  
+  //*******************************************************************************
+  
+  static const int  
+     TIME_IS_MSE = 1,     // INPUT TIME IS IN MINUTES SINCE EPOCH 
+     TIME_IS_TAI = 2,     // INPUT TIME IS IN DAYS SINCE 1950 TAI
+     TIME_IS_UTC = 3;     // INPUT TIME IS IN DAYS SINCE 1950 UTC
+     
+  //*******************************************************************************
+  
+  
+// SatStateDll's function pointers declaration
+extern fnPtrSatStateInit                   SatStateInit;
+extern fnPtrSatStateGetInfo                SatStateGetInfo;
+extern fnPtrSatStateLoadFile               SatStateLoadFile;
+extern fnPtrSatStateSaveFile               SatStateSaveFile;
+extern fnPtrSatStateRemoveSat              SatStateRemoveSat;
+extern fnPtrSatStateRemoveSatAll           SatStateRemoveSatAll;
+extern fnPtrSatStateRemoveAllSats          SatStateRemoveAllSats;
+extern fnPtrSatStateReset                  SatStateReset;
+extern fnPtrSatStateGetCount               SatStateGetCount;
+extern fnPtrSatStateGetLoaded              SatStateGetLoaded;
+extern fnPtrSatStateNumToKey               SatStateNumToKey;
+extern fnPtrSatStateGetSatDataAll          SatStateGetSatDataAll;
+extern fnPtrSatStateGetSatDataField        SatStateGetSatDataField;
+extern fnPtrSatStateInitSat                SatStateInitSat;
+extern fnPtrSatStateMse                    SatStateMse;
+extern fnPtrSatStateDs50UTC                SatStateDs50UTC;
+extern fnPtrSatStateGetPropOut             SatStateGetPropOut;
+extern fnPtrSatStateEphCom                 SatStateEphCom;
+extern fnPtrSatStateEphCom_OS              SatStateEphCom_OS;
+extern fnPtrSatStateHasCovMtx              SatStateHasCovMtx;
+extern fnPtrSatStateGetCovUVW              SatStateGetCovUVW;
+extern fnPtrSatStateGenEphFile             SatStateGenEphFile;
 
 
 

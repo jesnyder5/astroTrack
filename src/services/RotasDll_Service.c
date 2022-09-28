@@ -1,14 +1,14 @@
-#include "services/DllUtils.h"
-#include "services/RotasDll_Service.h"
-#include "services/DllMainDll_Service.h"
-#include "services/TimeFuncDll_Service.h"
-#include "services/ElOpsDll_Service.h"
-#include "services/SatStateDll_Service.h"
+#include "DllUtils.h"
+#include "RotasDll_Service.h"
+#include "DllMainDll_Service.h"
+#include "TimeFuncDll_Service.h"
+#include "ElOpsDll_Service.h"
+#include "SatStateDll_Service.h"
 
-#include "wrappers/ObsDll.h"
-#include "wrappers/RotasDll.h"
-#include "wrappers/SatStateDll.h"
-#include "wrappers/DllMainDll.h"
+#include "../wrappers/ObsDll.h"
+#include "../wrappers/RotasDll.h"
+#include "../wrappers/SatStateDll.h"
+#include "../wrappers/DllMainDll.h"
 
 
 
@@ -151,7 +151,7 @@ void GetObsResiduals(__int64 obsKey, __int64 satKey, Residuals* residuals)
    double satElts[9];
    double obElts[9];
 
-   residuals->ErrCode  = RotasComputeObsResiduals(obsKey, satKey, residualArr, satElts, obElts);
+   residuals->errCode  = RotasComputeObsResiduals(obsKey, satKey, residualArr, satElts, obElts);
    ResidualArrToStruct(obsKey, satKey, residualArr, residuals);
 }
 
@@ -159,38 +159,38 @@ void GetObsResiduals(__int64 obsKey, __int64 satKey, Residuals* residuals)
 // Populate residual structure from residual array
 void ResidualArrToStruct(__int64 obsKey, __int64 satKey, double residualArr[], Residuals* residuals)
 {
-   residuals->ASTAT              = (int)residualArr[XA_OBSRES_ASTAT];
-   if (residuals->ErrCode != 0 || residuals->ASTAT > 4)
+   residuals->astat              = (int)residualArr[XA_OBSRES_ASTAT];
+   if (residuals->errCode != 0 || residuals->astat > 4)
    {
       return;
    }
 
-   residuals->Azimuth            = residualArr[XA_OBSRES_AZ];
-   residuals->Elevation          = residualArr[XA_OBSRES_EL];
-   residuals->RightAscension     = residualArr[XA_OBSRES_RA];
-   residuals->Declination        = residualArr[XA_OBSRES_DEC];
-   residuals->Range              = residualArr[XA_OBSRES_RANGE];
-   residuals->Height             = residualArr[XA_OBSRES_HEIGHT];
-   residuals->Beta               = residualArr[XA_OBSRES_BETA];
-   residuals->DeltaT             = residualArr[XA_OBSRES_DELTAT];
-   residuals->VMag               = residualArr[XA_OBSRES_VMAG];
-   residuals->Age                = residualArr[XA_OBSRES_AGE];
-   residuals->SatArgOfLatitude   = residualArr[XA_OBSRES_SU];
-   residuals->RevNum             = residualArr[XA_OBSRES_REVNUM];
-   residuals->RangeRate          = residualArr[XA_OBSRES_RNGRATE];
-   residuals->SatTrueAnomaly     = residualArr[XA_OBSRES_SATANOM];
-   residuals->SatElevation       = residualArr[XA_OBSRES_SATELEV];
-   residuals->ObsType            = (int)residualArr[XA_OBSRES_OBSTYPE]; 
-   residuals->ASTAT              = (int)residualArr[XA_OBSRES_ASTAT];
-   residuals->SatCat             = (int)residualArr[XA_OBSRES_SATCAT];
+   residuals->azimuth            = residualArr[XA_OBSRES_AZ];
+   residuals->elevation          = residualArr[XA_OBSRES_EL];
+   residuals->rightAscension     = residualArr[XA_OBSRES_RA];
+   residuals->declination        = residualArr[XA_OBSRES_DEC];
+   residuals->range              = residualArr[XA_OBSRES_RANGE];
+   residuals->height             = residualArr[XA_OBSRES_HEIGHT];
+   residuals->beta               = residualArr[XA_OBSRES_BETA];
+   residuals->deltaT             = residualArr[XA_OBSRES_DELTAT];
+   residuals->vmag               = residualArr[XA_OBSRES_VMAG];
+   residuals->age                = residualArr[XA_OBSRES_AGE];
+   residuals->satArgOfLatitude   = residualArr[XA_OBSRES_SU];
+   residuals->revNum             = residualArr[XA_OBSRES_REVNUM];
+   residuals->rangeRate          = residualArr[XA_OBSRES_RNGRATE];
+   residuals->satTrueAnomaly     = residualArr[XA_OBSRES_SATANOM];
+   residuals->satElevation       = residualArr[XA_OBSRES_SATELEV];
+   residuals->obsType            = (int)residualArr[XA_OBSRES_OBSTYPE]; 
+   residuals->astat              = (int)residualArr[XA_OBSRES_ASTAT];
+   residuals->satCat             = (int)residualArr[XA_OBSRES_SATCAT];
 
-   residuals->ObsKey             = obsKey;
-   residuals->SatKey             = satKey;
-   residuals->SenKey             = ObsKeyToSenNum(obsKey);
-   residuals->ObsTimeDs50UTC     = residualArr[XA_OBSRES_OBSTIME];
+   residuals->obsKey             = obsKey;
+   residuals->satKey             = satKey;
+   residuals->senKey             = SenNumFrObsKey(obsKey);
+   residuals->obsTimeDs50UTC     = residualArr[XA_OBSRES_OBSTIME];
 
-   residuals->VelAngle           = residualArr[XA_OBSRES_VELANG];
-   residuals->AngularMomentum    = residualArr[XA_OBSRES_ANGMOM];
+   residuals->velAngle           = residualArr[XA_OBSRES_VELANG];
+   residuals->angularMomentum    = residualArr[XA_OBSRES_ANGMOM];
 }
 
 
@@ -233,7 +233,7 @@ void PrintObsResiduals(FILE* fpOut, ObsRecord* obs, int obsNum, Residuals* resid
 
    char propTypeChar;
    int isRangeComputed;
-   int obsType = residuals->ObsType;
+   int obsType = residuals->obsType;
    int isHigherPrecision = 1;
    SatParms satParms;
          
@@ -244,7 +244,7 @@ void PrintObsResiduals(FILE* fpOut, ObsRecord* obs, int obsNum, Residuals* resid
       isRangeComputed = 0;
 
 
-   RetrieveSatParms(residuals->SatKey, &satParms);
+   RetrieveSatParms(residuals->satKey, &satParms);
 
    if (satParms.propType == PROPTYPE_GP)
       propTypeChar = 'G';
@@ -256,7 +256,7 @@ void PrintObsResiduals(FILE* fpOut, ObsRecord* obs, int obsNum, Residuals* resid
       propTypeChar = ' ';
 
    //if(residuals->SatCat < 1 || residuals->SatCat > 4)
-   if(residuals->SatCat < 0 || residuals->SatCat > 4)
+   if(residuals->satCat < 0 || residuals->satCat > 4)
    {
       printf("invalid satcat\n");
       exit(1);
@@ -268,24 +268,24 @@ void PrintObsResiduals(FILE* fpOut, ObsRecord* obs, int obsNum, Residuals* resid
       formatStr = " %1d %5d %5d %3d  %s %5d %3d %1d%9.4f%9.4f%10.3f%9.1f%c%8.3f%8.3f%11.3f %3s%6.2f%5d %c\n";
 
    fprintf(fpOut, formatStr,
-      residuals->ASTAT,
+      residuals->astat,
       satParms.satNum, // SatNumOf(residuals->SatKey),
       obs->satNum,
       obs->senNum,
       UTCToDtg18Str(obs->obsTimeDs50UTC),
-      (int)residuals->RevNum,
-      (int)residuals->SatArgOfLatitude,
-      residuals->ObsType,
-      NonNegativeZero(residuals->DeltaT, 4),
-      NonNegativeZero(residuals->Beta, 4),
-      NonNegativeZero(residuals->Height, 3),
-      NonNegativeZero(residuals->Range, 1),
+      (int)residuals->revNum,
+      (int)residuals->satArgOfLatitude,
+      residuals->obsType,
+      NonNegativeZero(residuals->deltaT, 4),
+      NonNegativeZero(residuals->beta, 4),
+      NonNegativeZero(residuals->height, 3),
+      NonNegativeZero(residuals->range, 1),
       isRangeComputed ? 'C' : ' ',
-      NonNegativeZero(residuals->RightAscension, 5),
-      NonNegativeZero(residuals->Declination, 5),
-      NonNegativeZero(residuals->VMag, 3),
-      SATCAT[residuals->SatCat - 1],
-      NonNegativeZero(residuals->Age, 2),
+      NonNegativeZero(residuals->rightAscension, 5),
+      NonNegativeZero(residuals->declination, 5),
+      NonNegativeZero(residuals->vmag, 3),
+      SATCAT[residuals->satCat - 1],
+      NonNegativeZero(residuals->age, 2),
       obsNum,
       propTypeChar);
 }

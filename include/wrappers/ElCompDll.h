@@ -1,13 +1,15 @@
-// This wrapper file was generated automatically by the A3\GenDllWrappers program.
+// This wrapper file was generated automatically by the GenDllWrappers program.
 
 #ifndef ELCOMPDLL_H
 #define ELCOMPDLL_H
 
-#include "services/DllUtils.h"
+#include "../services/DllUtils.h"
 
-// Provide the path to the dll/so
-#ifdef _WIN32
+// Provide the path to the dll/so/dylib
+#if defined (_WIN32) || defined (__CYGWIN__)
   #define ElCompDll "ElComp.dll"
+#elif __APPLE__
+  #define ElCompDll "libelcomp.dylib"
 #else
   #define ElCompDll "libelcomp.so"
 #endif
@@ -403,139 +405,136 @@ typedef void (STDCALL *fnPtrCocoFrElDataWOA)(double xa_satData_pri[16], double x
 
 // Resets criteria to default values for Coco 
 typedef void (STDCALL *fnPtrCocoResetCriteria)();
-   
-// indexes for ElComp reference sat data and deltas   
-static const int     
-   XA_ELCOM_INCLI    =  0,     // inclination (deg)
-   XA_ELCOM_NODE     =  1,     // right ascension of the asending node (deg) 
-   XA_ELCOM_E        =  2,     // eccentricity (unitless)    
-   XA_ELCOM_OMEGA    =  3,     // argument of perigee (deg) 
-   XA_ELCOM_MNANOM   =  4,     // mean anomaly (deg)
-   XA_ELCOM_MNMOTION =  5,     // mean motion (revs/day)
-   XA_ELCOM_EPOCH    =  6,     // epoch in days since 1950, UTC
-   
-   XA_ELCOM_PHT      =  7,     // perigee height (km) 
-   XA_ELCOM_PERIOD   =  8,     // period (min)
-   XA_ELCOM_TNODE    =  9,     // delta t between nodal crossing times (min)
-   XA_ELCOM_LONGE    = 10,     // delta east longitude for geo satellites (deg)
-   
-   XA_ELCOM_SIZE     = 16;
-   
-// indexes for setting criteria for full, close, maybe
-static const int     
-   XA_ECDIFF_INCMAX1  =  0,    // incli diff in deg - full
-   XA_ECDIFF_INCMAX2  =  1,    // incli diff in deg - close
-   XA_ECDIFF_INCMAX3  =  2,    // incli diff in deg - maybe
-   
-   XA_ECDIFF_RAMAX1   =  3,    // W vector dot product in deg - full
-   XA_ECDIFF_RAMAX2   =  4,    // W vector dot product in deg - close
-   XA_ECDIFF_RAMAX3   =  5,    // W vector dot product in deg - maybe
-   
-   XA_ECDIFF_PHTMAX1  =  6,    // perigee height diff in km - full
-   XA_ECDIFF_PHTMAX2  =  7,    // perigee height diff in km - close
-   XA_ECDIFF_PHTMAX3  =  8,    // perigee height diff in km - maybe
-   
-   XA_ECDIFF_ECCMAX1  =  9,    // eccentricity diff - full
-   XA_ECDIFF_ECCMAX2  = 10,    // eccentricity diff - close
-   XA_ECDIFF_ECCMAX3  = 11,    // eccentricity diff - maybe
-   
-   XA_ECDIFF_PERMAX1  = 12,    // period diff in min - full
-   XA_ECDIFF_PERMAX2  = 13,    // period diff in min - close
-   XA_ECDIFF_PERMAX3  = 14,    // period diff in min - maybe
-   
-   XA_ECDIFF_APMAX1   = 15,    // argument of perigee diff in deg - full
-   XA_ECDIFF_APMAX2   = 16,    // argument of perigee diff in deg - close
-   XA_ECDIFF_APMAX3   = 17,    // argument of perigee diff in deg - maybe
-   
-   XA_ECDIFF_SIZE     = 32;   
-   
-// indexes for association status from ElComp   
-static const int  
-   ELCOM_ASTAT_FULL  = 1,     // "FULL" association
-   ELCOM_ASTAT_CLOSE = 2,     // "CLOSE" association
-   ELCOM_ASTAT_MAYBE = 3,     // "MAYBE" association
-   ELCOM_ASTAT_NONE  = 4;     // "NONE" association
-   
-// indexes for setting criteria for full, close, maybe
-static const int     
-   XA_COCODIFF_INCMAX1  =  0,    // incli diff in deg - same
-   XA_COCODIFF_INCMAX2  =  1,    // incli diff in deg - close
-   XA_COCODIFF_INCMAX3  =  2,    // incli diff in deg - near-by
-   
-   XA_COCODIFF_RAMAX1   =  3,    // W vector dot product in deg - same
-   XA_COCODIFF_RAMAX2   =  4,    // W vector dot product in deg - close
-   XA_COCODIFF_RAMAX3   =  5,    // W vector dot product in deg - near-by
-   
-   XA_COCODIFF_PHTMAX1  =  6,    // perigee height diff in km - same
-   XA_COCODIFF_PHTMAX2  =  7,    // perigee height diff in km - close
-   XA_COCODIFF_PHTMAX3  =  8,    // perigee height diff in km - near-by
-   
-   XA_COCODIFF_PERMAX1  =  9,    // period diff in min - same
-   XA_COCODIFF_PERMAX2  = 10,    // period diff in min - close
-   XA_COCODIFF_PERMAX3  = 11,    // period diff in min - near-by
-   
-   XA_COCODIFF_SIZE     = 32;   
-
-   
-// indexes for Coco sat data and coplanar deltas fields
-static const int     
-   XA_SATDATA_INCLI    =  0,     // inclination (deg)
-   XA_SATDATA_NODE     =  1,     // right ascension of the asending node (deg) 
-   XA_SATDATA_E        =  2,     // eccentricity (unitless)    
-   XA_SATDATA_OMEGA    =  3,     // argument of perigee (deg) 
-   XA_SATDATA_MNANOM   =  4,     // mean anomaly (deg)
-   XA_SATDATA_MNMOTION =  5,     // mean motion (revs/day)
-   XA_SATDATA_EPOCH    =  6,     // epoch in days since 1950, UTC
-   
-   XA_SATDATA_PHT      =  7,     // perigee height (km) 
-   XA_SATDATA_PERIOD   =  8,     // period (min)
-   
-   XA_SATDATA_SIZE     = 16;
-   
-   
-// indexes for Coco sat data and coplanar deltas fields
-static const int     
-   XA_COCO_INCLI    =  0,     // inclination (deg)
-   XA_COCO_NODE     =  1,     // right ascension of the asending node (deg) 
-   XA_COCO_PHT      =  2,     // perigee height (km) 
-   XA_COCO_PERIOD   =  3,     // period (min)
-   XA_COCO_WDOT     =  4,     // coplanar angle (dot the w vectors) (deg) 
-   XA_COCO_RADOT    =  5,     // right ascension dot (deg/day)
-   XA_COCO_TNODE    =  6,     // nodal crossing (min)   
-   XA_COCO_TZERO    =  7,     // time in days to approach 0.0 RA delta
-   XA_COCO_SCAP     =  8,     // sustained close approach possible
-   XA_COCO_PCM      =  9,     // potential constellation member
-   XA_COCO_PNODALX  = 10,     // time in ds50UTC when primary at nodal crossing (prior to its epoch)
-   XA_COCO_SNODALX  = 11,     // time in ds50UTC when secondary at nodal crossing (after primary nodal crossing time)
-   
-   XA_COCO_SIZE     = 16;   
-   
-   
-// indexes for association status from COCO  
-static const int  
-   COCO_ASTAT_SAME   = 1,     // "SAME" association
-   COCO_ASTAT_CLOSE  = 2,     // "CLOSE" association
-   COCO_ASTAT_NEARBY = 3,     // "NEARBY" association
-   COCO_ASTAT_NONE   = 5;     // "NONE" association
-
-
-
-
-// ElCompDll's function pointers
-fnPtrElCompInit                     ElCompInit;
-fnPtrElCompGetInfo                  ElCompGetInfo;
-fnPtrElCompSetCriteria              ElCompSetCriteria;
-fnPtrElCompGetCriteria              ElCompGetCriteria;
-fnPtrElCompGetResults               ElCompGetResults;
-fnPtrElCompFrElData                 ElCompFrElData;
-fnPtrElCompResetCriteria            ElCompResetCriteria;
-fnPtrCocoSetCriteria                CocoSetCriteria;
-fnPtrCocoGetCriteria                CocoGetCriteria;
-fnPtrCocoGetResults                 CocoGetResults;
-fnPtrCocoGetResultsWOA              CocoGetResultsWOA;
-fnPtrCocoFrElData                   CocoFrElData;
-fnPtrCocoFrElDataWOA                CocoFrElDataWOA;
-fnPtrCocoResetCriteria              CocoResetCriteria;
+     
+  // INDEXES FOR ELCOMP REFERENCE SAT DATA AND DELTAS   
+  static const int     
+     XA_ELCOM_INCLI    =  0,     // INCLINATION (DEG)
+     XA_ELCOM_NODE     =  1,     // RIGHT ASCENSION OF THE ASENDING NODE (DEG) 
+     XA_ELCOM_E        =  2,     // ECCENTRICITY (UNITLESS)    
+     XA_ELCOM_OMEGA    =  3,     // ARGUMENT OF PERIGEE (DEG) 
+     XA_ELCOM_MNANOM   =  4,     // MEAN ANOMALY (DEG)
+     XA_ELCOM_MNMOTION =  5,     // MEAN MOTION (REVS/DAY)
+     XA_ELCOM_EPOCH    =  6,     // EPOCH IN DAYS SINCE 1950, UTC
+     
+     XA_ELCOM_PHT      =  7,     // PERIGEE HEIGHT (KM) 
+     XA_ELCOM_PERIOD   =  8,     // PERIOD (MIN)
+     XA_ELCOM_TNODE    =  9,     // DELTA T BETWEEN NODAL CROSSING TIMES (MIN)
+     XA_ELCOM_LONGE    = 10,     // DELTA EAST LONGITUDE FOR GEO SATELLITES (DEG)
+     
+     XA_ELCOM_SIZE     = 16;
+     
+  // INDEXES FOR SETTING CRITERIA FOR FULL, CLOSE, MAYBE
+  static const int     
+     XA_ECDIFF_INCMAX1  =  0,    // INCLI DIFF IN DEG - FULL
+     XA_ECDIFF_INCMAX2  =  1,    // INCLI DIFF IN DEG - CLOSE
+     XA_ECDIFF_INCMAX3  =  2,    // INCLI DIFF IN DEG - MAYBE
+     
+     XA_ECDIFF_RAMAX1   =  3,    // W VECTOR DOT PRODUCT IN DEG - FULL
+     XA_ECDIFF_RAMAX2   =  4,    // W VECTOR DOT PRODUCT IN DEG - CLOSE
+     XA_ECDIFF_RAMAX3   =  5,    // W VECTOR DOT PRODUCT IN DEG - MAYBE
+     
+     XA_ECDIFF_PHTMAX1  =  6,    // PERIGEE HEIGHT DIFF IN KM - FULL
+     XA_ECDIFF_PHTMAX2  =  7,    // PERIGEE HEIGHT DIFF IN KM - CLOSE
+     XA_ECDIFF_PHTMAX3  =  8,    // PERIGEE HEIGHT DIFF IN KM - MAYBE
+     
+     XA_ECDIFF_ECCMAX1  =  9,    // ECCENTRICITY DIFF - FULL
+     XA_ECDIFF_ECCMAX2  = 10,    // ECCENTRICITY DIFF - CLOSE
+     XA_ECDIFF_ECCMAX3  = 11,    // ECCENTRICITY DIFF - MAYBE
+     
+     XA_ECDIFF_PERMAX1  = 12,    // PERIOD DIFF IN MIN - FULL
+     XA_ECDIFF_PERMAX2  = 13,    // PERIOD DIFF IN MIN - CLOSE
+     XA_ECDIFF_PERMAX3  = 14,    // PERIOD DIFF IN MIN - MAYBE
+     
+     XA_ECDIFF_APMAX1   = 15,    // ARGUMENT OF PERIGEE DIFF IN DEG - FULL
+     XA_ECDIFF_APMAX2   = 16,    // ARGUMENT OF PERIGEE DIFF IN DEG - CLOSE
+     XA_ECDIFF_APMAX3   = 17,    // ARGUMENT OF PERIGEE DIFF IN DEG - MAYBE
+     
+     XA_ECDIFF_SIZE     = 32;   
+     
+  // INDEXES FOR ASSOCIATION STATUS FROM ELCOMP   
+  static const int  
+     ELCOM_ASTAT_FULL  = 1,     // "FULL" ASSOCIATION
+     ELCOM_ASTAT_CLOSE = 2,     // "CLOSE" ASSOCIATION
+     ELCOM_ASTAT_MAYBE = 3,     // "MAYBE" ASSOCIATION
+     ELCOM_ASTAT_NONE  = 4;     // "NONE" ASSOCIATION
+     
+  // INDEXES FOR SETTING CRITERIA FOR FULL, CLOSE, MAYBE
+  static const int     
+     XA_COCODIFF_INCMAX1  =  0,    // INCLI DIFF IN DEG - SAME
+     XA_COCODIFF_INCMAX2  =  1,    // INCLI DIFF IN DEG - CLOSE
+     XA_COCODIFF_INCMAX3  =  2,    // INCLI DIFF IN DEG - NEAR-BY
+     
+     XA_COCODIFF_RAMAX1   =  3,    // W VECTOR DOT PRODUCT IN DEG - SAME
+     XA_COCODIFF_RAMAX2   =  4,    // W VECTOR DOT PRODUCT IN DEG - CLOSE
+     XA_COCODIFF_RAMAX3   =  5,    // W VECTOR DOT PRODUCT IN DEG - NEAR-BY
+     
+     XA_COCODIFF_PHTMAX1  =  6,    // PERIGEE HEIGHT DIFF IN KM - SAME
+     XA_COCODIFF_PHTMAX2  =  7,    // PERIGEE HEIGHT DIFF IN KM - CLOSE
+     XA_COCODIFF_PHTMAX3  =  8,    // PERIGEE HEIGHT DIFF IN KM - NEAR-BY
+     
+     XA_COCODIFF_PERMAX1  =  9,    // PERIOD DIFF IN MIN - SAME
+     XA_COCODIFF_PERMAX2  = 10,    // PERIOD DIFF IN MIN - CLOSE
+     XA_COCODIFF_PERMAX3  = 11,    // PERIOD DIFF IN MIN - NEAR-BY
+     
+     XA_COCODIFF_SIZE     = 32;   
+  
+     
+  // INDEXES FOR COCO SAT DATA AND COPLANAR DELTAS FIELDS
+  static const int     
+     XA_SATDATA_INCLI    =  0,     // INCLINATION (DEG)
+     XA_SATDATA_NODE     =  1,     // RIGHT ASCENSION OF THE ASENDING NODE (DEG) 
+     XA_SATDATA_E        =  2,     // ECCENTRICITY (UNITLESS)    
+     XA_SATDATA_OMEGA    =  3,     // ARGUMENT OF PERIGEE (DEG) 
+     XA_SATDATA_MNANOM   =  4,     // MEAN ANOMALY (DEG)
+     XA_SATDATA_MNMOTION =  5,     // MEAN MOTION (REVS/DAY)
+     XA_SATDATA_EPOCH    =  6,     // EPOCH IN DAYS SINCE 1950, UTC
+     
+     XA_SATDATA_PHT      =  7,     // PERIGEE HEIGHT (KM) 
+     XA_SATDATA_PERIOD   =  8,     // PERIOD (MIN)
+     
+     XA_SATDATA_SIZE     = 16;
+     
+     
+  // INDEXES FOR COCO SAT DATA AND COPLANAR DELTAS FIELDS
+  static const int     
+     XA_COCO_INCLI    =  0,     // INCLINATION (DEG)
+     XA_COCO_NODE     =  1,     // RIGHT ASCENSION OF THE ASENDING NODE (DEG) 
+     XA_COCO_PHT      =  2,     // PERIGEE HEIGHT (KM) 
+     XA_COCO_PERIOD   =  3,     // PERIOD (MIN)
+     XA_COCO_WDOT     =  4,     // COPLANAR ANGLE (DOT THE W VECTORS) (DEG) 
+     XA_COCO_RADOT    =  5,     // RIGHT ASCENSION DOT (DEG/DAY)
+     XA_COCO_TNODE    =  6,     // NODAL CROSSING (MIN)   
+     XA_COCO_TZERO    =  7,     // TIME IN DAYS TO APPROACH 0.0 RA DELTA
+     XA_COCO_SCAP     =  8,     // SUSTAINED CLOSE APPROACH POSSIBLE
+     XA_COCO_PCM      =  9,     // POTENTIAL CONSTELLATION MEMBER
+     XA_COCO_PNODALX  = 10,     // TIME IN DS50UTC WHEN PRIMARY AT NODAL CROSSING (PRIOR TO ITS EPOCH)
+     XA_COCO_SNODALX  = 11,     // TIME IN DS50UTC WHEN SECONDARY AT NODAL CROSSING (AFTER PRIMARY NODAL CROSSING TIME)
+     
+     XA_COCO_SIZE     = 16;   
+     
+     
+  // INDEXES FOR ASSOCIATION STATUS FROM COCO  
+  static const int  
+     COCO_ASTAT_SAME   = 1,     // "SAME" ASSOCIATION
+     COCO_ASTAT_CLOSE  = 2,     // "CLOSE" ASSOCIATION
+     COCO_ASTAT_NEARBY = 3,     // "NEARBY" ASSOCIATION
+     COCO_ASTAT_NONE   = 5;     // "NONE" ASSOCIATION
+  
+// ElCompDll's function pointers declaration
+extern fnPtrElCompInit                     ElCompInit;
+extern fnPtrElCompGetInfo                  ElCompGetInfo;
+extern fnPtrElCompSetCriteria              ElCompSetCriteria;
+extern fnPtrElCompGetCriteria              ElCompGetCriteria;
+extern fnPtrElCompGetResults               ElCompGetResults;
+extern fnPtrElCompFrElData                 ElCompFrElData;
+extern fnPtrElCompResetCriteria            ElCompResetCriteria;
+extern fnPtrCocoSetCriteria                CocoSetCriteria;
+extern fnPtrCocoGetCriteria                CocoGetCriteria;
+extern fnPtrCocoGetResults                 CocoGetResults;
+extern fnPtrCocoGetResultsWOA              CocoGetResultsWOA;
+extern fnPtrCocoFrElData                   CocoFrElData;
+extern fnPtrCocoFrElDataWOA                CocoFrElDataWOA;
+extern fnPtrCocoResetCriteria              CocoResetCriteria;
 
 
 

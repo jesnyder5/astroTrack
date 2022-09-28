@@ -1,7 +1,25 @@
-// This wrapper file was generated automatically by the A3\GenDllWrappers program.
+// This wrapper file was generated automatically by the GenDllWrappers program.
 
-#include "services/DllUtils.h"
-#include "wrappers/DllMainDll.h"
+#include "../services/DllUtils.h"
+#include "DllMainDll.h"
+
+
+// DllMainDll's function pointers definition
+fnPtrDllMainInit                    DllMainInit;
+fnPtrDllMainGetInfo                 DllMainGetInfo;
+fnPtrDllMainLoadFile                DllMainLoadFile;
+fnPtrOpenLogFile                    OpenLogFile;
+fnPtrCloseLogFile                   CloseLogFile;
+fnPtrLogMessage                     LogMessage;
+fnPtrGetLastErrMsg                  GetLastErrMsg;
+fnPtrGetLastInfoMsg                 GetLastInfoMsg;
+fnPtrGetInitDllNames                GetInitDllNames;
+fnPtrTestInterface                  TestInterface;
+fnPtrTestInterface2                 TestInterface2;
+fnPtrTestInterface3                 TestInterface3;
+fnPtrGetMOICData                    GetMOICData;
+fnPtrSetElsetKeyMode                SetElsetKeyMode;
+fnPtrGetElsetKeyMode                GetElsetKeyMode;
 
 
 static void* hLib = NULL; // handle to the dll
@@ -24,6 +42,8 @@ void LoadDllMainDll()
    GetLastInfoMsg = (fnPtrGetLastInfoMsg)GetFnPtr(hLib, (char*)"GetLastInfoMsg");
    GetInitDllNames = (fnPtrGetInitDllNames)GetFnPtr(hLib, (char*)"GetInitDllNames");
    TestInterface = (fnPtrTestInterface)GetFnPtr(hLib, (char*)"TestInterface");
+   TestInterface2 = (fnPtrTestInterface2)GetFnPtr(hLib, (char*)"TestInterface2");
+   TestInterface3 = (fnPtrTestInterface3)GetFnPtr(hLib, (char*)"TestInterface3");
    GetMOICData = (fnPtrGetMOICData)GetFnPtr(hLib, (char*)"GetMOICData");
    SetElsetKeyMode = (fnPtrSetElsetKeyMode)GetFnPtr(hLib, (char*)"SetElsetKeyMode");
    GetElsetKeyMode = (fnPtrGetElsetKeyMode)GetFnPtr(hLib, (char*)"GetElsetKeyMode");

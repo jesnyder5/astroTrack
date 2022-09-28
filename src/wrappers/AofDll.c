@@ -1,7 +1,22 @@
-// This wrapper file was generated automatically by the A3\GenDllWrappers program.
+// This wrapper file was generated automatically by the GenDllWrappers program.
 
-#include "services/DllUtils.h"
-#include "wrappers/AofDll.h"
+#include "../services/DllUtils.h"
+#include "AofDll.h"
+
+
+// AofDll's function pointers definition
+fnPtrAofInit                        AofInit;
+fnPtrAofGetInfo                     AofGetInfo;
+fnPtrAofLoadFile                    AofLoadFile;
+fnPtrAofLoadFileAll                 AofLoadFileAll;
+fnPtrAofLoadCard                    AofLoadCard;
+fnPtrAofGetDataFrInputFiles         AofGetDataFrInputFiles;
+fnPtrAofReset                       AofReset;
+fnPtrAofBasic                       AofBasic;
+fnPtrAofComplex                     AofComplex;
+fnPtrAofGetLook                     AofGetLook;
+fnPtrAofGetView                     AofGetView;
+fnPtrAofGetDarknessLevel            AofGetDarknessLevel;
 
 
 static void* hLib = NULL; // handle to the dll

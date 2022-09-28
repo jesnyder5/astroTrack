@@ -1,13 +1,15 @@
-// This wrapper file was generated automatically by the A3\GenDllWrappers program.
+// This wrapper file was generated automatically by the GenDllWrappers program.
 
 #ifndef SPVECDLL_H
 #define SPVECDLL_H
 
-#include "services/DllUtils.h"
+#include "../services/DllUtils.h"
 
-// Provide the path to the dll/so
-#ifdef _WIN32
+// Provide the path to the dll/so/dylib
+#if defined (_WIN32) || defined (__CYGWIN__)
   #define SpVecDll "SpVec.dll"
+#elif __APPLE__
+  #define SpVecDll "libspvec.dylib"
 #else
   #define SpVecDll "libspvec.so"
 #endif
@@ -127,7 +129,7 @@ typedef __int64 (STDCALL *fnPtrSpVecAddSatFrFields)(double pos[3], double vel[3]
 typedef void (STDCALL *fnPtrSpVecAddSatFrFieldsML)(double pos[3], double vel[3], char secClass, int satNum, char satName[8], char epochDtg[17], int revNum, int elsetNum, double bterm, double agom, double ogParm, char coordSys[5], __int64* satKey);
 
 
-// Updates an SpVec satellite's data in memory using individually provided field values. Note: satnum, epoch string can't be updated.
+// Updates an SpVec satellite's data in memory using individually provided field values. Note: satNum, epoch string can't be updated.
 // The satellite's unique key will not be changed in this function call. 
 // satKey             The sattelite's unique key (in-Long)
 // pos                position vector (km) (in-Double[3])
@@ -173,7 +175,7 @@ typedef int (STDCALL *fnPtrSpVecGetField)(__int64 satKey, int xf_SpVec, char val
 
 
 // Updates the value of a field of an SpVec
-// See SpVecGetField for a description of the xf_SpVec parameter.  Satnum (9) and epoch date (11) cannot be altered.
+// See SpVecGetField for a description of the xf_SpVec parameter.  satNum (9) and epoch date (11) cannot be altered.
 // The set value type was intentionally chosen as a character string because it allows the users to set value for different data types.
 // satKey             The satellite's unique key (in-Long)
 // xf_SpVec           Predefined number specifying which field to set (in-Integer)
@@ -310,7 +312,7 @@ typedef __int64 (STDCALL *fnPtrSpVecAddSatFrArray)(double xa_spVec[512], char xs
 typedef void (STDCALL *fnPtrSpVecAddSatFrArrayML)(double xa_spVec[512], char xs_spVec[512], __int64* satKey);
 
 
-// Updates existing SPVEC data with the provided new data stored in the input parameters. Note: satnum, epoch string can't be updated.
+// Updates existing SPVEC data with the provided new data stored in the input parameters. Note: satNum, epoch string can't be updated.
 // satKey             The satellite's unique key (in-Long)
 // xa_spVec           Array containing SPVEC's numerical fields, see XA_SPVEC_? for array arrangement (in-Double[512])
 // xs_spVec           Input string that contains all SPVEC's text fields, see XS_SPVEC_? for column arrangement (in-Character[512])
@@ -357,113 +359,110 @@ typedef int (STDCALL *fnPtrSpVecUpdateSatFrArray)(__int64 satKey, double xa_spVe
 // xs_spVec           Output string that contains all SPVEC's text fields, see XS_SPVEC_? for column arrangement (out-Character[512])
 // returns 0 if all values are retrieved successfully, non-0 if there is an error
 typedef int (STDCALL *fnPtrSpVecDataToArray)(__int64 satKey, double xa_spVec[512], char xs_spVec[512]);
-
-// Indexes of SPVEC data fields
-static const int  
-   XF_SPVEC_POS1     =  1,      // X component of satellite's position (km)
-   XF_SPVEC_POS2     =  2,      // Y component of satellite's position (km)
-   XF_SPVEC_POS3     =  3,      // Z component of satellite's position (km)
-   XF_SPVEC_VEL1     =  4,      // X component of satellite's velocity (m/s)
-   XF_SPVEC_VEL2     =  5,      // Y component of satellite's velocity (m/s)
-   XF_SPVEC_VEL3     =  6,      // Z component of satellite's velocity (m/s)
-   XF_SPVEC_SECCLASS =  7,      // Security classification
-   XF_SPVEC_SATNUM   =  9,      // Satellite number
-   XF_SPVEC_SATNAME  = 10,      // Satellite common name
-   XF_SPVEC_EPOCH    = 11,      // Epoch date
-   XF_SPVEC_REVNUM   = 12,      // Epoch revolution number
-   XF_SPVEC_ELSETNUM = 13,      // Elset number
-   XF_SPVEC_BTERM    = 14,      // Ballistic coefficient (m^2/kg)
-   XF_SPVEC_AGOM     = 15,      // Radiation pressure coefficient (m^2/kg)
-   XF_SPVEC_OGPARM   = 16,      // Outgassing parameter (km/s^2)
-   XF_SPVEC_INPCOORD = 17;      // Inpute coordinate system
-   
-   
-// Indexes of SPVEC numerical data in an array
-static const int  
-   XA_SPVEC_SATNUM   =   0,      // Satellite number
-   XA_SPVEC_EPOCH    =   1,      // Epoch date in days since 1950 UTC
-   XA_SPVEC_REVNUM   =   2,      // Epoch revolution number
-   XA_SPVEC_ELSETNUM =   3,      // Elset number
-   XA_SPVEC_BTERM    =   4,      // Ballistic coefficient (m^2/kg)
-   XA_SPVEC_AGOM     =   5,      // Radiation pressure coefficient (m^2/kg)
-   XA_SPVEC_OGPARM   =   6,      // Outgassing parameter (km/s^2)
-   XA_SPVEC_INPCOORD =   7,      // Inpute coordinate system; = 0: use 4P, = 1:TMDAT, = 2: MMJ2K
-
-   XA_SPVEC_POS1     =  20,      // X component of satellite's position (km)
-   XA_SPVEC_POS2     =  21,      // Y component of satellite's position (km)
-   XA_SPVEC_POS3     =  22,      // Z component of satellite's position (km)
-   XA_SPVEC_VEL1     =  23,      // X component of satellite's velocity (m/s)
-   XA_SPVEC_VEL2     =  24,      // Y component of satellite's velocity (m/s)
-   XA_SPVEC_VEL3     =  25,      // Z component of satellite's velocity (m/s)
-   
-   XA_SPVEC_HASOWNCRL=  70,      // Flag to indicate SP vec has its own numerical integration control
-   XA_SPVEC_GEOIDX   =  71,      // Geopotential model to use
-   XA_SPVEC_BULGEFLG =  72,      // Earth gravity pertubations flag
-   XA_SPVEC_DRAGFLG  =  73,      // Drag pertubations flag 
-   XA_SPVEC_RADFLG   =  74,      // Radiation pressure pertubations flag
-   XA_SPVEC_LUNSOL   =  75,      // Lunar/Solar pertubations flag
-   XA_SPVEC_F10      =  76,      // F10 value
-   XA_SPVEC_F10AVG   =  77,      // F10 average value
-   XA_SPVEC_AP       =  78,      // Ap value
-   XA_SPVEC_TRUNC    =  79,      // Geopotential truncation order/degree/zonals
-   XA_SPVEC_CONVERG  =  80,      // Corrector step convergence criterion; exponent of 1/10; default = 10
-   XA_SPVEC_OGFLG    =  81,      // Outgassing pertubations flag
-   XA_SPVEC_TIDESFLG =  82,      // Solid earth and ocean tide pertubations flag
-   XA_SPVEC_INCOORD  =  83,      // Input vector coordinate system
-   XA_SPVEC_NTERMS   =  84,      // Nutation terms
-   XA_SPVEC_REEVAL   =  85,      // Recompute pertubations at each corrector step
-   XA_SPVEC_INTEGCTRL=  86,      // Variable of intergration control
-   XA_SPVEC_VARSTEP  =  87,      // Variable step size control
-   XA_SPVEC_INITSTEP =  88,      // Initial step size
-   
-   XA_SPVEC_RMS      =  99,      // weighted RM of last DC on the satellite 
-   XA_SPVEC_COVELEMS = 100,      // the lower triangle portion of the full cov matrix (100-120: 6x6 covmtx, ..., 100-154: 10x10 covmtx)
-   
-   XA_SPVEC_SIZE     = 512;
-   
-
-// Indexes of SPVEC text data in an array of chars
-static const int     
-   XS_SPVEC_SECCLASS_1 =  0,      // Security classification
-   XS_SPVEC_SATNAME_8  =  1,      // Satellite common name
-   
-   XS_SPVEC_SIZE       = 512;
-   
-
-
-
-
-
-// SpVecDll's function pointers
-fnPtrSpVecInit                      SpVecInit;
-fnPtrSpVecGetInfo                   SpVecGetInfo;
-fnPtrSpVecLoadFile                  SpVecLoadFile;
-fnPtrSpVecSaveFile                  SpVecSaveFile;
-fnPtrSpVecRemoveSat                 SpVecRemoveSat;
-fnPtrSpVecRemoveAllSats             SpVecRemoveAllSats;
-fnPtrSpVecGetCount                  SpVecGetCount;
-fnPtrSpVecGetLoaded                 SpVecGetLoaded;
-fnPtrSpVecAddSatFrLines             SpVecAddSatFrLines;
-fnPtrSpVecAddSatFrLinesML           SpVecAddSatFrLinesML;
-fnPtrSpVecAddSatFrFields            SpVecAddSatFrFields;
-fnPtrSpVecAddSatFrFieldsML          SpVecAddSatFrFieldsML;
-fnPtrSpVecUpdateSatFrFields         SpVecUpdateSatFrFields;
-fnPtrSpVecGetField                  SpVecGetField;
-fnPtrSpVecSetField                  SpVecSetField;
-fnPtrSpVecGetAllFields              SpVecGetAllFields;
-fnPtrSpVecParse                     SpVecParse;
-fnPtrSpVecLinesToArray              SpVecLinesToArray;
-fnPtrSpVecGetLines                  SpVecGetLines;
-fnPtrSpVecFieldsToLines             SpVecFieldsToLines;
-fnPtrSpVecArrayToLines              SpVecArrayToLines;
-fnPtrSpVecGetSatKey                 SpVecGetSatKey;
-fnPtrSpVecGetSatKeyML               SpVecGetSatKeyML;
-fnPtrSpVecFieldsToSatKey            SpVecFieldsToSatKey;
-fnPtrSpVecFieldsToSatKeyML          SpVecFieldsToSatKeyML;
-fnPtrSpVecAddSatFrArray             SpVecAddSatFrArray;
-fnPtrSpVecAddSatFrArrayML           SpVecAddSatFrArrayML;
-fnPtrSpVecUpdateSatFrArray          SpVecUpdateSatFrArray;
-fnPtrSpVecDataToArray               SpVecDataToArray;
+  
+  // INDEXES OF SPVEC DATA FIELDS
+  static const int  
+     XF_SPVEC_POS1     =  1,      // X COMPONENT OF SATELLITE'S POSITION (KM)
+     XF_SPVEC_POS2     =  2,      // Y COMPONENT OF SATELLITE'S POSITION (KM)
+     XF_SPVEC_POS3     =  3,      // Z COMPONENT OF SATELLITE'S POSITION (KM)
+     XF_SPVEC_VEL1     =  4,      // X COMPONENT OF SATELLITE'S VELOCITY (M/S)
+     XF_SPVEC_VEL2     =  5,      // Y COMPONENT OF SATELLITE'S VELOCITY (M/S)
+     XF_SPVEC_VEL3     =  6,      // Z COMPONENT OF SATELLITE'S VELOCITY (M/S)
+     XF_SPVEC_SECCLASS =  7,      // SECURITY CLASSIFICATION
+     XF_SPVEC_SATNUM   =  9,      // SATELLITE NUMBER
+     XF_SPVEC_SATNAME  = 10,      // SATELLITE COMMON NAME
+     XF_SPVEC_EPOCH    = 11,      // EPOCH DATE
+     XF_SPVEC_REVNUM   = 12,      // EPOCH REVOLUTION NUMBER
+     XF_SPVEC_ELSETNUM = 13,      // ELSET NUMBER
+     XF_SPVEC_BTERM    = 14,      // BALLISTIC COEFFICIENT (M^2/KG)
+     XF_SPVEC_AGOM     = 15,      // RADIATION PRESSURE COEFFICIENT (M^2/KG)
+     XF_SPVEC_OGPARM   = 16,      // OUTGASSING PARAMETER (KM/S^2)
+     XF_SPVEC_INPCOORD = 17;      // INPUTE COORDINATE SYSTEM
+     
+     
+  // INDEXES OF SPVEC NUMERICAL DATA IN AN ARRAY
+  static const int  
+     XA_SPVEC_SATNUM   =   0,      // SATELLITE NUMBER
+     XA_SPVEC_EPOCH    =   1,      // EPOCH DATE IN DAYS SINCE 1950 UTC
+     XA_SPVEC_REVNUM   =   2,      // EPOCH REVOLUTION NUMBER
+     XA_SPVEC_ELSETNUM =   3,      // ELSET NUMBER
+     XA_SPVEC_BTERM    =   4,      // BALLISTIC COEFFICIENT (M^2/KG)
+     XA_SPVEC_AGOM     =   5,      // RADIATION PRESSURE COEFFICIENT (M^2/KG)
+     XA_SPVEC_OGPARM   =   6,      // OUTGASSING PARAMETER (KM/S^2)
+     XA_SPVEC_INPCOORD =   7,      // INPUTE COORDINATE SYSTEM; = 0: USE 4P, = 1:TMDAT, = 2: MMJ2K
+  
+     XA_SPVEC_POS1     =  20,      // X COMPONENT OF SATELLITE'S POSITION (KM)
+     XA_SPVEC_POS2     =  21,      // Y COMPONENT OF SATELLITE'S POSITION (KM)
+     XA_SPVEC_POS3     =  22,      // Z COMPONENT OF SATELLITE'S POSITION (KM)
+     XA_SPVEC_VEL1     =  23,      // X COMPONENT OF SATELLITE'S VELOCITY (M/S)
+     XA_SPVEC_VEL2     =  24,      // Y COMPONENT OF SATELLITE'S VELOCITY (M/S)
+     XA_SPVEC_VEL3     =  25,      // Z COMPONENT OF SATELLITE'S VELOCITY (M/S)
+     
+     XA_SPVEC_HASOWNCRL=  70,      // FLAG TO INDICATE SP VEC HAS ITS OWN NUMERICAL INTEGRATION CONTROL
+     XA_SPVEC_GEOIDX   =  71,      // GEOPOTENTIAL MODEL TO USE
+     XA_SPVEC_BULGEFLG =  72,      // EARTH GRAVITY PERTUBATIONS FLAG
+     XA_SPVEC_DRAGFLG  =  73,      // DRAG PERTUBATIONS FLAG 
+     XA_SPVEC_RADFLG   =  74,      // RADIATION PRESSURE PERTUBATIONS FLAG
+     XA_SPVEC_LUNSOL   =  75,      // LUNAR/SOLAR PERTUBATIONS FLAG
+     XA_SPVEC_F10      =  76,      // F10 VALUE
+     XA_SPVEC_F10AVG   =  77,      // F10 AVERAGE VALUE
+     XA_SPVEC_AP       =  78,      // AP VALUE
+     XA_SPVEC_TRUNC    =  79,      // GEOPOTENTIAL TRUNCATION ORDER/DEGREE/ZONALS
+     XA_SPVEC_CONVERG  =  80,      // CORRECTOR STEP CONVERGENCE CRITERION; EXPONENT OF 1/10; DEFAULT = 10
+     XA_SPVEC_OGFLG    =  81,      // OUTGASSING PERTUBATIONS FLAG
+     XA_SPVEC_TIDESFLG =  82,      // SOLID EARTH AND OCEAN TIDE PERTUBATIONS FLAG
+     XA_SPVEC_INCOORD  =  83,      // INPUT VECTOR COORDINATE SYSTEM
+     XA_SPVEC_NTERMS   =  84,      // NUTATION TERMS
+     XA_SPVEC_REEVAL   =  85,      // RECOMPUTE PERTUBATIONS AT EACH CORRECTOR STEP
+     XA_SPVEC_INTEGCTRL=  86,      // VARIABLE OF INTERGRATION CONTROL
+     XA_SPVEC_VARSTEP  =  87,      // VARIABLE STEP SIZE CONTROL
+     XA_SPVEC_INITSTEP =  88,      // INITIAL STEP SIZE
+     
+     XA_SPVEC_RMS      =  99,      // WEIGHTED RM OF LAST DC ON THE SATELLITE 
+     XA_SPVEC_COVELEMS = 100,      // THE LOWER TRIANGLE PORTION OF THE FULL COV MATRIX (100-120: 6X6 COVMTX, ..., 100-154: 10X10 COVMTX)
+     
+     XA_SPVEC_SIZE     = 512;
+     
+  
+  // INDEXES OF SPVEC TEXT DATA IN AN ARRAY OF CHARS
+  static const int     
+     XS_SPVEC_SECCLASS_1 =  0,      // SECURITY CLASSIFICATION
+     XS_SPVEC_SATNAME_8  =  1,      // SATELLITE COMMON NAME
+     
+     XS_SPVEC_SIZE       = 512;
+     
+  
+  
+// SpVecDll's function pointers declaration
+extern fnPtrSpVecInit                      SpVecInit;
+extern fnPtrSpVecGetInfo                   SpVecGetInfo;
+extern fnPtrSpVecLoadFile                  SpVecLoadFile;
+extern fnPtrSpVecSaveFile                  SpVecSaveFile;
+extern fnPtrSpVecRemoveSat                 SpVecRemoveSat;
+extern fnPtrSpVecRemoveAllSats             SpVecRemoveAllSats;
+extern fnPtrSpVecGetCount                  SpVecGetCount;
+extern fnPtrSpVecGetLoaded                 SpVecGetLoaded;
+extern fnPtrSpVecAddSatFrLines             SpVecAddSatFrLines;
+extern fnPtrSpVecAddSatFrLinesML           SpVecAddSatFrLinesML;
+extern fnPtrSpVecAddSatFrFields            SpVecAddSatFrFields;
+extern fnPtrSpVecAddSatFrFieldsML          SpVecAddSatFrFieldsML;
+extern fnPtrSpVecUpdateSatFrFields         SpVecUpdateSatFrFields;
+extern fnPtrSpVecGetField                  SpVecGetField;
+extern fnPtrSpVecSetField                  SpVecSetField;
+extern fnPtrSpVecGetAllFields              SpVecGetAllFields;
+extern fnPtrSpVecParse                     SpVecParse;
+extern fnPtrSpVecLinesToArray              SpVecLinesToArray;
+extern fnPtrSpVecGetLines                  SpVecGetLines;
+extern fnPtrSpVecFieldsToLines             SpVecFieldsToLines;
+extern fnPtrSpVecArrayToLines              SpVecArrayToLines;
+extern fnPtrSpVecGetSatKey                 SpVecGetSatKey;
+extern fnPtrSpVecGetSatKeyML               SpVecGetSatKeyML;
+extern fnPtrSpVecFieldsToSatKey            SpVecFieldsToSatKey;
+extern fnPtrSpVecFieldsToSatKeyML          SpVecFieldsToSatKeyML;
+extern fnPtrSpVecAddSatFrArray             SpVecAddSatFrArray;
+extern fnPtrSpVecAddSatFrArrayML           SpVecAddSatFrArrayML;
+extern fnPtrSpVecUpdateSatFrArray          SpVecUpdateSatFrArray;
+extern fnPtrSpVecDataToArray               SpVecDataToArray;
 
 
 

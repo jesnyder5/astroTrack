@@ -1,7 +1,39 @@
-// This wrapper file was generated automatically by the A3\GenDllWrappers program.
+// This wrapper file was generated automatically by the GenDllWrappers program.
 
-#include "services/DllUtils.h"
-#include "wrappers/SensorDll.h"
+#include "../services/DllUtils.h"
+#include "SensorDll.h"
+
+
+// SensorDll's function pointers definition
+fnPtrSensorInit                     SensorInit;
+fnPtrSensorGetInfo                  SensorGetInfo;
+fnPtrSensorLoadFile                 SensorLoadFile;
+fnPtrSensorLoadCard                 SensorLoadCard;
+fnPtrSensorSaveFile                 SensorSaveFile;
+fnPtrSensorRemove                   SensorRemove;
+fnPtrSensorRemoveAll                SensorRemoveAll;
+fnPtrSensorGetCount                 SensorGetCount;
+fnPtrSensorGetLoaded                SensorGetLoaded;
+fnPtrSensorGetLocAll                SensorGetLocAll;
+fnPtrSensorSetLocAll                SensorSetLocAll;
+fnPtrSensorGetLocField              SensorGetLocField;
+fnPtrSensorSetLocField              SensorSetLocField;
+fnPtrSensorGet1L                    SensorGet1L;
+fnPtrSensorSet1L                    SensorSet1L;
+fnPtrSensorGet2L                    SensorGet2L;
+fnPtrSensorSet2L                    SensorSet2L;
+fnPtrSensorGetLimField              SensorGetLimField;
+fnPtrSensorSetLimField              SensorSetLimField;
+fnPtrSensorGetBS                    SensorGetBS;
+fnPtrSensorSetBS                    SensorSetBS;
+fnPtrSensorGetBSField               SensorGetBSField;
+fnPtrSensorSetBSField               SensorSetBSField;
+fnPtrSensorGetLines                 SensorGetLines;
+fnPtrSensorGetOrbSatKey             SensorGetOrbSatKey;
+fnPtrSensorSetOrbSatKey             SensorSetOrbSatKey;
+fnPtrSensorLoadAzElTable            SensorLoadAzElTable;
+fnPtrSensorAddSegment               SensorAddSegment;
+fnPtrSensorGetSegment               SensorGetSegment;
 
 
 static void* hLib = NULL; // handle to the dll

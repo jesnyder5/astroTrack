@@ -1,7 +1,39 @@
-// This wrapper file was generated automatically by the A3\GenDllWrappers program.
+// This wrapper file was generated automatically by the GenDllWrappers program.
 
-#include "services/DllUtils.h"
-#include "wrappers/SpVecDll.h"
+#include "../services/DllUtils.h"
+#include "SpVecDll.h"
+
+
+// SpVecDll's function pointers definition
+fnPtrSpVecInit                      SpVecInit;
+fnPtrSpVecGetInfo                   SpVecGetInfo;
+fnPtrSpVecLoadFile                  SpVecLoadFile;
+fnPtrSpVecSaveFile                  SpVecSaveFile;
+fnPtrSpVecRemoveSat                 SpVecRemoveSat;
+fnPtrSpVecRemoveAllSats             SpVecRemoveAllSats;
+fnPtrSpVecGetCount                  SpVecGetCount;
+fnPtrSpVecGetLoaded                 SpVecGetLoaded;
+fnPtrSpVecAddSatFrLines             SpVecAddSatFrLines;
+fnPtrSpVecAddSatFrLinesML           SpVecAddSatFrLinesML;
+fnPtrSpVecAddSatFrFields            SpVecAddSatFrFields;
+fnPtrSpVecAddSatFrFieldsML          SpVecAddSatFrFieldsML;
+fnPtrSpVecUpdateSatFrFields         SpVecUpdateSatFrFields;
+fnPtrSpVecGetField                  SpVecGetField;
+fnPtrSpVecSetField                  SpVecSetField;
+fnPtrSpVecGetAllFields              SpVecGetAllFields;
+fnPtrSpVecParse                     SpVecParse;
+fnPtrSpVecLinesToArray              SpVecLinesToArray;
+fnPtrSpVecGetLines                  SpVecGetLines;
+fnPtrSpVecFieldsToLines             SpVecFieldsToLines;
+fnPtrSpVecArrayToLines              SpVecArrayToLines;
+fnPtrSpVecGetSatKey                 SpVecGetSatKey;
+fnPtrSpVecGetSatKeyML               SpVecGetSatKeyML;
+fnPtrSpVecFieldsToSatKey            SpVecFieldsToSatKey;
+fnPtrSpVecFieldsToSatKeyML          SpVecFieldsToSatKeyML;
+fnPtrSpVecAddSatFrArray             SpVecAddSatFrArray;
+fnPtrSpVecAddSatFrArrayML           SpVecAddSatFrArrayML;
+fnPtrSpVecUpdateSatFrArray          SpVecUpdateSatFrArray;
+fnPtrSpVecDataToArray               SpVecDataToArray;
 
 
 static void* hLib = NULL; // handle to the dll

@@ -1,13 +1,15 @@
-// This wrapper file was generated automatically by the A3\GenDllWrappers program.
+// This wrapper file was generated automatically by the GenDllWrappers program.
 
 #ifndef SAASDLL_H
 #define SAASDLL_H
 
-#include "services/DllUtils.h"
+#include "../services/DllUtils.h"
 
-// Provide the path to the dll/so
-#ifdef _WIN32
+// Provide the path to the dll/so/dylib
+#if defined (_WIN32) || defined (__CYGWIN__)
   #define SaasDll "Saas.dll"
+#elif __APPLE__
+  #define SaasDll "libsaas.dylib"
 #else
   #define SaasDll "libsaas.so"
 #endif
@@ -212,139 +214,136 @@ typedef void (STDCALL *fnPtrComputeLnchOrbPlane)(double xa_lnch[8], double* incl
 // xa_intxn           The output planer intersection data (out-Double[16])
 // returns 0 if successfully, non-0 if there is an error
 typedef int (STDCALL *fnPtrFindPlanerIntersection)(__int64 satKey, double xa_plnr[16], double xa_intxn[16]);
-
-//*******************************************************************************
-
-// Missile Profile
-static const int     
-   XA_MSL_MINHGT  =  0,     // missile profile's minimum height limit (km)
-   XA_MSL_MAXHGT  =  1,     // missile profile's maximum height limit (km)
-   XA_MSL_MAXSA   =  2,     // maximum allowed solar aspect angle (deg)
-   XA_MSL_ANGMAX  =  3,     // maximum allowed missile attack angle (deg)
-   XA_MSL_REJFLG  =  4,     // rejection flag (-1: reject negative, 0: reject neg and pos, 1: reject pos) 
-   XA_MSL_TIMCOE1 =  5,     // missile trajectory time coefficient for the *X**2 term [sec]
-   XA_MSL_TIMCOE2 =  6,     // missile trajectory time coefficient for the *X term [sec]
-   XA_MSL_TIMCOE3 =  7,     // missile trajectory time constant for the C term [sec] 
-   XA_MSL_RNGCOE1 =  8,     // missile trajectory range coefficient *X**2 term [km]
-   XA_MSL_RNGCOE2 =  9,     // missile trajectory range coefficient *X term [km]
-   XA_MSL_RNGCOE3 = 10,     // missile trajectory range constant for the C term [km]
- 
-   XA_MSL_SIZE    = 32;
-
-//*******************************************************************************
-   
-// Launch site location
-static const int     
-   XA_LS_LAT     = 0,     // launch site's latitude (deg)  (+N) (-S)
-   XA_LS_LON     = 1,     // launch site's longitude (deg) (+E) (-W)
-   XA_LS_HEIGHT  = 2,     // launch site's height(m)
-   
-   XA_LS_SIZE    = 8;
-   
-//*******************************************************************************   
-   
-// Saas run parameters
-static const int     
-   XA_SAASRUN_MAXPENS  = 0,     // Maximum number of penetration points that are allowed
-   XA_SAASRUN_START    = 1,     // SAAS start time in days since 1950, UTC
-   XA_SAASRUN_STOP     = 2,     // SAAS stop time in days since 1950, UTC
-   XA_SAASRUN_HALFCONE = 3,     // Half angle of attack cone (0=auto)
-   
-   XA_SAASRUN_SIZE     = 8;      
-   
-//*******************************************************************************      
-
-// Satellite penetration data
-static const int     
-   XA_SATPEN_IMPTIME  =  0,     // impact time in days since 1950, UTC
-   XA_SATPEN_LAUTIME  =  1,     // msl launch time in days since 1950, UTC
-   XA_SATPEN_AZ       =  2,     // azimuth (deg)
-   XA_SATPEN_EL       =  3,     // elevation (deg)
-   XA_SATPEN_RANGE    =  4,     // range (km)
-   XA_SATPEN_RNGRATE  =  5,     // range rate (km/s)
-   XA_SATPEN_SOLANG   =  6,     // solar aspect angle (deg)
-   XA_SATPEN_ATTCKANG =  7,     // attack angle (deg)
-   XA_SATPEN_SATHGHT  =  8,     // satellite's height (km)
-   XA_SATPEN_EN0EX1   =  9,     // ring penetration entry or exit time (0=entry, 1=exit)
-   
-   XA_SATPEN_SIZE     = 16;      
-   
-//*******************************************************************************      
-
-// SAAS ouput data
-static const int     
-   XA_SAASRET_NUMOFPENS =  0,     // number of actual satellite penetrations
-   XA_SAASRET_SATAHT    =  1,     // satellite apogee height (km)
-   XA_SAASRET_SATPHT    =  2,     // satellite perigee height (km)
-   XA_SAASRET_MINCONE   =  3,     // autocone minimum cone half angle (deg)
-   XA_SAASRET_MAXCONE   =  4,     // autocone maximum cone half angle (deg)
-   
-   
-
-   
-   XA_SAASRET_SIZE     = 16;      
-   
-//*******************************************************************************      
-
-// predefined values for different orbit types used in planer program
-static const int  
-   ORBTYPE_LEO = 1,  
-   ORBTYPE_MEO = 2,   
-   ORBTYPE_GEO = 3; 
-
-//*******************************************************************************      
-
-// indexes of fields specifying parameters for planer intersection program
-static const int  
-  XA_LNCH_LAT     = 0,       // launch site latitude (deg)
-  XA_LNCH_LON     = 1,       // launch site longitude (deg)
-  XA_LNCH_INJAZ   = 2,       // injection azimuth (deg)
-  XA_LNCH_DS50UTC = 3,       // launch time in days since 1950 UTC
   
-  XA_LNCH_SIZE    = 8;
+  //*******************************************************************************
   
-//*******************************************************************************   
+  // MISSILE PROFILE
+  static const int     
+     XA_MSL_MINHGT  =  0,     // MISSILE PROFILE'S MINIMUM HEIGHT LIMIT (KM)
+     XA_MSL_MAXHGT  =  1,     // MISSILE PROFILE'S MAXIMUM HEIGHT LIMIT (KM)
+     XA_MSL_MAXSA   =  2,     // MAXIMUM ALLOWED SOLAR ASPECT ANGLE (DEG)
+     XA_MSL_ANGMAX  =  3,     // MAXIMUM ALLOWED MISSILE ATTACK ANGLE (DEG)
+     XA_MSL_REJFLG  =  4,     // REJECTION FLAG (-1: REJECT NEGATIVE, 0: REJECT NEG AND POS, 1: REJECT POS) 
+     XA_MSL_TIMCOE1 =  5,     // MISSILE TRAJECTORY TIME COEFFICIENT FOR THE *X**2 TERM [SEC]
+     XA_MSL_TIMCOE2 =  6,     // MISSILE TRAJECTORY TIME COEFFICIENT FOR THE *X TERM [SEC]
+     XA_MSL_TIMCOE3 =  7,     // MISSILE TRAJECTORY TIME CONSTANT FOR THE C TERM [SEC] 
+     XA_MSL_RNGCOE1 =  8,     // MISSILE TRAJECTORY RANGE COEFFICIENT *X**2 TERM [KM]
+     XA_MSL_RNGCOE2 =  9,     // MISSILE TRAJECTORY RANGE COEFFICIENT *X TERM [KM]
+     XA_MSL_RNGCOE3 = 10,     // MISSILE TRAJECTORY RANGE CONSTANT FOR THE C TERM [KM]
+   
+     XA_MSL_SIZE    = 32;
   
-// indexes of fields specifying parameters for planer intersection program
-static const int  
-  XA_PLNR_ORBTYPE  = 0,       // orbital type (LEO = 1, MEO = 2, GEO = 3)
-  XA_PLNR_LSLAT    = 1,       // launch site latitude (deg)
-  XA_PLNR_LSLON    = 2,       // launch site longitude (deg)
-  XA_PLNR_DS50UTC  = 4,       // launch time in days since 1950 UTC
-  XA_PLNR_TOFFR    = 5,       // time of flight start (min)
-  XA_PLNR_TOFTO    = 6,       // time of flight end (min) 
-  XA_PLNR_INCLI    = 7,       // planer's inclination (deg)
-  XA_PLNR_NODE     = 8,       // planer's node (deg)
+  //*******************************************************************************
+     
+  // LAUNCH SITE LOCATION
+  static const int     
+     XA_LS_LAT     = 0,     // LAUNCH SITE'S LATITUDE (DEG)  (+N) (-S)
+     XA_LS_LON     = 1,     // LAUNCH SITE'S LONGITUDE (DEG) (+E) (-W)
+     XA_LS_HEIGHT  = 2,     // LAUNCH SITE'S HEIGHT(M)
+     
+     XA_LS_SIZE    = 8;
+     
+  //*******************************************************************************   
+     
+  // SAAS RUN PARAMETERS
+  static const int     
+     XA_SAASRUN_MAXPENS  = 0,     // MAXIMUM NUMBER OF PENETRATION POINTS THAT ARE ALLOWED
+     XA_SAASRUN_START    = 1,     // SAAS START TIME IN DAYS SINCE 1950, UTC
+     XA_SAASRUN_STOP     = 2,     // SAAS STOP TIME IN DAYS SINCE 1950, UTC
+     XA_SAASRUN_HALFCONE = 3,     // HALF ANGLE OF ATTACK CONE (0=AUTO)
+     
+     XA_SAASRUN_SIZE     = 8;      
+     
+  //*******************************************************************************      
   
-  XA_PLNR_SIZE     = 16;
+  // SATELLITE PENETRATION DATA
+  static const int     
+     XA_SATPEN_IMPTIME  =  0,     // IMPACT TIME IN DAYS SINCE 1950, UTC
+     XA_SATPEN_LAUTIME  =  1,     // MSL LAUNCH TIME IN DAYS SINCE 1950, UTC
+     XA_SATPEN_AZ       =  2,     // AZIMUTH (DEG)
+     XA_SATPEN_EL       =  3,     // ELEVATION (DEG)
+     XA_SATPEN_RANGE    =  4,     // RANGE (KM)
+     XA_SATPEN_RNGRATE  =  5,     // RANGE RATE (KM/S)
+     XA_SATPEN_SOLANG   =  6,     // SOLAR ASPECT ANGLE (DEG)
+     XA_SATPEN_ATTCKANG =  7,     // ATTACK ANGLE (DEG)
+     XA_SATPEN_SATHGHT  =  8,     // SATELLITE'S HEIGHT (KM)
+     XA_SATPEN_EN0EX1   =  9,     // RING PENETRATION ENTRY OR EXIT TIME (0=ENTRY, 1=EXIT)
+     
+     XA_SATPEN_SIZE     = 16;      
+     
+  //*******************************************************************************      
   
-//*******************************************************************************        
-   
-// indexes of output data returned by planer intersection program
-static const int  
-   XA_INTXN_DS50UTC = 0,      // time of intersection in days since 1950 UTC
-   XA_INTXN_INCLI   = 1,      // satellite inclination (deg)
-   XA_INTXN_LAT     = 2,      // satellite latitude (deg) at the time of the intersection 
-   XA_INTXN_LON     = 3,      // satellite longitude (deg) at the time of the intersection                            
-   XA_INTXN_HEIGHT  = 4,      // satellite height (km) at the time of the intersection                               
-   XA_INTXN_TOF     = 5,      // time of flight (min) since launch time                          
-   XA_INTXN_COPLANG = 6,      // coplaner angle (deg)                     
-   
-   XA_INTXN_SIZE    = 16;                               
-   
-//*******************************************************************************         
-   
-
-
-
-// SaasDll's function pointers
-fnPtrSaasInit                       SaasInit;
-fnPtrSaasGetInfo                    SaasGetInfo;
-fnPtrSaasGetResults                 SaasGetResults;
-fnPtrSaasAutoConeSize               SaasAutoConeSize;
-fnPtrSaasMissileFlightTime          SaasMissileFlightTime;
-fnPtrComputeLnchOrbPlane            ComputeLnchOrbPlane;
-fnPtrFindPlanerIntersection         FindPlanerIntersection;
+  // SAAS OUPUT DATA
+  static const int     
+     XA_SAASRET_NUMOFPENS =  0,     // NUMBER OF ACTUAL SATELLITE PENETRATIONS
+     XA_SAASRET_SATAHT    =  1,     // SATELLITE APOGEE HEIGHT (KM)
+     XA_SAASRET_SATPHT    =  2,     // SATELLITE PERIGEE HEIGHT (KM)
+     XA_SAASRET_MINCONE   =  3,     // AUTOCONE MINIMUM CONE HALF ANGLE (DEG)
+     XA_SAASRET_MAXCONE   =  4,     // AUTOCONE MAXIMUM CONE HALF ANGLE (DEG)
+     
+     
+  
+     
+     XA_SAASRET_SIZE     = 16;      
+     
+  //*******************************************************************************      
+  
+  // PREDEFINED VALUES FOR DIFFERENT ORBIT TYPES USED IN PLANER PROGRAM
+  static const int  
+     ORBTYPE_LEO = 1,    // ORBIT TYPE LEO
+     ORBTYPE_MEO = 2,    // ORBIT TYPE MEO
+     ORBTYPE_GEO = 3;    // ORBIT TYPE GEO
+  
+  //*******************************************************************************      
+  
+  // INDEXES OF FIELDS SPECIFYING PARAMETERS FOR PLANER INTERSECTION PROGRAM
+  static const int  
+    XA_LNCH_LAT     = 0,       // LAUNCH SITE LATITUDE (DEG)
+    XA_LNCH_LON     = 1,       // LAUNCH SITE LONGITUDE (DEG)
+    XA_LNCH_INJAZ   = 2,       // INJECTION AZIMUTH (DEG)
+    XA_LNCH_DS50UTC = 3,       // LAUNCH TIME IN DAYS SINCE 1950 UTC
+    
+    XA_LNCH_SIZE    = 8;
+    
+  //*******************************************************************************   
+    
+  // INDEXES OF FIELDS SPECIFYING PARAMETERS FOR PLANER INTERSECTION PROGRAM
+  static const int  
+    XA_PLNR_ORBTYPE  = 0,       // ORBITAL TYPE (LEO = 1, MEO = 2, GEO = 3)
+    XA_PLNR_LSLAT    = 1,       // LAUNCH SITE LATITUDE (DEG)
+    XA_PLNR_LSLON    = 2,       // LAUNCH SITE LONGITUDE (DEG)
+    XA_PLNR_DS50UTC  = 4,       // LAUNCH TIME IN DAYS SINCE 1950 UTC
+    XA_PLNR_TOFFR    = 5,       // TIME OF FLIGHT START (MIN)
+    XA_PLNR_TOFTO    = 6,       // TIME OF FLIGHT END (MIN) 
+    XA_PLNR_INCLI    = 7,       // PLANER'S INCLINATION (DEG)
+    XA_PLNR_NODE     = 8,       // PLANER'S NODE (DEG)
+    
+    XA_PLNR_SIZE     = 16;
+    
+  //*******************************************************************************        
+     
+  // INDEXES OF OUTPUT DATA RETURNED BY PLANER INTERSECTION PROGRAM
+  static const int  
+     XA_INTXN_DS50UTC = 0,      // TIME OF INTERSECTION IN DAYS SINCE 1950 UTC
+     XA_INTXN_INCLI   = 1,      // SATELLITE INCLINATION (DEG)
+     XA_INTXN_LAT     = 2,      // SATELLITE LATITUDE (DEG) AT THE TIME OF THE INTERSECTION 
+     XA_INTXN_LON     = 3,      // SATELLITE LONGITUDE (DEG) AT THE TIME OF THE INTERSECTION                            
+     XA_INTXN_HEIGHT  = 4,      // SATELLITE HEIGHT (KM) AT THE TIME OF THE INTERSECTION                               
+     XA_INTXN_TOF     = 5,      // TIME OF FLIGHT (MIN) SINCE LAUNCH TIME                          
+     XA_INTXN_COPLANG = 6,      // COPLANER ANGLE (DEG)                     
+     
+     XA_INTXN_SIZE    = 16;                               
+     
+  //*******************************************************************************         
+     
+// SaasDll's function pointers declaration
+extern fnPtrSaasInit                       SaasInit;
+extern fnPtrSaasGetInfo                    SaasGetInfo;
+extern fnPtrSaasGetResults                 SaasGetResults;
+extern fnPtrSaasAutoConeSize               SaasAutoConeSize;
+extern fnPtrSaasMissileFlightTime          SaasMissileFlightTime;
+extern fnPtrComputeLnchOrbPlane            ComputeLnchOrbPlane;
+extern fnPtrFindPlanerIntersection         FindPlanerIntersection;
 
 
 

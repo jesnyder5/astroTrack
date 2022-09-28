@@ -1,9 +1,9 @@
-#include "services/DllUtils.h"
-#include "services/DllMainDll_Service.h"
-#include "services/SensorDll_Service.h"
+#include "DllUtils.h"
+#include "DllMainDll_Service.h"
+#include "SensorDll_Service.h"
 
-#include "wrappers/DllMainDll.h"
-#include "wrappers/SensorDll.h"
+#include "../wrappers/DllMainDll.h"
+#include "../wrappers/SensorDll.h"
 
 
 // Retrieve Sensor location/limits data from the dll

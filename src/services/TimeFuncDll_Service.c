@@ -1,7 +1,7 @@
-#include "services/DllUtils.h"
-#include "services/TimeFuncDll_Service.h"
+#include "DllUtils.h"
+#include "TimeFuncDll_Service.h"
 
-#include "wrappers/TimeFuncDll.h"
+#include "../wrappers/TimeFuncDll.h"
 
 // Time Conversion Functions
 // CONVERT DAYS SINCE 1950 TO YYYY/DDD HHMM SS.SSS

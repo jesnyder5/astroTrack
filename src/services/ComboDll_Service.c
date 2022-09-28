@@ -1,14 +1,14 @@
-#include "services/DllMainDll_Service.h"
-#include "services/ElOpsDll_Service.h"
-#include "services/TimeFuncDll_Service.h"
-#include "services/ComboDll_Service.h"
-#include "services/SatStateDll_Service.h"
+#include "DllMainDll_Service.h"
+#include "ElOpsDll_Service.h"
+#include "TimeFuncDll_Service.h"
+#include "ComboDll_Service.h"
+#include "SatStateDll_Service.h"
 
-#include "wrappers/TimeFuncDll.h"
-#include "wrappers/SpPropDll.h"
-#include "wrappers/SatStateDll.h"
-#include "wrappers/ComboDll.h"
-#include "wrappers/SatStateDll.h"
+#include "../wrappers/TimeFuncDll.h"
+#include "../wrappers/SpPropDll.h"
+#include "../wrappers/SatStateDll.h"
+#include "../wrappers/ComboDll.h"
+#include "../wrappers/SatStateDll.h"
 
 
 // Retrieve COMBO control parameters from the COMBO dll

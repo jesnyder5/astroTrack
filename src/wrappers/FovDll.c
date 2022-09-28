@@ -1,7 +1,23 @@
-// This wrapper file was generated automatically by the A3\GenDllWrappers program.
+// This wrapper file was generated automatically by the GenDllWrappers program.
 
-#include "services/DllUtils.h"
-#include "wrappers/FovDll.h"
+#include "../services/DllUtils.h"
+#include "FovDll.h"
+
+
+// FovDll's function pointers definition
+fnPtrFovInit                        FovInit;
+fnPtrFovGetInfo                     FovGetInfo;
+fnPtrFovLoadFile                    FovLoadFile;
+fnPtrFovLoadFileAll                 FovLoadFileAll;
+fnPtrFovLoadCard                    FovLoadCard;
+fnPtrFovSaveFile                    FovSaveFile;
+fnPtrFovGetDataFrInputFiles         FovGetDataFrInputFiles;
+fnPtrFovFindTargetPasses            FovFindTargetPasses;
+fnPtrFovTargetElset                 FovTargetElset;
+fnPtrFovTargetElsetLook             FovTargetElsetLook;
+fnPtrFovTargetVec                   FovTargetVec;
+fnPtrFovTargetVecLook               FovTargetVecLook;
+fnPtrFovReset                       FovReset;
 
 
 static void* hLib = NULL; // handle to the dll

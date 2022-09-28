@@ -1,13 +1,15 @@
-// This wrapper file was generated automatically by the A3\GenDllWrappers program.
+// This wrapper file was generated automatically by the GenDllWrappers program.
 
 #ifndef ENVCONSTDLL_H
 #define ENVCONSTDLL_H
 
-#include "services/DllUtils.h"
+#include "../services/DllUtils.h"
 
-// Provide the path to the dll/so
-#ifdef _WIN32
+// Provide the path to the dll/so/dylib
+#if defined (_WIN32) || defined (__CYGWIN__)
   #define EnvConstDll "EnvConst.dll"
+#elif __APPLE__
+  #define EnvConstDll "libenvconst.dylib"
 #else
   #define EnvConstDll "libenvconst.so"
 #endif
@@ -18,7 +20,7 @@
 // 
 // An error will occur if you forget to load and initialize all the prerequisite DLLs, as listed in the DLL Prerequisites section of the accompanying documentation, before using this DLL.
 // 
-// When the function is called, the GEO model is set to WGS-72 and the FK model is set to FK5.  If the user plans to use the SGP4 propagator, DO NOT change this default setting. Otherwise, SGP4 won't work
+// When the function is called, the GEO model is set to WGS-72 and the FK model is set to FK5.  If the user plans to use the SGP4 propagator, do NOT change this default setting. Otherwise, SGP4 won't work
 // apPtr              The handle that was returned from DllMainInit, see the documentation for DllMain.dll for details. (in-Long)
 // returns Returns zero indicating the EnvConst DLL has been initialized successfully. Other values indicate an error.
 typedef int (STDCALL *fnPtrEnvInit)(__int64 apPtr);
@@ -194,9 +196,9 @@ typedef double (STDCALL *fnPtrEnvGetGeoConst)(int xf_GeoCon);
 // xf_FkCon
 // xf_FkCon Interpretation
 // 
-// 1C1: Earth rotation rate w.r.t. moving equinox (rad/day)
-// 2C1DOT: Earth rotation acceleration (rad/day2)
-// 3THGR70: Greenwich angle (1970; rad)
+// 1c1: Earth rotation rate w.r.t. moving equinox (rad/day)
+// 2c1dot: Earth rotation acceleration (rad/day2)
+// 3thgr70: Greenwich angle (1970; rad)
 //    
 // xf_FkCon           An index specifying the constant you wish to retrieve, , see XF_FKCON_? for field specification (in-Integer)
 // returns Value of the requested FK constant
@@ -220,69 +222,66 @@ typedef void (STDCALL *fnPtrEnvSetEarthShape)(int earthShape);
 // Returns the value representing the shape of the earth being used by the Astro Standards software, either spherical earth or oblate earth
 // returns The value indicates the shape of the earth that is being used in the Astro Standards software: 0=spherical earth, 1= oblate earth
 typedef int (STDCALL *fnPtrEnvGetEarthShape)();
-
-// Indexes of Earth Constant fields
-static const int     
-   XF_GEOCON_FF    = 1,         // Earth flattening (reciprocal; unitless)
-   XF_GEOCON_J2    = 2,         // J2 (unitless)
-   XF_GEOCON_J3    = 3,         // J3 (unitless)
-   XF_GEOCON_J4    = 4,         // J4 (unitless)
-   XF_GEOCON_KE    = 5,         // Ke (er**1.5/min)
-   XF_GEOCON_KMPER = 6,         // Earth radius (km/er)
-   XF_GEOCON_RPTIM = 7,         // Earth rotation rate w.r.t. fixed equinox (rad/min)
-
-   XF_GEOCON_CK2   = 8,         // J2/2 (unitless)
-   XF_GEOCON_CK4   = 9,         // -3/8 J4 (unitless)
-   XF_GEOCON_KS2EK = 10,        // Converts km/sec to er/kem
-   XF_GEOCON_THDOT = 11,        // Earth rotation rate w.r.t. fixed equinox (rad/kemin)
-   XF_GEOCON_J5    = 12;        // J5 (unitless)
-   
-
-// Indexes of FK Constant fields
-static const int                     
-   XF_FKCON_C1     = 1,         // Earth rotation rate w.r.t. moving equinox (rad/day) 
-   XF_FKCON_C1DOT  = 2,         // Earth rotation acceleration(rad/day**2) 
-   XF_FKCON_THGR70 = 3;         // Greenwich angle (1970; rad) 
-
-// Indexes represent geopotential models GEO
-static const int  
-   XF_GEOMOD_WGS84  =   84,     // Earth constants - WGS-84
-   XF_GEOMOD_EGM96  =   96,     // Earth constants - EGM-96
-   XF_GEOMOD_EGM08  =    8,     // Earth constants - EGM-08
-   XF_GEOMOD_WGS72  =   72,     // Earth constants - WGS-72
-   XF_GEOMOD_JGM2   =    2,     // Earth constants - JGM2
-   XF_GEOMOD_STEM68 =   68,     // Earth constants - STEM68
-   XF_GEOMOD_GEM5   =    5,     // Earth constants - GEM5
-   XF_GEOMOD_GEM9   =    9,     // Earth constants - GEM9
-   XF_GEOMOD_UNKNOWN=  100;
-
-//*******************************************************************************
-
-// Indexes represent fundamental catalogue FK
-static const int  
-   XF_FKMOD_4 = 4,    // Fundamental Catalog - FK5
-   XF_FKMOD_5 = 5;    // Fundamental Catalog - FK4
-
-
-
-
-
-// EnvConstDll's function pointers
-fnPtrEnvInit                        EnvInit;
-fnPtrEnvGetInfo                     EnvGetInfo;
-fnPtrEnvLoadFile                    EnvLoadFile;
-fnPtrEnvSaveFile                    EnvSaveFile;
-fnPtrEnvGetFkIdx                    EnvGetFkIdx;
-fnPtrEnvSetFkIdx                    EnvSetFkIdx;
-fnPtrEnvGetGeoIdx                   EnvGetGeoIdx;
-fnPtrEnvSetGeoIdx                   EnvSetGeoIdx;
-fnPtrEnvGetGeoStr                   EnvGetGeoStr;
-fnPtrEnvSetGeoStr                   EnvSetGeoStr;
-fnPtrEnvGetGeoConst                 EnvGetGeoConst;
-fnPtrEnvGetFkConst                  EnvGetFkConst;
-fnPtrEnvGetFkPtr                    EnvGetFkPtr;
-fnPtrEnvSetEarthShape               EnvSetEarthShape;
-fnPtrEnvGetEarthShape               EnvGetEarthShape;
+  
+  // INDEXES OF EARTH CONSTANT FIELDS
+  static const int     
+     XF_GEOCON_FF    = 1,         // EARTH FLATTENING (RECIPROCAL; UNITLESS)
+     XF_GEOCON_J2    = 2,         // J2 (UNITLESS)
+     XF_GEOCON_J3    = 3,         // J3 (UNITLESS)
+     XF_GEOCON_J4    = 4,         // J4 (UNITLESS)
+     XF_GEOCON_KE    = 5,         // KE (ER**1.5/MIN)
+     XF_GEOCON_KMPER = 6,         // EARTH RADIUS (KM/ER)
+     XF_GEOCON_RPTIM = 7,         // EARTH ROTATION RATE W.R.T. FIXED EQUINOX (RAD/MIN)
+  
+     XF_GEOCON_CK2   = 8,         // J2/2 (UNITLESS)
+     XF_GEOCON_CK4   = 9,         // -3/8 J4 (UNITLESS)
+     XF_GEOCON_KS2EK = 10,        // CONVERTS KM/SEC TO ER/KEM
+     XF_GEOCON_THDOT = 11,        // EARTH ROTATION RATE W.R.T. FIXED EQUINOX (RAD/KEMIN)
+     XF_GEOCON_J5    = 12;        // J5 (UNITLESS)
+     
+  
+  // INDEXES OF FK CONSTANT FIELDS
+  static const int                     
+     XF_FKCON_C1     = 1,         // EARTH ROTATION RATE W.R.T. MOVING EQUINOX (RAD/DAY) 
+     XF_FKCON_C1DOT  = 2,         // EARTH ROTATION ACCELERATION(RAD/DAY**2) 
+     XF_FKCON_THGR70 = 3;         // GREENWICH ANGLE (1970; RAD) 
+  
+  // INDEXES REPRESENT GEOPOTENTIAL MODELS GEO
+  static const int  
+     XF_GEOMOD_WGS84  =   84,     // EARTH CONSTANTS - WGS-84
+     XF_GEOMOD_EGM96  =   96,     // EARTH CONSTANTS - EGM-96
+     XF_GEOMOD_EGM08  =    8,     // EARTH CONSTANTS - EGM-08
+     XF_GEOMOD_WGS72  =   72,     // EARTH CONSTANTS - WGS-72
+     XF_GEOMOD_JGM2   =    2,     // EARTH CONSTANTS - JGM2
+     XF_GEOMOD_STEM68 =   68,     // EARTH CONSTANTS - STEM68
+     XF_GEOMOD_GEM5   =    5,     // EARTH CONSTANTS - GEM5
+     XF_GEOMOD_GEM9   =    9,     // EARTH CONSTANTS - GEM9
+     XF_GEOMOD_UNKNOWN=  100;     // INVALID EARTH MODEL
+  
+  //*******************************************************************************
+  
+  // INDEXES REPRESENT FUNDAMENTAL CATALOGUE FK
+  static const int  
+     XF_FKMOD_4 = 4,    // FUNDAMENTAL CATALOG - FK5
+     XF_FKMOD_5 = 5;    // FUNDAMENTAL CATALOG - FK4
+  
+  
+// EnvConstDll's function pointers declaration
+extern fnPtrEnvInit                        EnvInit;
+extern fnPtrEnvGetInfo                     EnvGetInfo;
+extern fnPtrEnvLoadFile                    EnvLoadFile;
+extern fnPtrEnvSaveFile                    EnvSaveFile;
+extern fnPtrEnvGetFkIdx                    EnvGetFkIdx;
+extern fnPtrEnvSetFkIdx                    EnvSetFkIdx;
+extern fnPtrEnvGetGeoIdx                   EnvGetGeoIdx;
+extern fnPtrEnvSetGeoIdx                   EnvSetGeoIdx;
+extern fnPtrEnvGetGeoStr                   EnvGetGeoStr;
+extern fnPtrEnvSetGeoStr                   EnvSetGeoStr;
+extern fnPtrEnvGetGeoConst                 EnvGetGeoConst;
+extern fnPtrEnvGetFkConst                  EnvGetFkConst;
+extern fnPtrEnvGetFkPtr                    EnvGetFkPtr;
+extern fnPtrEnvSetEarthShape               EnvSetEarthShape;
+extern fnPtrEnvGetEarthShape               EnvGetEarthShape;
 
 
 

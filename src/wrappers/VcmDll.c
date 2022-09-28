@@ -1,7 +1,37 @@
-// This wrapper file was generated automatically by the A3\GenDllWrappers program.
+// This wrapper file was generated automatically by the GenDllWrappers program.
 
-#include "services/DllUtils.h"
-#include "wrappers/VcmDll.h"
+#include "../services/DllUtils.h"
+#include "VcmDll.h"
+
+
+// VcmDll's function pointers definition
+fnPtrVcmInit                        VcmInit;
+fnPtrVcmGetInfo                     VcmGetInfo;
+fnPtrVcmLoadFile                    VcmLoadFile;
+fnPtrVcmSaveFile                    VcmSaveFile;
+fnPtrVcmRemoveSat                   VcmRemoveSat;
+fnPtrVcmRemoveAllSats               VcmRemoveAllSats;
+fnPtrVcmGetCount                    VcmGetCount;
+fnPtrVcmGetLoaded                   VcmGetLoaded;
+fnPtrVcmAddSatFrLines               VcmAddSatFrLines;
+fnPtrVcmAddSatFrLinesML             VcmAddSatFrLinesML;
+fnPtrVcmAddSatFrFields              VcmAddSatFrFields;
+fnPtrVcmAddSatFrFieldsML            VcmAddSatFrFieldsML;
+fnPtrVcmRetrieveAllData             VcmRetrieveAllData;
+fnPtrVcmUpdateSatFrFields           VcmUpdateSatFrFields;
+fnPtrVcmGetField                    VcmGetField;
+fnPtrVcmSetField                    VcmSetField;
+fnPtrVcmGetAllFields                VcmGetAllFields;
+fnPtrVcmGetLines                    VcmGetLines;
+fnPtrVcm1LineToMultiLine            Vcm1LineToMultiLine;
+fnPtrVcmMultiLineTo1Line            VcmMultiLineTo1Line;
+fnPtrVcmGetSatKey                   VcmGetSatKey;
+fnPtrVcmGetSatKeyML                 VcmGetSatKeyML;
+fnPtrVcmFieldsToSatKey              VcmFieldsToSatKey;
+fnPtrVcmFieldsToSatKeyML            VcmFieldsToSatKeyML;
+fnPtrVcmArrayToVcmLines             VcmArrayToVcmLines;
+fnPtrVcmArrayToVcm1Line             VcmArrayToVcm1Line;
+fnPtrVcmStringToArray               VcmStringToArray;
 
 
 static void* hLib = NULL; // handle to the dll

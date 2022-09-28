@@ -1,13 +1,15 @@
-// This wrapper file was generated automatically by the A3\GenDllWrappers program.
+// This wrapper file was generated automatically by the GenDllWrappers program.
 
 #ifndef FOVDLL_H
 #define FOVDLL_H
 
-#include "services/DllUtils.h"
+#include "../services/DllUtils.h"
 
-// Provide the path to the dll/so
-#ifdef _WIN32
+// Provide the path to the dll/so/dylib
+#if defined (_WIN32) || defined (__CYGWIN__)
   #define FovDll "Fov.dll"
+#elif __APPLE__
+  #define FovDll "libfov.dylib"
 #else
   #define FovDll "libfov.so"
 #endif
@@ -216,88 +218,85 @@ typedef int (STDCALL *fnPtrFovTargetVecLook)(double currDs50TAI, double xa_fovSr
 
 // Resets all FOV control parameters back to their default values
 typedef void (STDCALL *fnPtrFovReset)();
-   
-// Fov run parameters
-static const int     
-   XA_FOVRUN_MAXPASSES= 0,     // Maximum number of passes (entry/minimum/exit times) that FOV returns in one start/stop time
-   XA_FOVRUN_START    = 1,     // FOV start time in days since 1950, UTC
-   XA_FOVRUN_STOP     = 2,     // FOV stop time in days since 1950, UTC
-   XA_FOVRUN_HALFCONE = 3,     // Cone half angle (deg) (0=auto) (0-45)
-   XA_FOVRUN_INTERVAL = 4,     // Search interval (min) 
-   
-   XA_FOVRUN_SIZE     = 8;      
-
-// FOV source types   
-static const int  
-   FOV_SRCTYPE_SEN = 1,    // Source is sensor
-   FOV_SRCTYPE_LLH = 2,    // Source is lat lon height
-   FOV_SRCTYPE_EFG = 3,    // Source is EFG 
-   FOV_SRCTYPE_XYZ = 4;    // Source is XYZ
-   
-// FOV source types   
-static const int  
-   FOV_TGTTYPE_ELSET = 1,    // Target is elset
-   FOV_TGTTYPE_AZEL  = 2,    // Target is constant Az/El
-   FOV_TGTTYPE_RADEC = 3;    // Target is RA/Dec (STAR)
-   
-// FOV source specification
-static const int  
-   XA_FOVSRC_TYPE  = 0,   // 1=SEN   | 2=LLH       | 3=EFG      | 4=XYZ
-   XA_FOVSRC_ID    = 1,   // Sensor# | Source ID   | Source ID  | Source ID                            
-   XA_FOVSRC_ELEM1 = 2,   //         | N lat (deg) | EFG: E (m) | X (m)
-   XA_FOVSRC_ELEM2 = 3,   //         | E lon (deg) | EFG: F (m) | Y (m)
-   XA_FOVSRC_ELEM3 = 4,   //         | height (m)  | EFG: G (m) | Z (m)
-   XA_FOVSRC_ELEM4 = 5,   //         |             |            | time of position in Ds50UTC
-   
-   XA_FOVSRC_SIZE  = 8;
-   
-
-// FOV target specification
-static const int  
-   XA_FOVTGT_TYPE  = 0,   // 1=ELSET | 2=AZEL    | 3=RADEC
-   XA_FOVTGT_ID    = 1,   // Elset#  | Target ID | Target ID
-   XA_FOVTGT_ELEM1 = 2,   //         | az (deg)  | RA (deg)
-   XA_FOVTGT_ELEM2 = 3,   //         | el (deg)  | Dec (deg)
-   XA_FOVTGT_ELEM3 = 4,   //         |           | equinox indicator 
-   
-   XA_FOVTGT_SIZE  = 8;
-   
-// entry/minimum/exit time data   
-static const int  
-   XA_EMEDAT_ENTRY = 0,   // entry time (ds50UTC)
-   XA_EMEDAT_MIN   = 1,   // minimum time (ds50UTC)
-   XA_EMEDAT_EXIT  = 2,   // exit time (ds50UTC)
-   
-   XA_EMEDAT_SIZE  = 3;
-
-// FOV parameters   
-static const int  
-   XA_FOVCTRL_HALFCONE = 0,     // Cone half angle (deg) (0=auto) (0-45)
-   XA_FOVCTRL_INTERVAL = 1,     // Search interval (min) 
-   XA_FOVCTRL_PRTOPT   = 2,     // Print option
-   
-   XA_FOVCTRL_SIZE     = 8;     
-   
-   
-static const int FOVMAXNUM = 128;  // maximum number of windows/potential, victims/sources/targets allowed to be entered via an input file
-   
-
-
-
-// FovDll's function pointers
-fnPtrFovInit                        FovInit;
-fnPtrFovGetInfo                     FovGetInfo;
-fnPtrFovLoadFile                    FovLoadFile;
-fnPtrFovLoadFileAll                 FovLoadFileAll;
-fnPtrFovLoadCard                    FovLoadCard;
-fnPtrFovSaveFile                    FovSaveFile;
-fnPtrFovGetDataFrInputFiles         FovGetDataFrInputFiles;
-fnPtrFovFindTargetPasses            FovFindTargetPasses;
-fnPtrFovTargetElset                 FovTargetElset;
-fnPtrFovTargetElsetLook             FovTargetElsetLook;
-fnPtrFovTargetVec                   FovTargetVec;
-fnPtrFovTargetVecLook               FovTargetVecLook;
-fnPtrFovReset                       FovReset;
+     
+  // FOV RUN PARAMETERS
+  static const int     
+     XA_FOVRUN_MAXPASSES= 0,     // MAXIMUM NUMBER OF PASSES (ENTRY/MINIMUM/EXIT TIMES) THAT FOV RETURNS IN ONE START/STOP TIME
+     XA_FOVRUN_START    = 1,     // FOV START TIME IN DAYS SINCE 1950, UTC
+     XA_FOVRUN_STOP     = 2,     // FOV STOP TIME IN DAYS SINCE 1950, UTC
+     XA_FOVRUN_HALFCONE = 3,     // CONE HALF ANGLE (DEG) (0=AUTO) (0-45)
+     XA_FOVRUN_INTERVAL = 4,     // SEARCH INTERVAL (MIN) 
+     
+     XA_FOVRUN_SIZE     = 8;      
+  
+  // FOV SOURCE TYPES   
+  static const int  
+     FOV_SRCTYPE_SEN = 1,    // SOURCE IS SENSOR
+     FOV_SRCTYPE_LLH = 2,    // SOURCE IS LAT LON HEIGHT
+     FOV_SRCTYPE_EFG = 3,    // SOURCE IS EFG 
+     FOV_SRCTYPE_XYZ = 4;    // SOURCE IS XYZ
+     
+  // FOV SOURCE TYPES   
+  static const int  
+     FOV_TGTTYPE_ELSET = 1,    // TARGET IS ELSET
+     FOV_TGTTYPE_AZEL  = 2,    // TARGET IS CONSTANT AZ/EL
+     FOV_TGTTYPE_RADEC = 3;    // TARGET IS RA/DEC (STAR)
+     
+  // FOV SOURCE SPECIFICATION
+  static const int  
+     XA_FOVSRC_TYPE  = 0,   // 1=SEN   | 2=LLH       | 3=EFG      | 4=XYZ
+     XA_FOVSRC_ID    = 1,   // SENSOR# | SOURCE ID   | SOURCE ID  | SOURCE ID                            
+     XA_FOVSRC_ELEM1 = 2,   //         | N LAT (DEG) | EFG: E (M) | X (M)
+     XA_FOVSRC_ELEM2 = 3,   //         | E LON (DEG) | EFG: F (M) | Y (M)
+     XA_FOVSRC_ELEM3 = 4,   //         | HEIGHT (M)  | EFG: G (M) | Z (M)
+     XA_FOVSRC_ELEM4 = 5,   //         |             |            | TIME OF POSITION IN DS50UTC
+     
+     XA_FOVSRC_SIZE  = 8;
+     
+  
+  // FOV TARGET SPECIFICATION
+  static const int  
+     XA_FOVTGT_TYPE  = 0,   // 1=ELSET | 2=AZEL    | 3=RADEC
+     XA_FOVTGT_ID    = 1,   // ELSET#  | TARGET ID | TARGET ID
+     XA_FOVTGT_ELEM1 = 2,   //         | AZ (DEG)  | RA (DEG)
+     XA_FOVTGT_ELEM2 = 3,   //         | EL (DEG)  | DEC (DEG)
+     XA_FOVTGT_ELEM3 = 4,   //         |           | EQUINOX INDICATOR 
+     
+     XA_FOVTGT_SIZE  = 8;
+     
+  // ENTRY/MINIMUM/EXIT TIME DATA   
+  static const int  
+     XA_EMEDAT_ENTRY = 0,   // ENTRY TIME (DS50UTC)
+     XA_EMEDAT_MIN   = 1,   // MINIMUM TIME (DS50UTC)
+     XA_EMEDAT_EXIT  = 2,   // EXIT TIME (DS50UTC)
+     
+     XA_EMEDAT_SIZE  = 3;
+  
+  // FOV PARAMETERS   
+  static const int  
+     XA_FOVCTRL_HALFCONE = 0,     // CONE HALF ANGLE (DEG) (0=AUTO) (0-45)
+     XA_FOVCTRL_INTERVAL = 1,     // SEARCH INTERVAL (MIN) 
+     XA_FOVCTRL_PRTOPT   = 2,     // PRINT OPTION
+     
+     XA_FOVCTRL_SIZE     = 8;     
+     
+     
+  static const int FOVMAXNUM = 128;  // MAXIMUM NUMBER OF WINDOWS/POTENTIAL, VICTIMS/SOURCES/TARGETS ALLOWED TO BE ENTERED VIA AN INPUT FILE
+     
+// FovDll's function pointers declaration
+extern fnPtrFovInit                        FovInit;
+extern fnPtrFovGetInfo                     FovGetInfo;
+extern fnPtrFovLoadFile                    FovLoadFile;
+extern fnPtrFovLoadFileAll                 FovLoadFileAll;
+extern fnPtrFovLoadCard                    FovLoadCard;
+extern fnPtrFovSaveFile                    FovSaveFile;
+extern fnPtrFovGetDataFrInputFiles         FovGetDataFrInputFiles;
+extern fnPtrFovFindTargetPasses            FovFindTargetPasses;
+extern fnPtrFovTargetElset                 FovTargetElset;
+extern fnPtrFovTargetElsetLook             FovTargetElsetLook;
+extern fnPtrFovTargetVec                   FovTargetVec;
+extern fnPtrFovTargetVecLook               FovTargetVecLook;
+extern fnPtrFovReset                       FovReset;
 
 
 

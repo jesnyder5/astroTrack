@@ -1,16 +1,16 @@
-#include "services/DllUtils.h"
-#include "services/DllMainDll_Service.h"
-#include "services/AofDll_Service.h"
-#include "services/TimeFuncDll_Service.h"
-#include "services/SatStateDll_Service.h"
+#include "DllUtils.h"
+#include "DllMainDll_Service.h"
+#include "AofDll_Service.h"
+#include "TimeFuncDll_Service.h"
+#include "SatStateDll_Service.h"
 #include <math.h>
 
-#include "wrappers/DllMainDll.h"
-#include "wrappers/AofDll.h"
-#include "wrappers/TimeFuncDll.h"
-#include "wrappers/SensorDll.h"
-#include "wrappers/SatStateDll.h"
-#include "wrappers/LamodDll.h"
+#include "../wrappers/DllMainDll.h"
+#include "../wrappers/AofDll.h"
+#include "../wrappers/TimeFuncDll.h"
+#include "../wrappers/SensorDll.h"
+#include "../wrappers/SatStateDll.h"
+#include "../wrappers/LamodDll.h"
 
 
 // Retrieve Aof control data from the dll

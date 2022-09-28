@@ -1,13 +1,13 @@
-#include "services/DllUtils.h"
-#include "services/SatStateDll_Service.h"
-#include "services/TimeFuncDll_Service.h"
-#include "services/DllMainDll_Service.h"
+#include "DllUtils.h"
+#include "SatStateDll_Service.h"
+#include "TimeFuncDll_Service.h"
+#include "DllMainDll_Service.h"
 
 
-#include "wrappers/DllMainDll.h"
-#include "wrappers/ElOpsDll.h"
-#include "wrappers/SatStateDll.h"
-#include "wrappers/TimeFuncDll.h"
+#include "../wrappers/DllMainDll.h"
+#include "../wrappers/ElOpsDll.h"
+#include "../wrappers/SatStateDll.h"
+#include "../wrappers/TimeFuncDll.h"
 
 
 // Retrieve value of a field of satellite data

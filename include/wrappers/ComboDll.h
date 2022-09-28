@@ -1,13 +1,15 @@
-// This wrapper file was generated automatically by the A3\GenDllWrappers program.
+// This wrapper file was generated automatically by the GenDllWrappers program.
 
 #ifndef COMBODLL_H
 #define COMBODLL_H
 
-#include "services/DllUtils.h"
+#include "../services/DllUtils.h"
 
-// Provide the path to the dll/so
-#ifdef _WIN32
+// Provide the path to the dll/so/dylib
+#if defined (_WIN32) || defined (__CYGWIN__)
   #define ComboDll "Combo.dll"
+#elif __APPLE__
+  #define ComboDll "libcombo.dylib"
 #else
   #define ComboDll "libcombo.so"
 #endif
@@ -212,71 +214,68 @@ typedef int (STDCALL *fnPtrComboPOC)(double priSatPos[3], double priSatVel[3], d
 // pocArr             The resulting probability of collision:	1=Normalized distance (n-sigma) to circumscribing square, 2=POC of square, 3=Normalized distance (n-sigma) to circle, 4=POC of circle (out-Double[4])
 // returns 0 if the POC was computed successfully, non-0 if there is an error
 typedef int (STDCALL *fnPtrComboCSMPOC)(char csmFile[512], double sumR, double pocArr[4]);
-
-// Indexes of LAMOD 7P-card fields
-static const int  
-   XF_7P_TIMEFLAG    = 1,       // Input time format : 0: Minutes since epoch, 1: UTC
-   XF_7P_BEGTIME     = 2,       // Begin time
-   XF_7P_ENDTIME     = 3,       // End time
-   XF_7P_RELMINFLG   = 4,       // Control flag for computing relative minima
-   XF_7P_ABSMINFLG   = 5,       // Control flag for computing absolute minimum
-   XF_7P_EETIMES     = 6,       // Control flag for computing periods of close proximity
-   XF_7P_RELEPHFLG   = 7,       // Control flag for computing relative ephemeris
-   XF_7P_POCSIGMA    = 8,       // Control flag for computing probability of collision
-   XF_7P_RELMINLIM   = 9,       // Maximum separation for relative minima
-   XF_7P_ABSMINLIM   = 10,      // Close proximity limit
-   XF_7P_RELEPHINT   = 11,      // Relative ephemeris sampling interval 
-   XF_7P_PRTOPT      = 12,      // Print options
-   XF_7P_PRADIUS     = 13,      // Primary satellite effective radius (m)
-   XF_7P_SRADIUS     = 14;      // Secondary satellite effective radius (m)
-   
-// Different input of covariance matrix to compute POC   
-static const int  
-   XF_COVTYPE_ECI   = 1,        // ECI pos, vel, and ECI covariance
-   XF_COVTYPE_UVW   = 2;        // EFG pos, vel, and UVW covariance
-
-
-
-// Combo control parameters in input array xa_cb_parms that is used in ComboCompPriSec_MT()
-static const int  
-   XA_CB_PARMS_TIMEFLG     =  1,       // input format for begin and end times (0: minutes since epoch, 1: days since 1950 UTC)
-   XA_CB_PARMS_STARTTIME   =  2,       // begin time
-   XA_CB_PARMS_STOPTIME    =  3,       // end time
-   XA_CB_PARMS_MAXSEP      =  4,       // maximum separation for relative minima (km) - for reporting times when relative minima is less than this specified value
-   XA_CB_PARMS_PROXLIM     =  5,       // close proximity limit (km) - for reporting entry/exit times when pri/sec separation distance equals this specified value   
-   XA_CB_PARMS_SIZE        = 16;
-
-// Constants represent combo failed cases
-static const int  
-   FAILED_PRITOOFAR = 101,       // Primary satellite's epoch too far from time span
-   FAILED_SECTOOFAR = 102,       // Secondary satellite's epoch too far from time span
-   FAILED_SAMESAT   = 103,       // Primary/secondary satellites are identical  
-   FAILED_ALTITUDE  = 104,       // Secondary satellite failed perigee/apogee test 
-   WARN_BRIEFSPAN   = 105,       // Secondary satellite is considered a brief span
-   WARN_SUSRELGEO   = 106;       // Secondary satellite is in sustained relative geometry
-
-
-
-
-// ComboDll's function pointers
-fnPtrComboInit                      ComboInit;
-fnPtrComboGetInfo                   ComboGetInfo;
-fnPtrComboLoadFile                  ComboLoadFile;
-fnPtrComboLoadFileAll               ComboLoadFileAll;
-fnPtrComboLoadCard                  ComboLoadCard;
-fnPtrComboSaveFile                  ComboSaveFile;
-fnPtrComboGetNumOfPriSecSats        ComboGetNumOfPriSecSats;
-fnPtrComboGetPriSatNums             ComboGetPriSatNums;
-fnPtrComboGetSecSatNums             ComboGetSecSatNums;
-fnPtrComboGet7pCard                 ComboGet7pCard;
-fnPtrComboGet7pAll                  ComboGet7pAll;
-fnPtrComboSet7pAll                  ComboSet7pAll;
-fnPtrComboGet7pField                ComboGet7pField;
-fnPtrComboSet7pField                ComboSet7pField;
-fnPtrComboCompPriSec                ComboCompPriSec;
-fnPtrComboCompPriSec_MT             ComboCompPriSec_MT;
-fnPtrComboPOC                       ComboPOC;
-fnPtrComboCSMPOC                    ComboCSMPOC;
+  
+  // INDEXES OF LAMOD 7P-CARD FIELDS
+  static const int  
+     XF_7P_TIMEFLAG    = 1,       // INPUT TIME FORMAT : 0: MINUTES SINCE EPOCH, 1: UTC
+     XF_7P_BEGTIME     = 2,       // BEGIN TIME
+     XF_7P_ENDTIME     = 3,       // END TIME
+     XF_7P_RELMINFLG   = 4,       // CONTROL FLAG FOR COMPUTING RELATIVE MINIMA
+     XF_7P_ABSMINFLG   = 5,       // CONTROL FLAG FOR COMPUTING ABSOLUTE MINIMUM
+     XF_7P_EETIMES     = 6,       // CONTROL FLAG FOR COMPUTING PERIODS OF CLOSE PROXIMITY
+     XF_7P_RELEPHFLG   = 7,       // CONTROL FLAG FOR COMPUTING RELATIVE EPHEMERIS
+     XF_7P_POCSIGMA    = 8,       // CONTROL FLAG FOR COMPUTING PROBABILITY OF COLLISION
+     XF_7P_RELMINLIM   = 9,       // MAXIMUM SEPARATION FOR RELATIVE MINIMA
+     XF_7P_ABSMINLIM   = 10,      // CLOSE PROXIMITY LIMIT
+     XF_7P_RELEPHINT   = 11,      // RELATIVE EPHEMERIS SAMPLING INTERVAL 
+     XF_7P_PRTOPT      = 12,      // PRINT OPTIONS
+     XF_7P_PRADIUS     = 13,      // PRIMARY SATELLITE EFFECTIVE RADIUS (M)
+     XF_7P_SRADIUS     = 14;      // SECONDARY SATELLITE EFFECTIVE RADIUS (M)
+     
+  // DIFFERENT INPUT OF COVARIANCE MATRIX TO COMPUTE POC   
+  static const int  
+     XF_COVTYPE_ECI   = 1,        // ECI POS, VEL, AND ECI COVARIANCE
+     XF_COVTYPE_UVW   = 2;        // EFG POS, VEL, AND UVW COVARIANCE
+  
+  
+  
+  // COMBO CONTROL PARAMETERS IN INPUT ARRAY XA_CB_PARMS THAT IS USED IN COMBOCOMPPRISEC_MT()
+  static const int  
+     XA_CB_PARMS_TIMEFLG     =  1,       // INPUT FORMAT FOR BEGIN AND END TIMES (0: MINUTES SINCE EPOCH, 1: DAYS SINCE 1950 UTC)
+     XA_CB_PARMS_STARTTIME   =  2,       // BEGIN TIME
+     XA_CB_PARMS_STOPTIME    =  3,       // END TIME
+     XA_CB_PARMS_MAXSEP      =  4,       // MAXIMUM SEPARATION FOR RELATIVE MINIMA (KM) - FOR REPORTING TIMES WHEN RELATIVE MINIMA IS LESS THAN THIS SPECIFIED VALUE
+     XA_CB_PARMS_PROXLIM     =  5,       // CLOSE PROXIMITY LIMIT (KM) - FOR REPORTING ENTRY/EXIT TIMES WHEN PRI/SEC SEPARATION DISTANCE EQUALS THIS SPECIFIED VALUE   
+     XA_CB_PARMS_SIZE        = 16;
+  
+  // CONSTANTS REPRESENT COMBO FAILED CASES
+  static const int  
+     FAILED_PRITOOFAR = 101,       // PRIMARY SATELLITE'S EPOCH TOO FAR FROM TIME SPAN
+     FAILED_SECTOOFAR = 102,       // SECONDARY SATELLITE'S EPOCH TOO FAR FROM TIME SPAN
+     FAILED_SAMESAT   = 103,       // PRIMARY/SECONDARY SATELLITES ARE IDENTICAL  
+     FAILED_ALTITUDE  = 104,       // SECONDARY SATELLITE FAILED PERIGEE/APOGEE TEST 
+     WARN_BRIEFSPAN   = 105,       // SECONDARY SATELLITE IS CONSIDERED A BRIEF SPAN
+     WARN_SUSRELGEO   = 106;       // SECONDARY SATELLITE IS IN SUSTAINED RELATIVE GEOMETRY
+  
+// ComboDll's function pointers declaration
+extern fnPtrComboInit                      ComboInit;
+extern fnPtrComboGetInfo                   ComboGetInfo;
+extern fnPtrComboLoadFile                  ComboLoadFile;
+extern fnPtrComboLoadFileAll               ComboLoadFileAll;
+extern fnPtrComboLoadCard                  ComboLoadCard;
+extern fnPtrComboSaveFile                  ComboSaveFile;
+extern fnPtrComboGetNumOfPriSecSats        ComboGetNumOfPriSecSats;
+extern fnPtrComboGetPriSatNums             ComboGetPriSatNums;
+extern fnPtrComboGetSecSatNums             ComboGetSecSatNums;
+extern fnPtrComboGet7pCard                 ComboGet7pCard;
+extern fnPtrComboGet7pAll                  ComboGet7pAll;
+extern fnPtrComboSet7pAll                  ComboSet7pAll;
+extern fnPtrComboGet7pField                ComboGet7pField;
+extern fnPtrComboSet7pField                ComboSet7pField;
+extern fnPtrComboCompPriSec                ComboCompPriSec;
+extern fnPtrComboCompPriSec_MT             ComboCompPriSec_MT;
+extern fnPtrComboPOC                       ComboPOC;
+extern fnPtrComboCSMPOC                    ComboCSMPOC;
 
 
 

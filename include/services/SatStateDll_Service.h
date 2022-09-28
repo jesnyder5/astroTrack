@@ -4,11 +4,11 @@
 #include <stdio.h>
 #include "DllUtils.h"
 
-#include "wrappers/TleDll.h"
-#include "wrappers/SpVecDll.h"
-#include "wrappers/VcmDll.h"
-#include "wrappers/ExtEphemDll.h"
-#include "wrappers/ElOpsDll.h"
+#include "../wrappers/TleDll.h"
+#include "../wrappers/SpVecDll.h"
+#include "../wrappers/VcmDll.h"
+#include "../wrappers/ExtEphemDll.h"
+#include "../wrappers/ElOpsDll.h"
 
 static char EltTypeStr[6][16] = {"TLE (SGP)", 
                                  "TLE (SGP4)", 

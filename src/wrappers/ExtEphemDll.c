@@ -1,7 +1,36 @@
-// This wrapper file was generated automatically by the A3\GenDllWrappers program.
+// This wrapper file was generated automatically by the GenDllWrappers program.
 
-#include "services/DllUtils.h"
-#include "wrappers/ExtEphemDll.h"
+#include "../services/DllUtils.h"
+#include "ExtEphemDll.h"
+
+
+// ExtEphemDll's function pointers definition
+fnPtrExtEphInit                     ExtEphInit;
+fnPtrExtEphGetInfo                  ExtEphGetInfo;
+fnPtrExtEphLoadFile                 ExtEphLoadFile;
+fnPtrExtEphSaveFile                 ExtEphSaveFile;
+fnPtrExtEphRemoveSat                ExtEphRemoveSat;
+fnPtrExtEphRemoveAllSats            ExtEphRemoveAllSats;
+fnPtrExtEphGetCount                 ExtEphGetCount;
+fnPtrExtEphGetLoaded                ExtEphGetLoaded;
+fnPtrExtEphAddSat                   ExtEphAddSat;
+fnPtrExtEphAddSatEphem              ExtEphAddSatEphem;
+fnPtrExtEphAddSatEphemCovMtx        ExtEphAddSatEphemCovMtx;
+fnPtrExtEphAddSatEphemExt           ExtEphAddSatEphemExt;
+fnPtrExtEphGetAllFields             ExtEphGetAllFields;
+fnPtrExtEphGetField                 ExtEphGetField;
+fnPtrExtEphSetField                 ExtEphSetField;
+fnPtrExtEphStartEndTime             ExtEphStartEndTime;
+fnPtrExtEphGetEphemeris             ExtEphGetEphemeris;
+fnPtrExtEphGetCovMtx                ExtEphGetCovMtx;
+fnPtrExtEphMse                      ExtEphMse;
+fnPtrExtEphMseCovMtx                ExtEphMseCovMtx;
+fnPtrExtEphDs50UTC                  ExtEphDs50UTC;
+fnPtrExtEphDs50UTCCovMtx            ExtEphDs50UTCCovMtx;
+fnPtrExtEphXten                     ExtEphXten;
+fnPtrExtEphGetLine                  ExtEphGetLine;
+fnPtrExtEphGetSatKey                ExtEphGetSatKey;
+fnPtrExtEphFieldsToSatKey           ExtEphFieldsToSatKey;
 
 
 static void* hLib = NULL; // handle to the dll

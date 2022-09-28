@@ -1,11 +1,5 @@
-#include "services/DllUtils.h"
+#include "DllUtils.h"
 #include <math.h>
-
-// inline int min_i(int x, int y) { return x < y ? x : y; }
-// inline int max_i(int x, int y) { return x > y ? x : y; }
-
-// inline double min_d(double x, double y) { return x < y ? x : y; }
-// inline double max_d(double x, double y) { return x > y ? x : y; }
 
 
 // Get input parameters from the command line
@@ -16,9 +10,6 @@ void GetCommandLineArgs(int argc, char* argv[], const char* exeName, const char*
    // nullify all string fields
    cla->bConst[0]  = 0;
    cla->logFile[0] = 0;
-   cla->libPath[0] = 0;
-   cla->sgp4LicPath[0] = 0;
-
 
    // This program is getting input parameters from the command line.
    // Follow the instruction to pass parameters in the right order.
@@ -30,19 +21,10 @@ void GetCommandLineArgs(int argc, char* argv[], const char* exeName, const char*
       printf("Output file    = %s\n", cla->outFile);
       for(i = 3; i < argc; i++)
       {
-         if (strncmp(argv[i], "-I", 2) == 0) // optional -IlibPath provided
-         {
-            strcpy(cla->libPath, &argv[i][2]);
-         }
-         else if (strncmp(argv[i], "-D", 2) == 0) // optional -Dlogfile provided
+         if (strncmp(argv[i], "-D", 2) == 0) // optional -Dlogfile provided
          {
             strcpy(cla->logFile, &argv[i][2]);
             printf("Debug log file = %s\n", cla->logFile);
-         }
-         else if (strncmp(argv[i], "-S", 2) == 0) // optional -Ssgp4Lic provided
-         {
-            strcpy(cla->sgp4LicPath, &argv[i][2]);
-            printf("Sgp4 license key path = %s\n", cla->sgp4LicPath);
          }
          else if (strlen(argv[i]) == 7)// optional Earth constants provided
          {
@@ -55,13 +37,11 @@ void GetCommandLineArgs(int argc, char* argv[], const char* exeName, const char*
 	else 
    {
       printf("Error in number of parameters passed. Please see the usage.\n\n\n");
-      printf("Usage     : %s inFile outFile [EarthConstant] [-Ilibpath] [-Dlogfile]\n\n", exeName);
+      printf("Usage     : %s inFile outFile [EarthConstant] [-Dlogfile]\n\n", exeName);
       printf("inFile    : File contains %s related input data\n", appName);
       printf("outFile   : Name of the output file\n");
       printf("EarthConst: Optional gravitational constants ('WGS-72', 'WGS-84', 'EGM-96' ...)\n");
-      printf("-IlibPath : Optional path \"libpath\" to the Astrodynamic Standards library.\n");
       printf("-DlogFile : Optional \"logFile\" to enable writing debug data to the specified log file.\n");
-      printf("-Ssgp4Lic : Optional path \"sgp4Lic\" to the SGP4_Open_License.txt file.\n");
       if (strncmp("ROTAS", appName, 5) == 0)
          printf("-LD       : Optional option to print residuals in old format (less decimal places).\n");
       if (strncmp("COMBO", appName, 5) == 0)
@@ -75,13 +55,6 @@ void GetCommandLineArgs(int argc, char* argv[], const char* exeName, const char*
       }
       exit(1);
    }
-
-   // if not specify sgp4Lic, assign the licPath to it
-   // "SGP4_Open_License.txt" is in the same folder as the Sgp4Prop.dll
-   if (cla->sgp4LicPath[0] == 0 && cla->libPath[0] != 0)
-      strcpy(cla->sgp4LicPath, cla->libPath);
-
-   printf("Library Path   = %s\n\n", cla->libPath);
 }   
 
 

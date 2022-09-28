@@ -1,7 +1,32 @@
-// This wrapper file was generated automatically by the A3\GenDllWrappers program.
+// This wrapper file was generated automatically by the GenDllWrappers program.
 
-#include "services/DllUtils.h"
-#include "wrappers/RotasDll.h"
+#include "../services/DllUtils.h"
+#include "RotasDll.h"
+
+
+// RotasDll's function pointers definition
+fnPtrRotasInit                      RotasInit;
+fnPtrRotasGetInfo                   RotasGetInfo;
+fnPtrRotasLoadFile                  RotasLoadFile;
+fnPtrRotasLoadFileAll               RotasLoadFileAll;
+fnPtrRotasLoadCard                  RotasLoadCard;
+fnPtrRotasSaveFile                  RotasSaveFile;
+fnPtrRotasGetPCard                  RotasGetPCard;
+fnPtrRotasGetPAll                   RotasGetPAll;
+fnPtrRotasSetPAll                   RotasSetPAll;
+fnPtrRotasGetPField                 RotasGetPField;
+fnPtrRotasSetPField                 RotasSetPField;
+fnPtrRotasGetAssocMultipliers       RotasGetAssocMultipliers;
+fnPtrRotasSetAssocMultipliers       RotasSetAssocMultipliers;
+fnPtrRotasResetAll                  RotasResetAll;
+fnPtrRotasHasASTAT                  RotasHasASTAT;
+fnPtrRotasHasASTAT_MT               RotasHasASTAT_MT;
+fnPtrRotasComputeObsResiduals       RotasComputeObsResiduals;
+fnPtrRotasComputeObsResiduals_MT    RotasComputeObsResiduals_MT;
+fnPtrRotasComputeTrackResiduals     RotasComputeTrackResiduals;
+fnPtrRotasCompObResDirect           RotasCompObResDirect;
+fnPtrRotasGetRetagObsFile           RotasGetRetagObsFile;
+fnPtrRotasSetRetagObsFile           RotasSetRetagObsFile;
 
 
 static void* hLib = NULL; // handle to the dll

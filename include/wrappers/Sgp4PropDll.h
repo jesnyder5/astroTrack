@@ -1,13 +1,15 @@
-// This wrapper file was generated automatically by the A3\GenDllWrappers program.
+// This wrapper file was generated automatically by the GenDllWrappers program.
 
 #ifndef SGP4PROPDLL_H
 #define SGP4PROPDLL_H
 
-#include "services/DllUtils.h"
+#include "../services/DllUtils.h"
 
-// Provide the path to the dll/so
-#ifdef _WIN32
+// Provide the path to the dll/so/dylib
+#if defined (_WIN32) || defined (__CYGWIN__)
   #define Sgp4PropDll "Sgp4Prop.dll"
+#elif __APPLE__
+  #define Sgp4PropDll "libsgp4prop.dylib"
 #else
   #define Sgp4PropDll "libsgp4prop.so"
 #endif
@@ -296,105 +298,102 @@ typedef int (STDCALL *fnPtrSgp4GenEphems_OS)(double xa_tle[64], double startTime
 // ephemArr           0-2: pos (km), 3-5: vel (km/sec) (out-Double[*, 6])
 // returns 0 if the propagation is successful, non-0 if there is an error.
 typedef int (STDCALL *fnPtrSgp4PropAllSats)(__int64 satKeys[], int numOfSats, double ds50UTC, double ephemArr[][6]);
-
-// Different time types for passing to Sgp4PropAll
-static const int  
-   SGP4_TIMETYPE_MSE      = 0,   // propagation time is in minutes since epoch
-   SGP4_TIMETYPE_DS50UTC  = 1;   // propagation time is in days since 1950, UTC
-   
-// Sgp4 propagated output fields
-static const int  
-   XF_SGP4OUT_REVNUM       = 1,    // Revolution number
-   XF_SGP4OUT_NODAL_AP_PER = 2,    // Nodal period, apogee, perigee
-   XF_SGP4OUT_MEAN_KEP     = 3,    // Mean Keplerian
-   XF_SGP4OUT_OSC_KEP      = 4;    // Osculating Keplerian
-   
-// Sgp4 propagated data
-static const int  
-   XA_SGP4OUT_DS50UTC      =  0,   // Propagation time in days since 1950, UTC
-   XA_SGP4OUT_MSE          =  1,   // Propagation time in minutes since the satellite's epoch time
-   XA_SGP4OUT_POSX         =  2,   // ECI X position (km) in True Equator and Mean Equinox of Epoch
-   XA_SGP4OUT_POSY         =  3,   // ECI Y position (km) in True Equator and Mean Equinox of Epoch
-   XA_SGP4OUT_POSZ         =  4,   // ECI Z position (km) in True Equator and Mean Equinox of Epoch
-   XA_SGP4OUT_VELX         =  5,   // ECI X velocity (km/s) in True Equator and Mean Equinox of Epoch
-   XA_SGP4OUT_VELY         =  6,   // ECI Y velocity (km/s) in True Equator and Mean Equinox of Epoch
-   XA_SGP4OUT_VELZ         =  7,   // ECI Z velocity (km/s) in True Equator and Mean Equinox of Epoch
-   XA_SGP4OUT_LAT          =  8,   // Geodetic latitude (deg)
-   XA_SGP4OUT_LON          =  9,   // Geodetic longitude (deg)
-   XA_SGP4OUT_HEIGHT       = 10,   // Height above geoid (km)
-   XA_SGP4OUT_REVNUM       = 11,   // Revolution number
-   XA_SGP4OUT_NODALPER     = 12,   // Nodal period (min)
-   XA_SGP4OUT_APOGEE       = 13,   // Apogee (km)
-   XA_SGP4OUT_PERIGEE      = 14,   // Perigee (km)
-   XA_SGP4OUT_MN_A         = 15,   // Mean semi-major axis (km)
-   XA_SGP4OUT_MN_E         = 16,   // Mean eccentricity (unitless)
-   XA_SGP4OUT_MN_INCLI     = 17,   // Mean inclination (deg)
-   XA_SGP4OUT_MN_MA        = 18,   // Mean mean anomaly (deg)
-   XA_SGP4OUT_MN_NODE      = 19,   // Mean right ascension of the asending node (deg)
-   XA_SGP4OUT_MN_OMEGA     = 20,   // Mean argument of perigee (deg)
-   XA_SGP4OUT_OSC_A        = 21,   // Osculating semi-major axis (km)  
-   XA_SGP4OUT_OSC_E        = 22,   // Osculating eccentricity (unitless)
-   XA_SGP4OUT_OSC_INCLI    = 23,   // Osculating inclination (deg)
-   XA_SGP4OUT_OSC_MA       = 24,   // Osculating mean anomaly (deg)
-   XA_SGP4OUT_OSC_NODE     = 25,   // Osculating right ascension of the asending node (deg)
-   XA_SGP4OUT_OSC_OMEGA    = 26,   // Osculating argument of perigee (deg)
-
-   XA_SGP4OUT_SIZE         = 64;
-   
-// Different options for generating ephemerides from SGP4
-static const int  
-   SGP4_EPHEM_ECI   = 1,       // ECI TEME of DATE     - 0: time in days since 1950 UTC, 1-3: pos (km), 4-6: vel (km/sec)
-   SGP4_EPHEM_J2K   = 2;       // MEME of J2K (4 terms)- 0: time in days since 1950 UTC, 1-3: pos (km), 4-6: vel (km/sec) 
-   
-
-// Different dynamic step size options
-static const int     
-   DYN_SS_BASIC  = -1   ; // Use a simple algorithm to determine step size based on satellite's current position
-   
-//*******************************************************************************
-
-   
-// Different return values of errCode from Sgp4 propagation
-static const int  
-   GP_ERR_NONE        = 0,    // SGP4 propagates successfully
-   GP_ERR_BADFK       = 1,    // Bad FK model (FK5 must be selected)
-   GP_ERR_ANEGATIVE   = 2,    // A is negative
-   GP_ERR_ATOOLARGE   = 3,    // A is to large
-   GP_ERR_EHYPERPOLIC = 4,    // Eccentricity is hyperbolic
-   GP_ERR_ENEGATIVE   = 5,    // Eccentricity is negative
-   GP_ERR_MATOOLARGE  = 6,    // Mean anomaly is too large
-   GP_ERR_E2TOOLARGE  = 7;    // e**2 is too large
-
-
-//*******************************************************************************
-
-   
-
-
-
-// Sgp4PropDll's function pointers
-fnPtrSgp4Init                       Sgp4Init;
-fnPtrSgp4GetInfo                    Sgp4GetInfo;
-fnPtrSgp4InitSat                    Sgp4InitSat;
-fnPtrSgp4RemoveSat                  Sgp4RemoveSat;
-fnPtrSgp4RemoveAllSats              Sgp4RemoveAllSats;
-fnPtrSgp4GetCount                   Sgp4GetCount;
-fnPtrSgp4PropMse                    Sgp4PropMse;
-fnPtrSgp4PropDs50UTC                Sgp4PropDs50UTC;
-fnPtrSgp4PropDs50UtcPosVel          Sgp4PropDs50UtcPosVel;
-fnPtrSgp4PropDs50UtcLLH             Sgp4PropDs50UtcLLH;
-fnPtrSgp4PropDs50UtcPos             Sgp4PropDs50UtcPos;
-fnPtrSgp4GetPropOut                 Sgp4GetPropOut;
-fnPtrSgp4PropAll                    Sgp4PropAll;
-fnPtrSgp4PosVelToKep                Sgp4PosVelToKep;
-fnPtrSgp4PosVelToTleArr             Sgp4PosVelToTleArr;
-fnPtrSgp4ReepochTLE                 Sgp4ReepochTLE;
-fnPtrSgp4ReepochCsv                 Sgp4ReepochCsv;
-fnPtrSgp4SetLicFilePath             Sgp4SetLicFilePath;
-fnPtrSgp4GetLicFilePath             Sgp4GetLicFilePath;
-fnPtrSgp4GenEphems                  Sgp4GenEphems;
-fnPtrSgp4GenEphems_OS               Sgp4GenEphems_OS;
-fnPtrSgp4PropAllSats                Sgp4PropAllSats;
+  
+  // DIFFERENT TIME TYPES FOR PASSING TO SGP4PROPALL
+  static const int  
+     SGP4_TIMETYPE_MSE      = 0,   // PROPAGATION TIME IS IN MINUTES SINCE EPOCH
+     SGP4_TIMETYPE_DS50UTC  = 1;   // PROPAGATION TIME IS IN DAYS SINCE 1950, UTC
+     
+  // SGP4 PROPAGATED OUTPUT FIELDS
+  static const int  
+     XF_SGP4OUT_REVNUM       = 1,    // REVOLUTION NUMBER
+     XF_SGP4OUT_NODAL_AP_PER = 2,    // NODAL PERIOD, APOGEE, PERIGEE
+     XF_SGP4OUT_MEAN_KEP     = 3,    // MEAN KEPLERIAN
+     XF_SGP4OUT_OSC_KEP      = 4;    // OSCULATING KEPLERIAN
+     
+  // SGP4 PROPAGATED DATA
+  static const int  
+     XA_SGP4OUT_DS50UTC      =  0,   // PROPAGATION TIME IN DAYS SINCE 1950, UTC
+     XA_SGP4OUT_MSE          =  1,   // PROPAGATION TIME IN MINUTES SINCE THE SATELLITE'S EPOCH TIME
+     XA_SGP4OUT_POSX         =  2,   // ECI X POSITION (KM) IN TRUE EQUATOR AND MEAN EQUINOX OF EPOCH
+     XA_SGP4OUT_POSY         =  3,   // ECI Y POSITION (KM) IN TRUE EQUATOR AND MEAN EQUINOX OF EPOCH
+     XA_SGP4OUT_POSZ         =  4,   // ECI Z POSITION (KM) IN TRUE EQUATOR AND MEAN EQUINOX OF EPOCH
+     XA_SGP4OUT_VELX         =  5,   // ECI X VELOCITY (KM/S) IN TRUE EQUATOR AND MEAN EQUINOX OF EPOCH
+     XA_SGP4OUT_VELY         =  6,   // ECI Y VELOCITY (KM/S) IN TRUE EQUATOR AND MEAN EQUINOX OF EPOCH
+     XA_SGP4OUT_VELZ         =  7,   // ECI Z VELOCITY (KM/S) IN TRUE EQUATOR AND MEAN EQUINOX OF EPOCH
+     XA_SGP4OUT_LAT          =  8,   // GEODETIC LATITUDE (DEG)
+     XA_SGP4OUT_LON          =  9,   // GEODETIC LONGITUDE (DEG)
+     XA_SGP4OUT_HEIGHT       = 10,   // HEIGHT ABOVE GEOID (KM)
+     XA_SGP4OUT_REVNUM       = 11,   // REVOLUTION NUMBER
+     XA_SGP4OUT_NODALPER     = 12,   // NODAL PERIOD (MIN)
+     XA_SGP4OUT_APOGEE       = 13,   // APOGEE (KM)
+     XA_SGP4OUT_PERIGEE      = 14,   // PERIGEE (KM)
+     XA_SGP4OUT_MN_A         = 15,   // MEAN SEMI-MAJOR AXIS (KM)
+     XA_SGP4OUT_MN_E         = 16,   // MEAN ECCENTRICITY (UNITLESS)
+     XA_SGP4OUT_MN_INCLI     = 17,   // MEAN INCLINATION (DEG)
+     XA_SGP4OUT_MN_MA        = 18,   // MEAN MEAN ANOMALY (DEG)
+     XA_SGP4OUT_MN_NODE      = 19,   // MEAN RIGHT ASCENSION OF THE ASENDING NODE (DEG)
+     XA_SGP4OUT_MN_OMEGA     = 20,   // MEAN ARGUMENT OF PERIGEE (DEG)
+     XA_SGP4OUT_OSC_A        = 21,   // OSCULATING SEMI-MAJOR AXIS (KM)  
+     XA_SGP4OUT_OSC_E        = 22,   // OSCULATING ECCENTRICITY (UNITLESS)
+     XA_SGP4OUT_OSC_INCLI    = 23,   // OSCULATING INCLINATION (DEG)
+     XA_SGP4OUT_OSC_MA       = 24,   // OSCULATING MEAN ANOMALY (DEG)
+     XA_SGP4OUT_OSC_NODE     = 25,   // OSCULATING RIGHT ASCENSION OF THE ASENDING NODE (DEG)
+     XA_SGP4OUT_OSC_OMEGA    = 26,   // OSCULATING ARGUMENT OF PERIGEE (DEG)
+  
+     XA_SGP4OUT_SIZE         = 64;
+     
+  // DIFFERENT OPTIONS FOR GENERATING EPHEMERIDES FROM SGP4
+  static const int  
+     SGP4_EPHEM_ECI   = 1,       // ECI TEME OF DATE     - 0: TIME IN DAYS SINCE 1950 UTC, 1-3: POS (KM), 4-6: VEL (KM/SEC)
+     SGP4_EPHEM_J2K   = 2;       // MEME OF J2K (4 TERMS)- 0: TIME IN DAYS SINCE 1950 UTC, 1-3: POS (KM), 4-6: VEL (KM/SEC) 
+     
+  
+  // DIFFERENT DYNAMIC STEP SIZE OPTIONS
+  static const int     
+     DYN_SS_BASIC  = -1   ; // USE A SIMPLE ALGORITHM TO DETERMINE STEP SIZE BASED ON SATELLITE'S CURRENT POSITION
+     
+  //*******************************************************************************
+  
+     
+  // DIFFERENT RETURN VALUES OF ERRCODE FROM SGP4 PROPAGATION
+  static const int  
+     GP_ERR_NONE        = 0,    // SGP4 PROPAGATES SUCCESSFULLY
+     GP_ERR_BADFK       = 1,    // BAD FK MODEL (FK5 MUST BE SELECTED)
+     GP_ERR_ANEGATIVE   = 2,    // A IS NEGATIVE
+     GP_ERR_ATOOLARGE   = 3,    // A IS TO LARGE
+     GP_ERR_EHYPERPOLIC = 4,    // ECCENTRICITY IS HYPERBOLIC
+     GP_ERR_ENEGATIVE   = 5,    // ECCENTRICITY IS NEGATIVE
+     GP_ERR_MATOOLARGE  = 6,    // MEAN ANOMALY IS TOO LARGE
+     GP_ERR_E2TOOLARGE  = 7;    // E**2 IS TOO LARGE
+  
+  
+  //*******************************************************************************
+  
+     
+// Sgp4PropDll's function pointers declaration
+extern fnPtrSgp4Init                       Sgp4Init;
+extern fnPtrSgp4GetInfo                    Sgp4GetInfo;
+extern fnPtrSgp4InitSat                    Sgp4InitSat;
+extern fnPtrSgp4RemoveSat                  Sgp4RemoveSat;
+extern fnPtrSgp4RemoveAllSats              Sgp4RemoveAllSats;
+extern fnPtrSgp4GetCount                   Sgp4GetCount;
+extern fnPtrSgp4PropMse                    Sgp4PropMse;
+extern fnPtrSgp4PropDs50UTC                Sgp4PropDs50UTC;
+extern fnPtrSgp4PropDs50UtcPosVel          Sgp4PropDs50UtcPosVel;
+extern fnPtrSgp4PropDs50UtcLLH             Sgp4PropDs50UtcLLH;
+extern fnPtrSgp4PropDs50UtcPos             Sgp4PropDs50UtcPos;
+extern fnPtrSgp4GetPropOut                 Sgp4GetPropOut;
+extern fnPtrSgp4PropAll                    Sgp4PropAll;
+extern fnPtrSgp4PosVelToKep                Sgp4PosVelToKep;
+extern fnPtrSgp4PosVelToTleArr             Sgp4PosVelToTleArr;
+extern fnPtrSgp4ReepochTLE                 Sgp4ReepochTLE;
+extern fnPtrSgp4ReepochCsv                 Sgp4ReepochCsv;
+extern fnPtrSgp4SetLicFilePath             Sgp4SetLicFilePath;
+extern fnPtrSgp4GetLicFilePath             Sgp4GetLicFilePath;
+extern fnPtrSgp4GenEphems                  Sgp4GenEphems;
+extern fnPtrSgp4GenEphems_OS               Sgp4GenEphems_OS;
+extern fnPtrSgp4PropAllSats                Sgp4PropAllSats;
 
 
 

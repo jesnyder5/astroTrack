@@ -1,13 +1,15 @@
-// This wrapper file was generated automatically by the A3\GenDllWrappers program.
+// This wrapper file was generated automatically by the GenDllWrappers program.
 
 #ifndef ELOPSDLL_H
 #define ELOPSDLL_H
 
-#include "services/DllUtils.h"
+#include "../services/DllUtils.h"
 
-// Provide the path to the dll/so
-#ifdef _WIN32
+// Provide the path to the dll/so/dylib
+#if defined (_WIN32) || defined (__CYGWIN__)
   #define ElOpsDll "ElOps.dll"
+#elif __APPLE__
+  #define ElOpsDll "libelops.dylib"
 #else
   #define ElOpsDll "libelops.so"
 #endif
@@ -41,98 +43,95 @@ typedef double (STDCALL *fnPtrCompLonEastSubPt)(double ds50UTC, double node, dou
 
 
 // Computes the decay time of the input satellite
-// satKey             The input satkey of the satellite needs to compute decay time (in-Long)
+// satKey             The input satKey of the satellite needs to compute decay time (in-Long)
 // f10Avg             Input F10 average value (in-Double)
 // decayDs50UTC       The output decay time in days since 1950 UTC (out-Double)
-// returns Returns 0 if success, 1 if ndot/2 lt 0, 2 if mean motion lt 1.5, and 3 if f2log lt 0
+// returns Returns 0 if success, 1 if nDot/2 lt 0, 2 if mean motion lt 1.5, and 3 if f2log lt 0
 typedef int (STDCALL *fnPtrFindSatDecayTime)(__int64 satKey, double f10Avg, double* decayDs50UTC);
 
 
 // Returs parameters of a satellite via its satKey
-// satKey             The input satkey of the satellite needs to compute gobs parameters (in-Long)
+// satKey             The input satKey of the satellite needs to compute gobs parameters (in-Long)
 // xa_satparm         Output satellite's parameters (out-Double[32])
 // returns 0 if the satellite parameters are successfully retrieved, non-0 if there is an error
 typedef int (STDCALL *fnPtrGetSatParameters)(__int64 satKey, double xa_satparm[32]);
 
 
 // Returs the satellite number associated with the input satKey
-// satKey             The input satkey (in-Long)
+// satKey             The input satKey (in-Long)
 // returns The satellite number associated with the input satKey (satNum = -1 if satKey doesn't exist)
 typedef int (STDCALL *fnPtrSatNumOf)(__int64 satKey);
-
-// Satellite maintenance category
-static const int  
-   SATCAT_SYNCHRONOUS = 1,       // Synchronous
-   SATCAT_DEEPSPACE   = 2,       // Deep space (not synchronous)
-   SATCAT_DECAYING    = 3,       // Decaying (perigee height below 575 km)
-   SATCAT_ROUTINE     = 4;       // Routine (everything else)   
-   
-// Indexes of available satellite data fields
-static const int  
-   XF_ELFIELD_EPOCHUTC =  1,     // epoch in days since 1950, UTC
-   XF_ELFIELD_MNANOM   =  2,     // mean anomaly (deg)
-   XF_ELFIELD_NODE     =  3,     // right ascension of the asending node (deg) 
-   XF_ELFIELD_OMEGA    =  4,     // argument of perigee (deg) 
-   XF_ELFIELD_PERIOD   =  5,     // period (min)
-   XF_ELFIELD_ECCEN    =  6,     // eccentricity (unitless)    
-   XF_ELFIELD_INCLI    =  7,     // inclination (deg)
-   XF_ELFIELD_MNMOTION =  8,     // mean motion (revs/day)
-   XF_ELFIELD_BFIELD   =  9,     // either SGP4 bStar (1/er) or SP bTerm (m2/kg)
-   XF_ELFIELD_PERIGEEHT= 10,     // perigee height (km) 
-   XF_ELFIELD_APOGEEHT = 11,     // apogee height (km) 
-   XF_ELFIELD_PERIGEE  = 12,     // perigee (km)
-   XF_ELFIELD_APOGEE   = 13,     // apogee (km)
-   XF_ELFIELD_A        = 14,     // semi major axis (km)
-   XF_ELFIELD_SATCAT   = 15,     // Satellite category (Synchronous, Deep space, Decaying, Routine)
-   XF_ELFIELD_HTM3     = 16,     // Astat 3 Height multiplier
-   XF_ELFIELD_CMOFFSET = 17,     // Center of mass offset (m)
-   XF_ELFIELD_N2DOT    = 18;     // n-double-dot/6  (for SGP, eph-type = 0)  
-
-   
-// Indexes of available satellite parameters
-static const int  
-   XA_SATPARM_EPOCHUTC =  0,     // satellite's epoch in days since 1950, UTC
-   XA_SATPARM_MNANOM   =  1,     // satellite's mean anomaly (deg)
-   XA_SATPARM_NODE     =  2,     // satellite's right ascension of the asending node (deg) 
-   XA_SATPARM_OMEGA    =  3,     // satellite's argument of perigee (deg) 
-   XA_SATPARM_PERIOD   =  4,     // satellite's period (min)
-   XA_SATPARM_ECCEN    =  5,     // satellite's eccentricity (unitless)    
-   XA_SATPARM_INCLI    =  6,     // satellite's inclination (deg)
-   XA_SATPARM_MNMOTION =  7,     // satellite's mean motion (revs/day)
-   XA_SATPARM_BFIELD   =  8,     // satellite's either SGP4 bStar (1/er) or SP bTerm (m2/kg)
-   XA_SATPARM_PERIGEEHT=  9,     // satellite's perigee height (km) 
-   XA_SATPARM_APOGEEHT = 10,     // satellite's apogee height (km) 
-   XA_SATPARM_PERIGEE  = 11,     // satellite's perigee (km)
-   XA_SATPARM_APOGEE   = 12,     // satellite's apogee (km)
-   XA_SATPARM_A        = 13,     // satellite's semi major axis (km)
-   XA_SATPARM_SATCAT   = 14,     // satellite's category (1=Synchronous, 2=Deep space, 3=Decaying, 4=Routine)
-   XA_SATPARM_CMOFFSET = 15,     // satellite's center of mass offset (m)
-   XA_SATPARM_LONE     = 16,     // satellite's east longitude east subpoint (deg) - only for synchronous orbits
-   XA_SATPARM_DRIFT    = 17,     // satellite's longitude drift rate (deg East/day) - only for synchronous orbits
-   XA_SATPARM_OMEGADOT = 18,     // satellite's omega rate of change (deg/day)
-   XA_SATPARM_RADOT    = 19,     // satellite's nodal precession rate (deg/day)
-   XA_SATPARM_NODALPRD = 20,     // satellite's nodal period (min)
-   XA_SATPARM_NODALX   = 21,     // satellite's nodal crossing time prior to its epoch (ds50UTC)
-   XA_SATPARM_ISGEO    = 22,     // satellite is GEO: 0=no, 1=yes
-   XA_SATPARM_RELENERGY= 23,     // satellite's relative energy - only for GOBS
-   XA_SATPARM_SATNUM   = 24,     // satellite's relative energy - only for GOBS
-   XA_SATPARM_OET      = 25,     // satellite's orbital elset type - see OET_? for list of available values
-   XA_SATPARM_PROPTYPE = 26,     // satellite's propagation type - see PROPTYPE_? for list of available values
-   XA_SATPARM_ELSETNUM = 27,     // satellite's element number
-   
-   XA_SATPARM_SIZE     = 32;
-
-
-
-
-// ElOpsDll's function pointers
-fnPtrElOpsInit                      ElOpsInit;
-fnPtrElOpsGetInfo                   ElOpsGetInfo;
-fnPtrIsGeoOrbit                     IsGeoOrbit;
-fnPtrCompLonEastSubPt               CompLonEastSubPt;
-fnPtrFindSatDecayTime               FindSatDecayTime;
-fnPtrGetSatParameters               GetSatParameters;
-fnPtrSatNumOf                       SatNumOf;
+  
+  // SATELLITE MAINTENANCE CATEGORY
+  static const int  
+     SATCAT_SYNCHRONOUS = 1,       // SYNCHRONOUS
+     SATCAT_DEEPSPACE   = 2,       // DEEP SPACE (NOT SYNCHRONOUS)
+     SATCAT_DECAYING    = 3,       // DECAYING (PERIGEE HEIGHT BELOW 575 KM)
+     SATCAT_ROUTINE     = 4;       // ROUTINE (EVERYTHING ELSE)   
+     
+  // INDEXES OF AVAILABLE SATELLITE DATA FIELDS
+  static const int  
+     XF_ELFIELD_EPOCHUTC =  1,     // EPOCH IN DAYS SINCE 1950, UTC
+     XF_ELFIELD_MNANOM   =  2,     // MEAN ANOMALY (DEG)
+     XF_ELFIELD_NODE     =  3,     // RIGHT ASCENSION OF THE ASENDING NODE (DEG) 
+     XF_ELFIELD_OMEGA    =  4,     // ARGUMENT OF PERIGEE (DEG) 
+     XF_ELFIELD_PERIOD   =  5,     // PERIOD (MIN)
+     XF_ELFIELD_ECCEN    =  6,     // ECCENTRICITY (UNITLESS)    
+     XF_ELFIELD_INCLI    =  7,     // INCLINATION (DEG)
+     XF_ELFIELD_MNMOTION =  8,     // MEAN MOTION (REVS/DAY)
+     XF_ELFIELD_BFIELD   =  9,     // EITHER SGP4 BSTAR (1/ER) OR SP BTERM (M2/KG)
+     XF_ELFIELD_PERIGEEHT= 10,     // PERIGEE HEIGHT (KM) 
+     XF_ELFIELD_APOGEEHT = 11,     // APOGEE HEIGHT (KM) 
+     XF_ELFIELD_PERIGEE  = 12,     // PERIGEE (KM)
+     XF_ELFIELD_APOGEE   = 13,     // APOGEE (KM)
+     XF_ELFIELD_A        = 14,     // SEMI MAJOR AXIS (KM)
+     XF_ELFIELD_SATCAT   = 15,     // SATELLITE CATEGORY (SYNCHRONOUS, DEEP SPACE, DECAYING, ROUTINE)
+     XF_ELFIELD_HTM3     = 16,     // ASTAT 3 HEIGHT MULTIPLIER
+     XF_ELFIELD_CMOFFSET = 17,     // CENTER OF MASS OFFSET (M)
+     XF_ELFIELD_N2DOT    = 18;     // N-DOUBLE-DOT/6  (FOR SGP, EPH-TYPE = 0)  
+  
+     
+  // INDEXES OF AVAILABLE SATELLITE PARAMETERS
+  static const int  
+     XA_SATPARM_EPOCHUTC =  0,     // SATELLITE'S EPOCH IN DAYS SINCE 1950, UTC
+     XA_SATPARM_MNANOM   =  1,     // SATELLITE'S MEAN ANOMALY (DEG)
+     XA_SATPARM_NODE     =  2,     // SATELLITE'S RIGHT ASCENSION OF THE ASENDING NODE (DEG) 
+     XA_SATPARM_OMEGA    =  3,     // SATELLITE'S ARGUMENT OF PERIGEE (DEG) 
+     XA_SATPARM_PERIOD   =  4,     // SATELLITE'S PERIOD (MIN)
+     XA_SATPARM_ECCEN    =  5,     // SATELLITE'S ECCENTRICITY (UNITLESS)    
+     XA_SATPARM_INCLI    =  6,     // SATELLITE'S INCLINATION (DEG)
+     XA_SATPARM_MNMOTION =  7,     // SATELLITE'S MEAN MOTION (REVS/DAY)
+     XA_SATPARM_BFIELD   =  8,     // SATELLITE'S EITHER SGP4 BSTAR (1/ER) OR SP BTERM (M2/KG)
+     XA_SATPARM_PERIGEEHT=  9,     // SATELLITE'S PERIGEE HEIGHT (KM) 
+     XA_SATPARM_APOGEEHT = 10,     // SATELLITE'S APOGEE HEIGHT (KM) 
+     XA_SATPARM_PERIGEE  = 11,     // SATELLITE'S PERIGEE (KM)
+     XA_SATPARM_APOGEE   = 12,     // SATELLITE'S APOGEE (KM)
+     XA_SATPARM_A        = 13,     // SATELLITE'S SEMI MAJOR AXIS (KM)
+     XA_SATPARM_SATCAT   = 14,     // SATELLITE'S CATEGORY (1=SYNCHRONOUS, 2=DEEP SPACE, 3=DECAYING, 4=ROUTINE)
+     XA_SATPARM_CMOFFSET = 15,     // SATELLITE'S CENTER OF MASS OFFSET (M)
+     XA_SATPARM_LONE     = 16,     // SATELLITE'S EAST LONGITUDE EAST SUBPOINT (DEG) - ONLY FOR SYNCHRONOUS ORBITS
+     XA_SATPARM_DRIFT    = 17,     // SATELLITE'S LONGITUDE DRIFT RATE (DEG EAST/DAY) - ONLY FOR SYNCHRONOUS ORBITS
+     XA_SATPARM_OMEGADOT = 18,     // SATELLITE'S OMEGA RATE OF CHANGE (DEG/DAY)
+     XA_SATPARM_RADOT    = 19,     // SATELLITE'S NODAL PRECESSION RATE (DEG/DAY)
+     XA_SATPARM_NODALPRD = 20,     // SATELLITE'S NODAL PERIOD (MIN)
+     XA_SATPARM_NODALX   = 21,     // SATELLITE'S NODAL CROSSING TIME PRIOR TO ITS EPOCH (DS50UTC)
+     XA_SATPARM_ISGEO    = 22,     // SATELLITE IS GEO: 0=NO, 1=YES
+     XA_SATPARM_RELENERGY= 23,     // SATELLITE'S RELATIVE ENERGY - ONLY FOR GOBS
+     XA_SATPARM_SATNUM   = 24,     // SATELLITE'S RELATIVE ENERGY - ONLY FOR GOBS
+     XA_SATPARM_OET      = 25,     // SATELLITE'S ORBITAL ELSET TYPE - SEE OET_? FOR LIST OF AVAILABLE VALUES
+     XA_SATPARM_PROPTYPE = 26,     // SATELLITE'S PROPAGATION TYPE - SEE PROPTYPE_? FOR LIST OF AVAILABLE VALUES
+     XA_SATPARM_ELSETNUM = 27,     // SATELLITE'S ELEMENT NUMBER
+     
+     XA_SATPARM_SIZE     = 32;
+  
+// ElOpsDll's function pointers declaration
+extern fnPtrElOpsInit                      ElOpsInit;
+extern fnPtrElOpsGetInfo                   ElOpsGetInfo;
+extern fnPtrIsGeoOrbit                     IsGeoOrbit;
+extern fnPtrCompLonEastSubPt               CompLonEastSubPt;
+extern fnPtrFindSatDecayTime               FindSatDecayTime;
+extern fnPtrGetSatParameters               GetSatParameters;
+extern fnPtrSatNumOf                       SatNumOf;
 
 
 

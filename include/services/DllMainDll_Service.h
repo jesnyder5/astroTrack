@@ -15,7 +15,6 @@ void WriteErrMsg(FILE* fp);
 void ShowMsgAndTerminate();
 void FreeDllMainDll();
 double MseToDs50UTC(double epochDs50UTC, double mse);
-int    ObsKeyToSenNum(__int64 obsKey);
 
 int    PrintAsZero(double intValue);
 double NonNegativeZero(double inValue, int decPlaces);

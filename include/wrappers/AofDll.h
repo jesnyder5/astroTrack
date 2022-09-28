@@ -1,13 +1,15 @@
-// This wrapper file was generated automatically by the A3\GenDllWrappers program.
+// This wrapper file was generated automatically by the GenDllWrappers program.
 
 #ifndef AOFDLL_H
 #define AOFDLL_H
 
-#include "services/DllUtils.h"
+#include "../services/DllUtils.h"
 
-// Provide the path to the dll/so
-#ifdef _WIN32
+// Provide the path to the dll/so/dylib
+#if defined (_WIN32) || defined (__CYGWIN__)
   #define AofDll "Aof.dll"
+#elif __APPLE__
+  #define AofDll "libaof.dylib"
 #else
   #define AofDll "libaof.so"
 #endif
@@ -174,7 +176,7 @@ typedef void (STDCALL *fnPtrAofReset)();
 // ELEM4  5  E lon (deg) lower right corner|                         |
 //    
 // 
-// Note:  for xa_aofAreaData TYPE=4 (polygon), use the AofComplex method.
+// Note:  for xa_aofAreaData type=4 (polygon), use the AofComplex method.
 // xa_aofRun          aof run parameters, see XA_AOFRUN_? for array arrangement (in-Double[8])
 // satKey             the overflight satellite's unique key (in-Long)
 // xa_aofSen          satellite/mission data, see XA_AOFSEN_? for array arrangement (in-Double[16])
@@ -255,120 +257,117 @@ typedef int (STDCALL *fnPtrAofGetView)(double ds50TAI, double llh[3], __int64 sa
 // xa_aofAreaData     defended area data, see XA_AOFAREA_? for array arrangement (in-Double[16])
 // returns darkness level, see DARKLEVEL_? for available values
 typedef int (STDCALL *fnPtrAofGetDarknessLevel)(double ds50TAI, double xa_aofAreaData[16]);
-
-   
-
-
-// AOF parameters
-static const int  
-   XA_AOFCTRL_TIMEFLG  =  0,   // input start/stop time type: 1=minutes since epoch (MSE), 0=date time (DTG)
-   XA_AOFCTRL_START    =  1,   // start time of interest (either MSE or DTG)
-   XA_AOFCTRL_STOP     =  2,   // stop time of interest (either MSE or DTG)
-   XA_AOFCTRL_INTERVAL =  3,   // search interval (min)
-   XA_AOFCTRL_PRTOPT   =  4,   // print output control flag; 0=print penetrations only, 1=print penetrations and data description
-   XA_AOFCTRL_SRCHMET  =  5,   // search method: 0=use brute force method, 1=use analytical method
-   XA_AOFCTRL_SRTTYPE  =  6,   // output sort type: S=sort each area by sat#, then time, T=sort each area by time, then sat#
-   
-   XA_AOFCTRL_SIZE     = 16;
-
-   
-// Defended area types   
-static const int  
-   AREATYPE_I_BOX     =  1,     // area box type
-   AREATYPE_I_CIRCLE  =  2,     // area circle type
-   AREATYPE_I_POINT   =  3,     // area point type
-   AREATYPE_I_POLYGON =  4;
-   
-   
-// AOF satellite/mission (satellite/sensor) data
-static const int  
-   XA_AOFSEN_SATNUM   =  0,   // satellite number of sensor-bearing satellite
-   XA_AOFSEN_TYPE     =  1,   // reserved for future use
-   XA_AOFSEN_MINEL    =  2,   // off nadir minimum look angle (deg) (=0 for Cone)
-   XA_AOFSEN_MAXEL    =  3,   // off nadir maximum look angle (deg)
-   XA_AOFSEN_MINAZ1   =  4,   // minimum azimuth of first azimuth range (deg)
-   XA_AOFSEN_MAXAZ1   =  5,   // maximum azimuth of first azimuth range (deg)
-   XA_AOFSEN_MINAZ2   =  6,   // minimum azimuth of second azimuth range (deg)
-   XA_AOFSEN_MAXAZ2   =  7,   // maximum azimuth of second azimuth range (deg)
-   XA_AOFSEN_ELEM7    =  8,   // reserved for future use
-   XA_AOFSEN_ELEM8    =  9,   // reserved for future use
-   XA_AOFSEN_ELEM9    = 10,   // reserved for future use
-   XA_AOFSEN_ELEM10   = 11,   // reserved for future use
-   
-   XA_AOFSEN_SIZE     = 16;
-
-
-// AOF satellite/sensor types   
-static const int  
-   AOFSENTYPE_CIRCLE = 0;  // circle (specify only off-nadir maximum look angle)
-
-
-// AOF run parameters
-static const int     
-   XA_AOFRUN_MAXPASSES= 0,     // Maximum number of passes that AOF returns in one start/stop time
-   XA_AOFRUN_START    = 1,     // AOF start time in days since 1950, UTC
-   XA_AOFRUN_STOP     = 2,     // AOF stop time in days since 1950, UTC
-   XA_AOFRUN_INTERVAL = 3,     // Search interval (min) 
-   
-   XA_AOFRUN_SIZE     = 8;      
-   
-   
-// AOF defended area types   
-static const int  
-   AOF_AREATYPE_BOX     = 1,    // Defended area is a box
-   AOF_AREATYPE_CIRCLE  = 2,    // Defended area is a circle
-   AOF_AREATYPE_POINT   = 3,    // Defended area is a point
-   AOF_AREATYPE_POLYGON = 4;    // Defended area is a polygon
-   
-   
-   
-// AOF defended area data   
-static const int  
-   XA_AOFAREA_NUM   = 0,      // Area number
-   XA_AOFAREA_TYPE  = 1,      // | 1 = BOX                       | 2 = CIRCLE              | 3 = POINT
-   XA_AOFAREA_ELEM1 = 2,      // | N lat (deg) upper left corner | N lat (deg) center point| N lat (deg) center point
-   XA_AOFAREA_ELEM2 = 3,      // | E lon (deg) upper left corner | E lon (deg) center point| E lon (deg) center point
-   XA_AOFAREA_ELEM3 = 4,      // | N lat (deg) lower right corner| circle radius (km)      | height (km, above reference geoid)
-   XA_AOFAREA_ELEM4 = 5,      // | E lon (deg) lower right corner|                         |            
-   
-   XA_AOFAREA_SIZE  = 16;
-   
-   
-// Penetration-level darkness status   
-static const int  
-   DARKLEVEL_ALLLIT  = 0,   // lit throughout penetration
-   DARKLEVEL_ALLDARK = 1,   // dark throughout penetration
-   DARKLEVEL_PARTLIT = 2;   // partly-lit during penetration
-   
-// View angle from overfly satellite to a llh point
-static const int  
-   XA_AOFVIEW_AZIM   = 0,   // Azimuth (deg)
-   XA_AOFVIEW_ELEV   = 1,   // Elevation (deg)
-   XA_AOFVIEW_HASLOS = 2,   // Has line of sight to the point (1=Yes, 0=No-earth obstructs the view)
-   
-   XA_AOFVIEW_SIZE   = 8;
-   
-static const int MAX_LLHPOINTS = 120; // maximum of number of lat-lon-height points that can be used to describe a defended area   
-
-   
-
-
-
-
-
-// AofDll's function pointers
-fnPtrAofInit                        AofInit;
-fnPtrAofGetInfo                     AofGetInfo;
-fnPtrAofLoadFile                    AofLoadFile;
-fnPtrAofLoadFileAll                 AofLoadFileAll;
-fnPtrAofLoadCard                    AofLoadCard;
-fnPtrAofGetDataFrInputFiles         AofGetDataFrInputFiles;
-fnPtrAofReset                       AofReset;
-fnPtrAofBasic                       AofBasic;
-fnPtrAofComplex                     AofComplex;
-fnPtrAofGetLook                     AofGetLook;
-fnPtrAofGetView                     AofGetView;
-fnPtrAofGetDarknessLevel            AofGetDarknessLevel;
+  
+     
+  
+  
+  // AOF PARAMETERS
+  static const int  
+     XA_AOFCTRL_TIMEFLG  =  0,   // INPUT START/STOP TIME TYPE: 1=MINUTES SINCE EPOCH (MSE), 0=DATE TIME (DTG)
+     XA_AOFCTRL_START    =  1,   // START TIME OF INTEREST (EITHER MSE OR DTG)
+     XA_AOFCTRL_STOP     =  2,   // STOP TIME OF INTEREST (EITHER MSE OR DTG)
+     XA_AOFCTRL_INTERVAL =  3,   // SEARCH INTERVAL (MIN)
+     XA_AOFCTRL_PRTOPT   =  4,   // PRINT OUTPUT CONTROL FLAG; 0=PRINT PENETRATIONS ONLY, 1=PRINT PENETRATIONS AND DATA DESCRIPTION
+     XA_AOFCTRL_SRCHMET  =  5,   // SEARCH METHOD: 0=USE BRUTE FORCE METHOD, 1=USE ANALYTICAL METHOD
+     XA_AOFCTRL_SRTTYPE  =  6,   // OUTPUT SORT TYPE: S=SORT EACH AREA BY SAT#, THEN TIME, T=SORT EACH AREA BY TIME, THEN SAT#
+     
+     XA_AOFCTRL_SIZE     = 16;
+  
+     
+  // DEFENDED AREA TYPES   
+  static const int  
+     AREATYPE_I_BOX     =  1,     // AREA BOX TYPE
+     AREATYPE_I_CIRCLE  =  2,     // AREA CIRCLE TYPE
+     AREATYPE_I_POINT   =  3,     // AREA POINT TYPE
+     AREATYPE_I_POLYGON =  4;     // AREA POLYGON TYPE
+     
+     
+  // AOF SATELLITE/MISSION (SATELLITE/SENSOR) DATA
+  static const int  
+     XA_AOFSEN_SATNUM   =  0,   // SATELLITE NUMBER OF SENSOR-BEARING SATELLITE
+     XA_AOFSEN_TYPE     =  1,   // RESERVED FOR FUTURE USE
+     XA_AOFSEN_MINEL    =  2,   // OFF NADIR MINIMUM LOOK ANGLE (DEG) (=0 FOR CONE)
+     XA_AOFSEN_MAXEL    =  3,   // OFF NADIR MAXIMUM LOOK ANGLE (DEG)
+     XA_AOFSEN_MINAZ1   =  4,   // MINIMUM AZIMUTH OF FIRST AZIMUTH RANGE (DEG)
+     XA_AOFSEN_MAXAZ1   =  5,   // MAXIMUM AZIMUTH OF FIRST AZIMUTH RANGE (DEG)
+     XA_AOFSEN_MINAZ2   =  6,   // MINIMUM AZIMUTH OF SECOND AZIMUTH RANGE (DEG)
+     XA_AOFSEN_MAXAZ2   =  7,   // MAXIMUM AZIMUTH OF SECOND AZIMUTH RANGE (DEG)
+     XA_AOFSEN_ELEM7    =  8,   // RESERVED FOR FUTURE USE
+     XA_AOFSEN_ELEM8    =  9,   // RESERVED FOR FUTURE USE
+     XA_AOFSEN_ELEM9    = 10,   // RESERVED FOR FUTURE USE
+     XA_AOFSEN_ELEM10   = 11,   // RESERVED FOR FUTURE USE
+     
+     XA_AOFSEN_SIZE     = 16;
+  
+  
+  // AOF SATELLITE/SENSOR TYPES   
+  static const int  
+     AOFSENTYPE_CIRCLE = 0;  // CIRCLE (SPECIFY ONLY OFF-NADIR MAXIMUM LOOK ANGLE)
+  
+  
+  // AOF RUN PARAMETERS
+  static const int     
+     XA_AOFRUN_MAXPASSES= 0,     // MAXIMUM NUMBER OF PASSES THAT AOF RETURNS IN ONE START/STOP TIME
+     XA_AOFRUN_START    = 1,     // AOF START TIME IN DAYS SINCE 1950, UTC
+     XA_AOFRUN_STOP     = 2,     // AOF STOP TIME IN DAYS SINCE 1950, UTC
+     XA_AOFRUN_INTERVAL = 3,     // SEARCH INTERVAL (MIN) 
+     
+     XA_AOFRUN_SIZE     = 8;      
+     
+     
+  // AOF DEFENDED AREA TYPES   
+  static const int  
+     AOF_AREATYPE_BOX     = 1,    // DEFENDED AREA IS A BOX
+     AOF_AREATYPE_CIRCLE  = 2,    // DEFENDED AREA IS A CIRCLE
+     AOF_AREATYPE_POINT   = 3,    // DEFENDED AREA IS A POINT
+     AOF_AREATYPE_POLYGON = 4;    // DEFENDED AREA IS A POLYGON
+     
+     
+     
+  // AOF DEFENDED AREA DATA   
+  static const int  
+     XA_AOFAREA_NUM   = 0,      // AREA NUMBER
+     XA_AOFAREA_TYPE  = 1,      // | 1 = BOX                       | 2 = CIRCLE              | 3 = POINT
+     XA_AOFAREA_ELEM1 = 2,      // | N LAT (DEG) UPPER LEFT CORNER | N LAT (DEG) CENTER POINT| N LAT (DEG) CENTER POINT
+     XA_AOFAREA_ELEM2 = 3,      // | E LON (DEG) UPPER LEFT CORNER | E LON (DEG) CENTER POINT| E LON (DEG) CENTER POINT
+     XA_AOFAREA_ELEM3 = 4,      // | N LAT (DEG) LOWER RIGHT CORNER| CIRCLE RADIUS (KM)      | HEIGHT (KM, ABOVE REFERENCE GEOID)
+     XA_AOFAREA_ELEM4 = 5,      // | E LON (DEG) LOWER RIGHT CORNER|                         |            
+     
+     XA_AOFAREA_SIZE  = 16;
+     
+     
+  // PENETRATION-LEVEL DARKNESS STATUS   
+  static const int  
+     DARKLEVEL_ALLLIT  = 0,   // LIT THROUGHOUT PENETRATION
+     DARKLEVEL_ALLDARK = 1,   // DARK THROUGHOUT PENETRATION
+     DARKLEVEL_PARTLIT = 2;   // PARTLY-LIT DURING PENETRATION
+     
+  // VIEW ANGLE FROM OVERFLY SATELLITE TO A LLH POINT
+  static const int  
+     XA_AOFVIEW_AZIM   = 0,   // AZIMUTH (DEG)
+     XA_AOFVIEW_ELEV   = 1,   // ELEVATION (DEG)
+     XA_AOFVIEW_HASLOS = 2,   // HAS LINE OF SIGHT TO THE POINT (1=YES, 0=NO-EARTH OBSTRUCTS THE VIEW)
+     
+     XA_AOFVIEW_SIZE   = 8;
+     
+  static const int MAX_LLHPOINTS = 120; // MAXIMUM OF NUMBER OF LAT-LON-HEIGHT POINTS THAT CAN BE USED TO DESCRIBE A DEFENDED AREA   
+  
+     
+  
+  
+// AofDll's function pointers declaration
+extern fnPtrAofInit                        AofInit;
+extern fnPtrAofGetInfo                     AofGetInfo;
+extern fnPtrAofLoadFile                    AofLoadFile;
+extern fnPtrAofLoadFileAll                 AofLoadFileAll;
+extern fnPtrAofLoadCard                    AofLoadCard;
+extern fnPtrAofGetDataFrInputFiles         AofGetDataFrInputFiles;
+extern fnPtrAofReset                       AofReset;
+extern fnPtrAofBasic                       AofBasic;
+extern fnPtrAofComplex                     AofComplex;
+extern fnPtrAofGetLook                     AofGetLook;
+extern fnPtrAofGetView                     AofGetView;
+extern fnPtrAofGetDarknessLevel            AofGetDarknessLevel;
 
 
 

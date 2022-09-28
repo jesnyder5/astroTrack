@@ -10,7 +10,7 @@ typedef struct
    char     obsType;             // ob type (0-11;16;18;19)
    int      trackInd;            // track position indicator
                                  // Start Track Ob  In Track Ob = 4; End Track Ob = 5
-   int      ASTAT;               // association status (ASTAT; 1-4)
+   int      astat;               // association status (ASTAT; 1-4)
    int      siteTag;             // Original satellite number
    double   obsTimeDs50UTC;      // ob time in ds50UTC 
    double   elOrDec;             // elevation/declination (deg)

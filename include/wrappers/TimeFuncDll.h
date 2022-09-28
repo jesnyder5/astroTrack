@@ -1,13 +1,15 @@
-// This wrapper file was generated automatically by the A3\GenDllWrappers program.
+// This wrapper file was generated automatically by the GenDllWrappers program.
 
 #ifndef TIMEFUNCDLL_H
 #define TIMEFUNCDLL_H
 
-#include "services/DllUtils.h"
+#include "../services/DllUtils.h"
 
-// Provide the path to the dll/so
-#ifdef _WIN32
+// Provide the path to the dll/so/dylib
+#if defined (_WIN32) || defined (__CYGWIN__)
   #define TimeFuncDll "TimeFunc.dll"
+#elif __APPLE__
+  #define TimeFuncDll "libtimefunc.dylib"
 #else
   #define TimeFuncDll "libtimefunc.so"
 #endif
@@ -307,44 +309,41 @@ typedef void (STDCALL *fnPtrSet6P)(int startFrEpoch, int stopFrEpoch, double sta
 // Returns current prediction control parameters in form of a 6P-Card string.
 // card6PLine         The resulting 6P-Card string. (out-Character[512])
 typedef void (STDCALL *fnPtrGet6PCardLine)(char card6PLine[512]);
-  
-
-
-
-// TimeFuncDll's function pointers
-fnPtrTimeFuncInit                   TimeFuncInit;
-fnPtrTimeFuncGetInfo                TimeFuncGetInfo;
-fnPtrTConLoadFile                   TConLoadFile;
-fnPtrTimeFuncLoadFile               TimeFuncLoadFile;
-fnPtrIsTConFileLoaded               IsTConFileLoaded;
-fnPtrTConSaveFile                   TConSaveFile;
-fnPtrTConAddARec                    TConAddARec;
-fnPtrTConAddOne                     TConAddOne;
-fnPtrUTCToTConRec                   UTCToTConRec;
-fnPtrTConRemoveAll                  TConRemoveAll;
-fnPtrUTCToDTG20                     UTCToDTG20;
-fnPtrUTCToDTG19                     UTCToDTG19;
-fnPtrUTCToDTG17                     UTCToDTG17;
-fnPtrUTCToDTG15                     UTCToDTG15;
-fnPtrDTGToUTC                       DTGToUTC;
-fnPtrUTCToTAI                       UTCToTAI;
-fnPtrUTCToUT1                       UTCToUT1;
-fnPtrUTCToET                        UTCToET;
-fnPtrTAIToUTC                       TAIToUTC;
-fnPtrTAIToUT1                       TAIToUT1;
-fnPtrYrDaysToUTC                    YrDaysToUTC;
-fnPtrUTCToYrDays                    UTCToYrDays;
-fnPtrTimeComps1ToUTC                TimeComps1ToUTC;
-fnPtrUTCToTimeComps1                UTCToTimeComps1;
-fnPtrTimeComps2ToUTC                TimeComps2ToUTC;
-fnPtrUTCToTimeComps2                UTCToTimeComps2;
-fnPtrThetaGrnwch                    ThetaGrnwch;
-fnPtrThetaGrnwchFK4                 ThetaGrnwchFK4;
-fnPtrThetaGrnwchFK5                 ThetaGrnwchFK5;
-fnPtrTimeConvFrTo                   TimeConvFrTo;
-fnPtrGet6P                          Get6P;
-fnPtrSet6P                          Set6P;
-fnPtrGet6PCardLine                  Get6PCardLine;
+    
+// TimeFuncDll's function pointers declaration
+extern fnPtrTimeFuncInit                   TimeFuncInit;
+extern fnPtrTimeFuncGetInfo                TimeFuncGetInfo;
+extern fnPtrTConLoadFile                   TConLoadFile;
+extern fnPtrTimeFuncLoadFile               TimeFuncLoadFile;
+extern fnPtrIsTConFileLoaded               IsTConFileLoaded;
+extern fnPtrTConSaveFile                   TConSaveFile;
+extern fnPtrTConAddARec                    TConAddARec;
+extern fnPtrTConAddOne                     TConAddOne;
+extern fnPtrUTCToTConRec                   UTCToTConRec;
+extern fnPtrTConRemoveAll                  TConRemoveAll;
+extern fnPtrUTCToDTG20                     UTCToDTG20;
+extern fnPtrUTCToDTG19                     UTCToDTG19;
+extern fnPtrUTCToDTG17                     UTCToDTG17;
+extern fnPtrUTCToDTG15                     UTCToDTG15;
+extern fnPtrDTGToUTC                       DTGToUTC;
+extern fnPtrUTCToTAI                       UTCToTAI;
+extern fnPtrUTCToUT1                       UTCToUT1;
+extern fnPtrUTCToET                        UTCToET;
+extern fnPtrTAIToUTC                       TAIToUTC;
+extern fnPtrTAIToUT1                       TAIToUT1;
+extern fnPtrYrDaysToUTC                    YrDaysToUTC;
+extern fnPtrUTCToYrDays                    UTCToYrDays;
+extern fnPtrTimeComps1ToUTC                TimeComps1ToUTC;
+extern fnPtrUTCToTimeComps1                UTCToTimeComps1;
+extern fnPtrTimeComps2ToUTC                TimeComps2ToUTC;
+extern fnPtrUTCToTimeComps2                UTCToTimeComps2;
+extern fnPtrThetaGrnwch                    ThetaGrnwch;
+extern fnPtrThetaGrnwchFK4                 ThetaGrnwchFK4;
+extern fnPtrThetaGrnwchFK5                 ThetaGrnwchFK5;
+extern fnPtrTimeConvFrTo                   TimeConvFrTo;
+extern fnPtrGet6P                          Get6P;
+extern fnPtrSet6P                          Set6P;
+extern fnPtrGet6PCardLine                  Get6PCardLine;
 
 
 

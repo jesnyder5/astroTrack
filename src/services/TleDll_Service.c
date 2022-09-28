@@ -1,9 +1,9 @@
-#include "services/DllUtils.h"
-#include "services/TleDll_Service.h"
+#include "DllUtils.h"
+#include "TleDll_Service.h"
 
-#include "wrappers/TleDll.h"
-#include "wrappers/TimeFuncDll.h"
-#include "wrappers/EnvConstDll.h"
+#include "../wrappers/TleDll.h"
+#include "../wrappers/TimeFuncDll.h"
+#include "../wrappers/EnvConstDll.h"
 
 TleGPRecord LinesToTle(char* line1, char* line2)
 {

@@ -1,17 +1,17 @@
-#include "services/DllUtils.h"
-#include "services/DllMainDll_Service.h"
-#include "services/ElOpsDll_Service.h"
-#include "services/LamodDll_Service.h"
-#include "services/TimeFuncDll_Service.h"
-#include "services/SatStateDll_Service.h"
+#include "DllUtils.h"
+#include "DllMainDll_Service.h"
+#include "ElOpsDll_Service.h"
+#include "LamodDll_Service.h"
+#include "TimeFuncDll_Service.h"
+#include "SatStateDll_Service.h"
 #include <math.h>
 
-#include "wrappers/DllMainDll.h"
-#include "wrappers/EnvConstDll.h"
-#include "wrappers/LamodDll.h"
-#include "wrappers/TimeFuncDll.h"
-#include "wrappers/SensorDll.h"
-#include "wrappers/SatStateDll.h"
+#include "../wrappers/DllMainDll.h"
+#include "../wrappers/EnvConstDll.h"
+#include "../wrappers/LamodDll.h"
+#include "../wrappers/TimeFuncDll.h"
+#include "../wrappers/SensorDll.h"
+#include "../wrappers/SatStateDll.h"
 
 
 
@@ -432,7 +432,7 @@ void PrintNosticData(FILE* fp, SenSatData* senSatData, int nosticFlg, LookAngle*
    if (nosticFlg >= 2)
    {
       // Print sensor/satellite number at each step
-      fprintf(fp, "%s", "");
+      fprintf(fp, "\n");
       fprintf(fp, "   >>> Sensor: %3d - Satellite: %6d - Time: %20s - Mse: %14.6f\n",
          senSatData->senNum,
          senSatData->satNum,

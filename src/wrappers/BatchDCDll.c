@@ -1,7 +1,33 @@
-// This wrapper file was generated automatically by the A3\GenDllWrappers program.
+// This wrapper file was generated automatically by the GenDllWrappers program.
 
-#include "services/DllUtils.h"
-#include "wrappers/BatchDCDll.h"
+#include "../services/DllUtils.h"
+#include "BatchDCDll.h"
+
+
+// BatchDCDll's function pointers definition
+fnPtrBatchDCInit                    BatchDCInit;
+fnPtrBatchDCGetInfo                 BatchDCGetInfo;
+fnPtrBatchDCLoadFile                BatchDCLoadFile;
+fnPtrBatchDCLoadFileAll             BatchDCLoadFileAll;
+fnPtrBatchDCLoadCard                BatchDCLoadCard;
+fnPtrBatchDCGetPCard                BatchDCGetPCard;
+fnPtrBatchDCSaveFile                BatchDCSaveFile;
+fnPtrBatchDCGetParams               BatchDCGetParams;
+fnPtrBatchDCSetParams               BatchDCSetParams;
+fnPtrBatchDCInitSat                 BatchDCInitSat;
+fnPtrBatchDCSolve                   BatchDCSolve;
+fnPtrBatchDCSolveSelObs             BatchDCSolveSelObs;
+fnPtrBatchDCRemoveSat               BatchDCRemoveSat;
+fnPtrBatchDCIterate                 BatchDCIterate;
+fnPtrBatchDCGetVcm                  BatchDCGetVcm;
+fnPtrBatchDCGetSpVOut               BatchDCGetSpVOut;
+fnPtrBatchDCSetSpVOut               BatchDCSetSpVOut;
+fnPtrBatchDCResetAll                BatchDCResetAll;
+fnPtrBatchDCGetAccptCrit            BatchDCGetAccptCrit;
+fnPtrSpToEGP                        SpToEGP;
+fnPtrSpToTle                        SpToTle;
+fnPtrSpToCsv                        SpToCsv;
+fnPtrExtEphemToEGP                  ExtEphemToEGP;
 
 
 static void* hLib = NULL; // handle to the dll

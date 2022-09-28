@@ -1,7 +1,25 @@
-// This wrapper file was generated automatically by the A3\GenDllWrappers program.
+// This wrapper file was generated automatically by the GenDllWrappers program.
 
-#include "services/DllUtils.h"
-#include "wrappers/EnvConstDll.h"
+#include "../services/DllUtils.h"
+#include "EnvConstDll.h"
+
+
+// EnvConstDll's function pointers definition
+fnPtrEnvInit                        EnvInit;
+fnPtrEnvGetInfo                     EnvGetInfo;
+fnPtrEnvLoadFile                    EnvLoadFile;
+fnPtrEnvSaveFile                    EnvSaveFile;
+fnPtrEnvGetFkIdx                    EnvGetFkIdx;
+fnPtrEnvSetFkIdx                    EnvSetFkIdx;
+fnPtrEnvGetGeoIdx                   EnvGetGeoIdx;
+fnPtrEnvSetGeoIdx                   EnvSetGeoIdx;
+fnPtrEnvGetGeoStr                   EnvGetGeoStr;
+fnPtrEnvSetGeoStr                   EnvSetGeoStr;
+fnPtrEnvGetGeoConst                 EnvGetGeoConst;
+fnPtrEnvGetFkConst                  EnvGetFkConst;
+fnPtrEnvGetFkPtr                    EnvGetFkPtr;
+fnPtrEnvSetEarthShape               EnvSetEarthShape;
+fnPtrEnvGetEarthShape               EnvGetEarthShape;
 
 
 static void* hLib = NULL; // handle to the dll

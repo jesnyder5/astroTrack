@@ -1,7 +1,7 @@
-#include "services/DllUtils.h"
-#include "services/ObsOpsDll_Service.h"
+#include "DllUtils.h"
+#include "ObsOpsDll_Service.h"
 
-#include "wrappers/ObsOpsDll.h"
+#include "../wrappers/ObsOpsDll.h"
 
 // Retrieve Iomod control data from the dll
 void GetIomodCtrlPara(IomodCtrl* iomodCtrl)
@@ -63,7 +63,7 @@ void PrintIomodCtrls(FILE* fpOut, IomodCtrl* iomodCtrl)
    else
       obsOrderStr = "";
 
-   len = 42 - (strlen(obsOrderStr) + strlen(obSortOrder[abs(sortOrder) - 1]));
+   len = 42 - ((int)strlen(obsOrderStr) + (int)strlen(obSortOrder[abs(sortOrder) - 1]));
 
    fprintf(fpOut, "            INITIAL ORBIT (IOMOD) OPTIONS:\n");
    fprintf(fpOut, " ===============================================================================\n");

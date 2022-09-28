@@ -1,7 +1,15 @@
-// This wrapper file was generated automatically by the A3\GenDllWrappers program.
+// This wrapper file was generated automatically by the GenDllWrappers program.
 
-#include "services/DllUtils.h"
-#include "wrappers/BamDll.h"
+#include "../services/DllUtils.h"
+#include "BamDll.h"
+
+
+// BamDll's function pointers definition
+fnPtrBamInit                        BamInit;
+fnPtrBamGetInfo                     BamGetInfo;
+fnPtrBamCompNumTSs                  BamCompNumTSs;
+fnPtrBamCompute                     BamCompute;
+fnPtrBamGetResults                  BamGetResults;
 
 
 static void* hLib = NULL; // handle to the dll

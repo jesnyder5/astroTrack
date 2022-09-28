@@ -1,7 +1,24 @@
-// This wrapper file was generated automatically by the A3\GenDllWrappers program.
+// This wrapper file was generated automatically by the GenDllWrappers program.
 
-#include "services/DllUtils.h"
-#include "wrappers/ElCompDll.h"
+#include "../services/DllUtils.h"
+#include "ElCompDll.h"
+
+
+// ElCompDll's function pointers definition
+fnPtrElCompInit                     ElCompInit;
+fnPtrElCompGetInfo                  ElCompGetInfo;
+fnPtrElCompSetCriteria              ElCompSetCriteria;
+fnPtrElCompGetCriteria              ElCompGetCriteria;
+fnPtrElCompGetResults               ElCompGetResults;
+fnPtrElCompFrElData                 ElCompFrElData;
+fnPtrElCompResetCriteria            ElCompResetCriteria;
+fnPtrCocoSetCriteria                CocoSetCriteria;
+fnPtrCocoGetCriteria                CocoGetCriteria;
+fnPtrCocoGetResults                 CocoGetResults;
+fnPtrCocoGetResultsWOA              CocoGetResultsWOA;
+fnPtrCocoFrElData                   CocoFrElData;
+fnPtrCocoFrElDataWOA                CocoFrElDataWOA;
+fnPtrCocoResetCriteria              CocoResetCriteria;
 
 
 static void* hLib = NULL; // handle to the dll
