@@ -34,6 +34,7 @@ int main(){
         std::cout << (i + 1) << ": " << satNames.at(i) << std::endl;
     }
 */
+/*
     std::cout << "Position TEST" << std::endl;
 
     double posTEME[3] = {1, 2, 3};
@@ -46,7 +47,7 @@ int main(){
         std::cout << posTEME[i] << " ";
     }
     std::cout << std::endl;
-
+*/
     // std::cout << std::endl << "print first satellite (" << satNames.at(0) << ") TLE fields:" << std::endl;
     // test.printSatTLE(satNames.at(0));
 
