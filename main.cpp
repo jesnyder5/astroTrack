@@ -27,12 +27,25 @@ int main(){
     //file = "weather2.tle";
 
     astroTracker test(file);
-
+/*
     std::vector<std::string> satNames = test.getSatNames();
 
     for(int i=0; i < satNames.size(); i++){
         std::cout << (i + 1) << ": " << satNames.at(i) << std::endl;
     }
+*/
+    std::cout << "Position TEST" << std::endl;
+
+    double posTEME[3] = {1, 2, 3};
+    for(int i = 0; i < 3; i++){
+        std::cout << posTEME[i] << " ";
+    }
+    std::cout << std::endl;
+    test.getGPSposTEME(posTEME);
+    for(int i = 0; i < 3; i++){
+        std::cout << posTEME[i] << " ";
+    }
+    std::cout << std::endl;
 
     // std::cout << std::endl << "print first satellite (" << satNames.at(0) << ") TLE fields:" << std::endl;
     // test.printSatTLE(satNames.at(0));

@@ -12,6 +12,7 @@
 #include <iostream>
 #include <fstream>
 #include "stdlib.h"
+#include "time.h"
 
 #ifndef ASTDYN_STD
 #define ASTDYN_STD

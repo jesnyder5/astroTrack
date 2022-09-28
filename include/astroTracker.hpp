@@ -39,6 +39,10 @@ public:
     void printSatTLE(std::string name);
 
     // 
+    // Convert latitude, longitude, and height retrived from GPS to TEME vector
+    void getGPSposTEME(double posTEME[3]);
+
+    void getSunAndMoonPosTEME(double posSunTEME[3]);
     
 
 private:
