@@ -3,7 +3,7 @@
  * Author: Jeremy Snyder
  * Creation: Jan 1, 2022
  *
- * Last Update: Aug 31, 2022
+ * Last Update: Sep 28, 2022
  *
  * Uses USSF SGP4 to track objects from an Earth-fixed terrestrial reference frame.
  */
@@ -241,19 +241,16 @@ void astroTracker::loadFromFile(std::string FILENAME){
 
 // Load satellite objects from OMM json object
 void astroTracker::loadFromJson(json omm){
-    satNum = omm["NORAD_CAT_ID"].get<int>();
-    secClass = omm["CLASSIFICATION_TYPE"].get<std::string>()[0]; //convert to string then pull first character to get char
-
+    char satName[8]; 
     std::string satNameStr = omm["OBJECT_ID"].get<std::string>();
     satNameStr.erase(remove(satNameStr.begin(), satNameStr.end(), '-'), satNameStr.end());
     satNameStr.copy(satName, 8);
 
-
     std::string epochStr = omm["EPOCH"].get<std::string>();
     //Year
-    epochYr = std::stoi(epochStr.substr(0,4));
+    int epochYr = std::stoi(epochStr.substr(0,4));
     //Month
-    epochDays = (double)monthToDaysOfYr(std::stoi(epochStr.substr(5, 2)), epochYr);
+    double epochDays = (double)monthToDaysOfYr(std::stoi(epochStr.substr(5, 2)), epochYr);
     //Day
     epochDays += std::stod(epochStr.substr(8, 2));
     //Hour
@@ -263,115 +260,44 @@ void astroTracker::loadFromJson(json omm){
     //Second
     epochDays += (std::stod(epochStr.substr(17, 9)) / (24 * 60 * 60));
 
-
-    bstar = omm["BSTAR"].get<double>();
-    ephType = omm["EPHEMERIS_TYPE"].get<int>();
-    elsetNum = omm["ELEMENT_SET_NO"].get<int>();
-    incli = omm["INCLINATION"].get<double>();
-    node = omm["RA_OF_ASC_NODE"].get<double>();
-    eccen = omm["ECCENTRICITY"].get<double>();
-    omega = omm["ARG_OF_PERICENTER"].get<double>();
-    mnAnomaly = omm["MEAN_ANOMALY"].get<double>();
-    mnMotion = omm["MEAN_MOTION"].get<double>();
-    revNum = omm["REV_AT_EPOCH"].get<int>();
-
-
-    satKey = TleAddSatFrFieldsGP(
-        satNum,
-        secClass,
-        satName,
-        epochYr,
-        epochDays,
-        bstar,
-        ephType,
-        elsetNum,
-        incli,
-        node,
-        eccen,
-        omega,
-        mnAnomaly,
-        mnMotion,
-        revNum
-    );
-    Sgp4InitSat(satKey);
-
-    sats[omm["OBJECT_NAME"].get<std::string>()] = {
-        {"SatKey", satKey},
-        {"Norad_ID", satNum},
-        {"Security_Class", secClass},
-        {"Intl_Des", satName},
-        {"Epoch_Year", epochYr},
-        {"Epoch_Days", epochDays},
-        {"Bstar", bstar},
-        {"Eph_Type", ephType},
-        {"Element_Set_Num", elsetNum},
-        {"Inclination", incli},
-        {"RA_Node", node},
-        {"Eccentricity", eccen},
-        {"Arg_Perigee", omega},
-        {"Mean_Anomaly", mnAnomaly},
-        {"Mean_Motion", mnMotion},
-        {"Revolution_Num", revNum}
-    };
-
-    loadedSatNames.push_back(omm["OBJECT_NAME"].get<std::string>());
+    loadedSats.push_back(satellite(omm["OBJECT_NAME"].get<std::string>(),
+            omm["NORAD_CAT_ID"].get<int>(),
+            omm["CLASSIFICATION_TYPE"].get<std::string>()[0],
+            satName,
+            epochYr,
+            epochDays,
+            omm["BSTAR"].get<double>(),
+            omm["EPHEMERIS_TYPE"].get<int>(),
+            omm["ELEMENT_SET_NO"].get<int>(),
+            omm["INCLINATION"].get<double>(),
+            omm["RA_OF_ASC_NODE"].get<double>(),
+            omm["ECCENTRICITY"].get<double>(),
+            omm["ARG_OF_PERICENTER"].get<double>(),
+            omm["MEAN_ANOMALY"].get<double>(),
+            omm["MEAN_MOTION"].get<double>(),
+            omm["REV_AT_EPOCH"].get<int>()));
 
 }
 
 // Load satellite objects from TLE lines and satellite name
 void astroTracker::loadFromTLE(std::string name, std::string line1, std::string line2){
-    satKey = TleAddSatFrLines(&line1[0], &line2[0]);
-    Sgp4InitSat(satKey);
-
-    TleGetAllFieldsGP(
-        satKey,
-        &satNum,
-        &secClass,
-        satName,
-        &epochYr,
-        &epochDays,
-        &bstar,
-        &ephType,
-        &elsetNum,
-        &incli,
-        &node,
-        &eccen,
-        &omega,
-        &mnAnomaly,
-        &mnMotion,
-        &revNum
-    );
-
-    sats[name] = {
-        {"SatKey", satKey},
-        {"Norad_ID", satNum},
-        {"Security_Class", secClass},
-        {"Intl_Des", satName},
-        {"Epoch_Year", epochYr},
-        {"Epoch_Days", epochDays},
-        {"Bstar", bstar},
-        {"Eph_Type", ephType},
-        {"Element_Set_Num", elsetNum},
-        {"Inclination", incli},
-        {"RA_Node", node},
-        {"Eccentricity", eccen},
-        {"Arg_Perigee", omega},
-        {"Mean_Anomaly", mnAnomaly},
-        {"Mean_Motion", mnMotion},
-        {"Revolution_Num", revNum}
-    };
-
-    loadedSatNames.push_back(name);
-
+    loadedSats.push_back(satellite(name, line1, line2));
 }
 
 //================================================ Main Functions ====================================
 
 std::vector<std::string> astroTracker::getSatNames(){
-    return loadedSatNames;
+    std::vector<std::string> satNames;
+    for(int i = 0; i<loadedSats.capacity(); i++){
+        satNames.push_back(loadedSats[i].getSatelliteName());
+    }
+    return satNames;
 }
 
 void astroTracker::printSatTLE(std::string name){
+/*
+    loadedSats.
+
     std::cout << std::endl;
     std::cout << "satNum: " << sats[name].get<nlohmann::json>()["Norad_ID"].get<int>() << std::endl;
     std::cout << "secClass: " << sats[name].get<nlohmann::json>()["Security_Class"].get<char>() << std::endl;
@@ -389,7 +315,7 @@ void astroTracker::printSatTLE(std::string name){
     std::cout << "mnMotion: " << sats[name].get<nlohmann::json>()["Mean_Motion"].get<double>() << std::endl;
     std::cout << "revNum: " << sats[name].get<nlohmann::json>()["Revolution_Num"].get<int>() << std::endl;
     std::cout << std::endl;
-
+*/
 }
 
 //  The following function has at least some of the logic to convert current WGS84 GPS coordinates
@@ -456,7 +382,51 @@ void astroTracker::getGPSposTEME(double posTEME[3]){
 }
 */
 
+void astroTracker::getSunAndMoonPosTEME(double posSunTEME[3], double posMoonTEME[3], double posTime_ds50UTC){
+    if(posTime_ds50UTC == -1){
+        posTime_ds50UTC = getCurrTime_ds50UTC();
+    }
+    double sunVecMag, moonVecMag;
+    CompSunMoonPos(posTime_ds50UTC, posSunTEME, &sunVecMag, posMoonTEME, &moonVecMag);
+}
+
+void astroTracker::getSunAndMoonPosECR(double posSunECR[3], double posMoonECR[3], double posTime_ds50UTC){
+    if(posTime_ds50UTC == -1){
+        posTime_ds50UTC = getCurrTime_ds50UTC();
+    }
+    std::cout << posTime_ds50UTC << std::endl;
+    double sunVecMag, moonVecMag, posSunTEME[3], posMoonTEME[3], tempLLH[3];
+    CompSunMoonPos(posTime_ds50UTC, posSunTEME, &sunVecMag, posMoonTEME, &moonVecMag);
+    double velSunTEME[3] = {0, 0, 0}, velSunECR[3] = {0, 0, 0};
+    ECIToEFGTime(posTime_ds50UTC, posSunTEME, velSunTEME, posSunECR, velSunECR);
+    double velMoonTEME[3] = {0, 0, 0}, velMoonECR[3] = {0, 0, 0};
+    ECIToEFGTime(posTime_ds50UTC, posMoonTEME, velMoonTEME, posMoonECR, velMoonECR);
+    // std::cout << velMoonECR[0] << std::endl;
+    // XYZToLLHTime(posTime_ds50UTC, posSunTEME, tempLLH); // nan start
+    // LLHToEFGPos(tempLLH, posSunECR);
+    // std::cout << posSunTEME[0] << std::endl;
+    // std::cout << tempLLH[0] << std::endl;
+    // std::cout << posSunECR[0] << std::endl;
+
+    // XYZToLLHTime(posTime_ds50UTC, posMoonTEME, tempLLH);
+    // LLHToEFGPos(tempLLH, posMoonECR);
+}
+
 //================================================ Utility Functions =================================
+
+
+double astroTracker::getCurrTime_ds50UTC(){
+    time_t rawCurrTime;
+    time(&rawCurrTime);
+    tm * currTime = gmtime(&rawCurrTime);
+
+    return TimeComps1ToUTC((currTime->tm_year + 1900),
+                                                    currTime->tm_yday,
+                                                    currTime->tm_hour,
+                                                    currTime->tm_min,
+                                                    (double)currTime->tm_sec);
+
+}
 
 //Returns true if year is a leap year
 bool astroTracker::isLeapYear(int year){

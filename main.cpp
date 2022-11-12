@@ -54,7 +54,16 @@ int main(){
     // std::cout << std::endl << "print second satellite (" << satNames.at(1) << ") TLE fields:" << std::endl;
     // test.printSatTLE(satNames.at(1));
 
-    
+    double posSunTEME[3], posMoonTEME[3];
+    test.getSunAndMoonPosTEME(posSunTEME, posMoonTEME);
+    std::cout << "Sun Position Vector (TEME): " << posSunTEME[0] << " " << posSunTEME[1] << " " << posSunTEME[2] << std::endl;
+    std::cout << "Moon Position Vector (TEME): " << posMoonTEME[0] << " " << posMoonTEME[1] << " " << posMoonTEME[2] << std::endl;
+
+    double posSunECR[3], posMoonECR[3];
+    test.getSunAndMoonPosECR(posSunECR, posMoonECR);
+    std::cout << "Sun Position Vector (ECR): " << posSunECR[0] << " " << posSunECR[1] << " " << posSunECR[2] << std::endl;
+    std::cout << "Moon Position Vector (ECR): " << posMoonECR[0] << " " << posMoonECR[1] << " " << posMoonECR[2] << std::endl;
+
 
     finishTime = clock();
     std::cout 

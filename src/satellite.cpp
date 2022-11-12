@@ -3,7 +3,7 @@
  * Author: Jeremy Snyder
  * Creation: Sep 7, 2022
  *
- * Last Update: Sep 7, 2022
+ * Last Update: Sep 28, 2022
  *
  * Satellite object with attributes corresponding to USSF Astrodynamics Standards satellite objects
  * and related functions
@@ -27,8 +27,14 @@ extern "C" {
 }
 #endif
 
+satellite::satellite(){
+
+}  
+
 // Load satellite objects from TLE lines and satellite name
 satellite::satellite(std::string name, std::string line1, std::string line2){
+    satelliteName = name;
+    
     satKey = TleAddSatFrLines(&line1[0], &line2[0]);
     Sgp4InitSat(satKey);
 
@@ -52,6 +58,79 @@ satellite::satellite(std::string name, std::string line1, std::string line2){
     );
 
 }
+
+// Construct using individually provided fields
+satellite::satellite(std::string name,
+                        int in_satNum,
+                        char in_secClass,
+                        char in_satName[8],
+                        int in_epochYr,
+                        double in_epochDays,
+                        double in_bstar,
+                        int in_ephType,
+                        int in_elsetNum,
+                        double in_incli,
+                        double in_node,
+                        double in_eccen,
+                        double in_omega,
+                        double in_mnAnomaly,
+                        double in_mnMotion,
+                        int in_revNum){
+
+    satelliteName = name;
+    satKey = TleAddSatFrFieldsGP(in_satNum,
+                in_secClass,
+                in_satName,
+                in_epochYr,
+                in_epochDays,
+                in_bstar,
+                in_ephType,
+                in_elsetNum,
+                in_incli,
+                in_node,
+                in_eccen,
+                in_omega,
+                in_mnAnomaly,
+                in_mnMotion,
+                in_revNum
+            );
+    Sgp4InitSat(satKey);
+
+    TleGetAllFieldsGP(
+        satKey,
+        &satNum,
+        &secClass,
+        satName,
+        &epochYr,
+        &epochDays,
+        &bstar,
+        &ephType,
+        &elsetNum,
+        &incli,
+        &node,
+        &eccen,
+        &omega,
+        &mnAnomaly,
+        &mnMotion,
+        &revNum
+    );
+}
+
+// Construct using pre-initialized satKey
+satellite::satellite(long satKey){
+
+}
+
+satellite::~satellite(){
+
+}
+
+// Retrieve satellite name string
+std::string satellite::getSatelliteName(){
+    return satelliteName;
+}
+
+
 
 // Load all the dlls being used in the program
 void satellite::LoadAstroStdDlls(){

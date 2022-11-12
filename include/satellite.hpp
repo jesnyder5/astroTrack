@@ -6,7 +6,7 @@
  * Author: Jeremy Snyder
  * Creation: Sep 7, 2022
  *
- * Last Update: Sep 7, 2022
+ * Last Update: Sep 28, 2022
  *
  * Satellite object with attributes corresponding to USSF Astrodynamics Standards satellite objects
  * and related functions
@@ -23,11 +23,37 @@ public:
     satellite(std::string name, std::string line1, std::string line2);
 
     // Construct using individually provided fields
-    // satellite();
+    satellite(std::string name,
+                int in_satNum,
+                char in_secClass,
+                char in_satName[8],
+                int in_epochYr,
+                double in_epochDays,
+                double in_bstar,
+                int in_ephType,
+                int in_elsetNum,
+                double in_incli,
+                double in_node,
+                double in_eccen,
+                double in_omega,
+                double in_mnAnomaly,
+                double in_mnMotion,
+                int in_revNum
+            );
+
+    // Construct using pre-initialized satKey
+    satellite(long satKey);
 
     ~satellite();
     
+    // Retrieve satellite name string
+    std::string getSatelliteName();
+
 private:
+    // Satellite Name
+    std::string satelliteName = "null";
+
+
     // Utility Functions
     bool isLeapYear(int year);
     int monthToDaysOfYr(int month, int year);

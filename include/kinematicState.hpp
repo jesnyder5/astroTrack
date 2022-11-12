@@ -35,6 +35,9 @@ public:
     double* getECEF();
 
 private:
+    // Kinematic state instantaneous time
+     double ds50UTC = -1;
+    
     // Position vector components
     double xyz[3] = {0,0,0};    // TEME
     double xyz_ECR[3]= {0,0,0}; // ECR
@@ -45,10 +48,7 @@ private:
 
     // ASTDYN Stds satKey for direct retrieval of vector components
     long satKey = -1;
-
-    // ASTDYN Stds senkey for direct retrieval of sensor location
-    int senKey = -1;
-
+    
 
     // Updates vector components using stored satkey
     bool updateECR();

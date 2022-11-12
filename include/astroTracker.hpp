@@ -6,7 +6,7 @@
  * Author: Jeremy Snyder
  * Creation: Jan 1, 2022
  *
- * Last Update: Aug 31, 2022
+ * Last Update: Sep 28, 2022
  *
  * Uses USSF SGP4 libraries to track objects from an Earth-fixed terrestrial reference frame.
  */
@@ -42,20 +42,20 @@ public:
     // Convert latitude, longitude, and height retrived from GPS to TEME vector
     void getGPSposTEME(double posTEME[3]);
 
-    void getSunAndMoonPosTEME(double posSunTEME[3]);
+    void getSunAndMoonPosTEME(double posSunTEME[3], double posMoonTEME[3], double posTime_ds50UTC=-1);
     
+    void getSunAndMoonPosECR(double posSunECR[3], double posMoonECR[3], double posTime_ds50UTC=-1);
 
 private:
-    // Json object using satellite names as keys and storing satellite properties as well as corresponding TLE dll satKey
-    json sats;
+    // Vector containing loaded satellite
+    std::vector<satellite> loadedSats;
 
-    // Vector containing loaded satellite names (used as keys for sats json)
-    std::vector<std::string> loadedSatNames;
-
-    //Loading Functions
+    //Satellite Loading Functions
     void loadFromFile(std::string FILENAME);
     void loadFromJson(json omm);
     void loadFromTLE(std::string name, std::string line1, std::string line2);
+
+    // ===== Astrodynamics Standards Library initialization functions =====
 
     // Load needed dlls
     void LoadAstroStdDlls();
@@ -67,31 +67,16 @@ private:
     void FreeAstroStdDlls();
 
     //Utility Functions
+
+
+    double getCurrTime_ds50UTC();
+
+
     bool isLeapYear(int year);
+
+
     int monthToDaysOfYr(int month, int year);
 
-
-    //GP TLE fields
-    int satNum;             //Satellite number (in-Integer)
-    char secClass;          //Security classification (in-Character)
-    char satName[8];        //Satellite international designator (in-Character[8])
-    int epochYr;            //Element epoch time - year, [YY]YY (in-Integer)
-    double epochDays;       //Element epoch time - day of year, DDD.DDDDDDDD (in-Double)
-    double bstar;           //B* drag term (1/er) (ephType = 0, 2) or BTerm - ballistic coefficient (m2/kg) (ephType = 4, XP) (in-Double)
-    int ephType;            //Satellite ephemeris type (0: SGP, 2: SGP4) (in-Integer)
-    int elsetNum;           //Element set number (in-Integer)
-    double incli;           //Orbit inclination (degrees) (in-Double)
-    double node;            //Right ascension of ascending node (degrees) (in-Double)
-    double eccen;           //Eccentricity (in-Double)
-    double omega;           //Argument of perigee (degrees) (in-Double)
-    double mnAnomaly;       //Mean anomaly (degrees) (in-Double)
-    double mnMotion;        //Mean motion (rev/day) (ephType = 0: Kozai mean motion, ephType = 2 or 4: Brouwer mean motion) (in-Double)
-    int revNum;             //Revolution number at epoch (in-Integer)
-
-    //TLE SO satellite key
-    long satKey;
 };
-
-
 
 #endif
