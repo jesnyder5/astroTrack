@@ -36,6 +36,9 @@ int main(){
     std::cout << "Moon Position Vector (ECR): " << posMoonECR[0] << " " << posMoonECR[1] << " " << posMoonECR[2] << std::endl;
 
 
+    test.printSatPosTEME("NOAA 15");
+
+
     finishTime = clock();
     std::cout 
     << "Program Run time: " 

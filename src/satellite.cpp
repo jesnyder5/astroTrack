@@ -117,7 +117,7 @@ satellite::satellite(std::string name,
 }
 
 // Construct using pre-initialized satKey
-satellite::satellite(long satKey){
+satellite::satellite(__int64 satKey){
 
 }
 
@@ -128,6 +128,10 @@ satellite::~satellite(){
 // Retrieve satellite name string
 std::string satellite::getSatelliteName(){
     return satelliteName;
+}
+
+__int64 satellite::getSatKey(){
+    return satKey;
 }
 
 

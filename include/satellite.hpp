@@ -14,6 +14,19 @@
 
 #include <string>
 
+//Directives for Windows PC and UNIX platforms
+#ifdef _WIN32
+   #include <windows.h>
+   //#define STDCALL __stdcall // Remember to use this __stdcall in VC++ 6.0
+   #define STDCALL __cdecl   // Remember to select this __cdecl in VS 2008
+   // windows platforms has __int64 type - 64-bit integer
+#else
+   #include <dlfcn.h>
+   #define STDCALL 
+   // unix-family platforms doesn't support __int64, therefore need to define it here
+   typedef long long __int64;
+#endif
+
 class satellite {
 public:
     // Constructors and Destructors
@@ -42,12 +55,14 @@ public:
             );
 
     // Construct using pre-initialized satKey
-    satellite(long satKey);
+    satellite(__int64 satKey);
 
     ~satellite();
     
     // Retrieve satellite name string
     std::string getSatelliteName();
+
+    __int64 getSatKey();
 
 private:
     // Satellite Name
@@ -81,7 +96,7 @@ private:
     int revNum;             //Revolution number at epoch (in-Integer)
 
     // TLE SO satellite key
-    long satKey;
+    __int64 satKey;
 
 };
 

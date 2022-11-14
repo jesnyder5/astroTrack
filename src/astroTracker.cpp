@@ -462,6 +462,25 @@ void astroTracker::getSunAndMoonPosECR(double posSunECR[3], double posMoonECR[3]
     // LLHToEFGPos(tempLLH, posMoonECR);
 }
 
+void astroTracker::printSatPosTEME(std::string satName){
+    satellite subjectSat = satellite();
+    for(int i = 0; i < loadedSats.size(); i++){
+        if(loadedSats.at(i).getSatelliteName()==satName){
+            subjectSat = loadedSats.at(i);
+        }
+    }
+    double subject_ds50UTC = getCurrTime_ds50UTC();
+    __int64 subjectSatKey = subjectSat.getSatKey();
+    double subjectPosTEME[3];
+    Sgp4PropDs50UtcPos(subjectSatKey, subject_ds50UTC, subjectPosTEME);
+    std::cout << subjectSat.getSatelliteName() << " is at: (" 
+    << subjectPosTEME[0] << ", " 
+    << subjectPosTEME[1] << ", " 
+    << subjectPosTEME[2] << ")"
+    << std::endl;
+}
+
+
 //================================================ Utility Functions =================================
 
 

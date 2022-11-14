@@ -46,6 +46,8 @@ public:
     
     void getSunAndMoonPosECR(double posSunECR[3], double posMoonECR[3], double posTime_ds50UTC=-1);
 
+    void printSatPosTEME(std::string satName);
+
 private:
     // Vector containing loaded satellite
     std::vector<satellite> loadedSats;
