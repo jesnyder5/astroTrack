@@ -3,7 +3,7 @@
  * Author: Jeremy Snyder
  * Creation: Jan 1, 2022
  *
- * Last Update: Aug 31, 2022
+ * Last Update: Nov 13, 2022
  *
  * [desc]
  */
@@ -18,50 +18,21 @@
 using json = nlohmann::json;
 
 int main(){
-
     clock_t startTime, finishTime;
     startTime = clock();
 
     std::string file;
     file = "omm-weather.json";
-    //file = "weather2.tle";
+    // file = "weather2.tle";
 
     astroTracker test(file);
-/*
-    std::vector<std::string> satNames = test.getSatNames();
 
-    for(int i=0; i < satNames.size(); i++){
-        std::cout << (i + 1) << ": " << satNames.at(i) << std::endl;
-    }
-*/
-/*
-    std::cout << "Position TEST" << std::endl;
-
-    double posTEME[3] = {1, 2, 3};
-    for(int i = 0; i < 3; i++){
-        std::cout << posTEME[i] << " ";
-    }
-    std::cout << std::endl;
-    test.getGPSposTEME(posTEME);
-    for(int i = 0; i < 3; i++){
-        std::cout << posTEME[i] << " ";
-    }
-    std::cout << std::endl;
-*/
-    // std::cout << std::endl << "print first satellite (" << satNames.at(0) << ") TLE fields:" << std::endl;
-    // test.printSatTLE(satNames.at(0));
-
-    // std::cout << std::endl << "print second satellite (" << satNames.at(1) << ") TLE fields:" << std::endl;
-    // test.printSatTLE(satNames.at(1));
-
-    double posSunTEME[3], posMoonTEME[3];
+    double posSunTEME[3], posMoonTEME[3], posSunECR[3], posMoonECR[3];
     test.getSunAndMoonPosTEME(posSunTEME, posMoonTEME);
-    std::cout << "Sun Position Vector (TEME): " << posSunTEME[0] << " " << posSunTEME[1] << " " << posSunTEME[2] << std::endl;
-    std::cout << "Moon Position Vector (TEME): " << posMoonTEME[0] << " " << posMoonTEME[1] << " " << posMoonTEME[2] << std::endl;
-
-    double posSunECR[3], posMoonECR[3];
     test.getSunAndMoonPosECR(posSunECR, posMoonECR);
+    std::cout << "Sun Position Vector (TEME): " << posSunTEME[0] << " " << posSunTEME[1] << " " << posSunTEME[2] << std::endl;
     std::cout << "Sun Position Vector (ECR): " << posSunECR[0] << " " << posSunECR[1] << " " << posSunECR[2] << std::endl;
+    std::cout << "Moon Position Vector (TEME): " << posMoonTEME[0] << " " << posMoonTEME[1] << " " << posMoonTEME[2] << std::endl;
     std::cout << "Moon Position Vector (ECR): " << posMoonECR[0] << " " << posMoonECR[1] << " " << posMoonECR[2] << std::endl;
 
 

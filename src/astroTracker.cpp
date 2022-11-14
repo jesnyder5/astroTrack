@@ -3,7 +3,7 @@
  * Author: Jeremy Snyder
  * Creation: Jan 1, 2022
  *
- * Last Update: Sep 28, 2022
+ * Last Update: Nov 13, 2022
  *
  * Uses USSF SGP4 to track objects from an Earth-fixed terrestrial reference frame.
  */
@@ -13,6 +13,11 @@
 #include <fstream>
 #include "stdlib.h"
 #include "time.h"
+
+#ifndef __Win32
+#include <unistd.h>
+#include <fcntl.h>
+#endif
 
 #ifndef ASTDYN_STD
 #define ASTDYN_STD
@@ -30,7 +35,6 @@ extern "C" {
 #endif
 
 astroTracker::astroTracker(){
-    std::cout << "constructor" << std::endl;
     // Load dlls
     LoadAstroStdDlls();
     // Initialize dlls
@@ -42,7 +46,6 @@ astroTracker::astroTracker(){
 
 // Construct using json object in OMM format
 astroTracker::astroTracker(json omm){
-    std::cout << "json constructor" << std::endl;
     // Load dlls
     LoadAstroStdDlls();
     // Initialize dlls
@@ -55,10 +58,8 @@ astroTracker::astroTracker(json omm){
     LogMessage(logMsg);
 }
 
-
 // Construct using tle lines and name
 astroTracker::astroTracker(std::string name, std::string line1, std::string line2){
-    std::cout << "tle constructor" << std::endl;
     // Load dlls
     LoadAstroStdDlls();
     // Initialize dlls
@@ -73,7 +74,6 @@ astroTracker::astroTracker(std::string name, std::string line1, std::string line
 
 // Construct using json or tle files
 astroTracker::astroTracker(std::string FILENAME){
-    std::cout << "file constructor" << std::endl;
     // Load dlls
     LoadAstroStdDlls();
     // Initialize dlls
@@ -82,20 +82,35 @@ astroTracker::astroTracker(std::string FILENAME){
     loadFromFile(FILENAME);
     std::cout << "Successfully loaded " << TleGetCount() << " satellites" << std::endl;
 
-    char logMsg[] = "End of file-based constructor";
+    // Create log message variables
+    std::string logMsgStr;
+    char logMsg[128];
+
+    // Log number of loaded satellites
+    logMsgStr = "Successfully loaded " + std::to_string(TleGetCount()) + " satellites";
+    strcpy(logMsg, logMsgStr.c_str());
+    LogMessage(logMsg);
+
+    // Log end of constuctor
+    strcpy(logMsg, "End of file-based constructor");
     LogMessage(logMsg);
 }
 
 astroTracker::~astroTracker(){
-    std::cout << "destructor" << std::endl;
     // Free loaded AstroStd dlls
     FreeAstroStdDlls();
 }
 
+
 // Load all the dlls being used in the program
 void astroTracker::LoadAstroStdDlls(){
-
-    std::cout << "LoadAstroStdDlls" << std::endl;
+    // Library wrappers output loading messages to STDOUT. This will redirect to somewhere else
+    // POSIX centric solution
+    #ifndef __Win32
+    fflush(stdout);
+    int stdout_fd = dup(STDOUT_FILENO); // Copy STDOUT info to temp var
+    freopen("/dev/null", "w", stdout); // Reopen STDOUT to write to /dev/null for now. 
+    #endif
 
     // Load MainDll dll
     LoadDllMainDll();
@@ -114,12 +129,17 @@ void astroTracker::LoadAstroStdDlls(){
 
     // Load Sgp4Prop dll and assign function pointers
     LoadSgp4PropDll();
+
+    #ifndef __Win32
+    fflush(stdout);
+    std::cout.flush(); // Empty any output buffers
+    dup2(stdout_fd, STDOUT_FILENO); // Reset STDOUT to original info
+    close(stdout_fd); // Close temp var
+    #endif
 }
 
 // Initialize all the dlls being used in the program
 void astroTracker::InitAstroStdDlls(){
-    std::cout << "InitAstroStdDlls" << std::endl;
-   
     fAddr apPtr;
     int errCode;
 
@@ -128,6 +148,15 @@ void astroTracker::InitAstroStdDlls(){
 
     char LOGFILE[] = "sgp4_log.txt";
     OpenLogFile(LOGFILE);
+
+    // Create log message variables
+    std::string logMsgStr;
+    char logMsg[128];
+    // Log tracker start time
+    time_t rawtime;
+    time(&rawtime);
+    strftime(logMsg, 128,"astroTracker Start: %c", localtime(&rawtime));
+    LogMessage(logMsg);
 
     errCode = EnvInit(apPtr);
     if (errCode != 0)
@@ -149,6 +178,8 @@ void astroTracker::InitAstroStdDlls(){
     if (errCode != 0)
         ShowMsgAndTerminate();
     
+    // Version Info
+    /*
     std::cout << std::endl;
     char DllInfo[INFOSTRLEN];
     DllMainGetInfo(DllInfo);
@@ -175,21 +206,24 @@ void astroTracker::InitAstroStdDlls(){
     DllInfo[INFOSTRLEN-1] = 0;
     printf("%s\n", DllInfo);
     std::cout << std::endl;
-
-    std::cout << "Init successful" << std::endl;
+    */
 }
 
 // Free all the dlls being used in the program
 void astroTracker::FreeAstroStdDlls(){
-    std::cout << "FreeAstroStdDlls" << std::endl;
-   
-    CloseLogFile();
+    // Library wrappers output loading messages to STDOUT. This will redirect to somewhere else
+    // POSIX centric solution
+    #ifndef __Win32
+    fflush(stdout);
+    int stdout_fd = dup(STDOUT_FILENO); // Copy STDOUT info to temp var
+    freopen("/dev/null", "w", stdout); // Reopen STDOUT to write to /dev/null for now. 
+    #endif
 
-    // Free MainDll dll
-    FreeDllMainDll();
-
-    // Free EnvConst dll
-    FreeEnvConstDll();
+    // Free Sgp4Prop dll
+    FreeSgp4PropDll();
+    
+    // Free Tle dll
+    FreeTleDll();
 
     // Free AstroFunc dll
     FreeAstroFuncDll();
@@ -197,30 +231,47 @@ void astroTracker::FreeAstroStdDlls(){
     // Free TimeFunc dll
     FreeTimeFuncDll();
 
-    // Free Tle dll
-    FreeTleDll();
+    // Free EnvConst dll
+    FreeEnvConstDll();
 
-    // Free Sgp4Prop dll
-    FreeSgp4PropDll();
+    // Create log message variables
+    std::string logMsgStr;
+    char logMsg[128];
+    // Log tracker stop time
+    time_t rawtime;
+    time(&rawtime);
+    strftime(logMsg, 128,"astroTracker Stop: %c", localtime(&rawtime));
+    LogMessage(logMsg);
+    CloseLogFile();
+
+    // Free MainDll dll
+    FreeDllMainDll();
+
+    #ifndef __Win32
+    fflush(stdout);
+    std::cout.flush(); // Empty any output buffers
+    dup2(stdout_fd, STDOUT_FILENO); // Reset STDOUT to original info
+    close(stdout_fd); // Close temp var
+    #endif
 }
 
-//================================================ File Loading Functions ============================
+//================================================ Satellite Loading Functions ============================
 
 // Load satellite objects from either .json or .tle file
 void astroTracker::loadFromFile(std::string FILENAME){
     if(FILENAME.substr(FILENAME.length()-5) == ".json"){
-        std::cout << "Loading json file" << std::endl;
+        // std::cout << "Loading json file" << std::endl;
         std::ifstream jsonFile(FILENAME);
         json j = json::parse(jsonFile);
 
-        for(int i = 0; i < j.size()-1; i++){
-            loadFromJson(j[i]);
+        for(int i = 0; i < j.size(); i++){
+            loadFromJson(j.at(i));
         }
 
     }
     else if(FILENAME.substr(FILENAME.length()-4) == ".tle"){
         //TleLoadFile(&FILENAME[0]);
-        std::cout << "Loading TLE file" << std::endl;
+        // std::cout << "Loading TLE file" << std::endl;
 
         std::ifstream tleFile(FILENAME);
         std::string name, line1, line2;
@@ -242,11 +293,11 @@ void astroTracker::loadFromFile(std::string FILENAME){
 // Load satellite objects from OMM json object
 void astroTracker::loadFromJson(json omm){
     char satName[8]; 
-    std::string satNameStr = omm["OBJECT_ID"].get<std::string>();
+    std::string satNameStr = omm.at("OBJECT_ID").get<std::string>();
     satNameStr.erase(remove(satNameStr.begin(), satNameStr.end(), '-'), satNameStr.end());
     satNameStr.copy(satName, 8);
 
-    std::string epochStr = omm["EPOCH"].get<std::string>();
+    std::string epochStr = omm.at("EPOCH").get<std::string>();
     //Year
     int epochYr = std::stoi(epochStr.substr(0,4));
     //Month
@@ -260,22 +311,22 @@ void astroTracker::loadFromJson(json omm){
     //Second
     epochDays += (std::stod(epochStr.substr(17, 9)) / (24 * 60 * 60));
 
-    loadedSats.push_back(satellite(omm["OBJECT_NAME"].get<std::string>(),
-            omm["NORAD_CAT_ID"].get<int>(),
-            omm["CLASSIFICATION_TYPE"].get<std::string>()[0],
+    loadedSats.push_back(satellite(omm.at("OBJECT_NAME").get<std::string>(),
+            omm.at("NORAD_CAT_ID").get<int>(),
+            omm.at("CLASSIFICATION_TYPE").get<std::string>()[0],
             satName,
             epochYr,
             epochDays,
-            omm["BSTAR"].get<double>(),
-            omm["EPHEMERIS_TYPE"].get<int>(),
-            omm["ELEMENT_SET_NO"].get<int>(),
-            omm["INCLINATION"].get<double>(),
-            omm["RA_OF_ASC_NODE"].get<double>(),
-            omm["ECCENTRICITY"].get<double>(),
-            omm["ARG_OF_PERICENTER"].get<double>(),
-            omm["MEAN_ANOMALY"].get<double>(),
-            omm["MEAN_MOTION"].get<double>(),
-            omm["REV_AT_EPOCH"].get<int>()));
+            omm.at("BSTAR").get<double>(),
+            omm.at("EPHEMERIS_TYPE").get<int>(),
+            omm.at("ELEMENT_SET_NO").get<int>(),
+            omm.at("INCLINATION").get<double>(),
+            omm.at("RA_OF_ASC_NODE").get<double>(),
+            omm.at("ECCENTRICITY").get<double>(),
+            omm.at("ARG_OF_PERICENTER").get<double>(),
+            omm.at("MEAN_ANOMALY").get<double>(),
+            omm.at("MEAN_MOTION").get<double>(),
+            omm.at("REV_AT_EPOCH").get<int>()));
 
 }
 
@@ -288,7 +339,7 @@ void astroTracker::loadFromTLE(std::string name, std::string line1, std::string 
 
 std::vector<std::string> astroTracker::getSatNames(){
     std::vector<std::string> satNames;
-    for(int i = 0; i<loadedSats.capacity(); i++){
+    for(int i = 0; i < loadedSats.size(); i++){
         satNames.push_back(loadedSats[i].getSatelliteName());
     }
     return satNames;
@@ -394,7 +445,6 @@ void astroTracker::getSunAndMoonPosECR(double posSunECR[3], double posMoonECR[3]
     if(posTime_ds50UTC == -1){
         posTime_ds50UTC = getCurrTime_ds50UTC();
     }
-    std::cout << posTime_ds50UTC << std::endl;
     double sunVecMag, moonVecMag, posSunTEME[3], posMoonTEME[3], tempLLH[3];
     CompSunMoonPos(posTime_ds50UTC, posSunTEME, &sunVecMag, posMoonTEME, &moonVecMag);
     double velSunTEME[3] = {0, 0, 0}, velSunECR[3] = {0, 0, 0};
