@@ -134,6 +134,37 @@ __int64 satellite::getSatKey(){
     return satKey;
 }
 
+// Vector update code from defunct kinematicState class
+/*
+// Updates vector components using stored satKey
+bool kinematicState::updateECR(){
+    time_t rawUpdateTime;
+    time(&rawUpdateTime);
+    tm * updateTime = gmtime(&rawUpdateTime);
+
+    double updateTime_ds50UTC = TimeComps1ToUTC((updateTime->tm_year + 1900),
+                                                    updateTime->tm_yday,
+                                                    updateTime->tm_hour,
+                                                    updateTime->tm_min,
+                                                    (double)updateTime->tm_sec);
+
+    double posEFG[3], velEFG[3];
+
+    ECIToEFGTime(updateTime_ds50UTC,
+                    xyz,
+                    xyz_dot,
+                    posEFG,
+                    velEFG);
+    
+    EFGToECRTime(updateTime_ds50UTC,
+                    posEFG,
+                    velEFG,
+                    xyz_ECR,
+                    xyz_dot_ECR);
+    
+    return true;
+}
+*/
 
 
 // Load all the dlls being used in the program
