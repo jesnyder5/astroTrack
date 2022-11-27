@@ -37,7 +37,7 @@ int main(){
 
 
     test.printSatPosTEME("NOAA 15");
-
+    test.printSatLA("NOAA 15");
 
     finishTime = clock();
     std::cout 

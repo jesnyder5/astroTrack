@@ -46,16 +46,23 @@ public:
     
     void getSunAndMoonPosECR(double posSunECR[3], double posMoonECR[3], double posTime_ds50UTC=-1);
 
+    // Print satellite current position vector in TEME (demo function)
     void printSatPosTEME(std::string satName);
+
+    // Print satellite current look angle
+    void printSatLA(std::string satName);
 
 private:
     // Vector containing loaded satellite
     std::vector<satellite> loadedSats;
 
-    //Satellite Loading Functions
+    // Satellite Loading Functions
     void loadFromFile(std::string FILENAME);
     void loadFromJson(json omm);
     void loadFromTLE(std::string name, std::string line1, std::string line2);
+
+    // Local sensor initialization
+    bool sensorInit(); // Have the user define some parameters for this
 
     // ===== Astrodynamics Standards Library initialization functions =====
 
@@ -68,7 +75,7 @@ private:
     // Free dlls
     void FreeAstroStdDlls();
 
-    //Utility Functions
+    // ===== Utility Functions =====
 
 
     double getCurrTime_ds50UTC();

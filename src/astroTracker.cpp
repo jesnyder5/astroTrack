@@ -23,14 +23,21 @@
 #define ASTDYN_STD
 // Provided Astrodynamics Standards library wrappers
 extern "C" {
-#include "DllMainDll_Service.h"
-#include "TimeFuncDll_Service.h"
 #include "DllMainDll.h"
+#include "DllMainDll_Service.h"
 #include "EnvConstDll.h"
-#include "AstroFuncDll.h"
 #include "TimeFuncDll.h"
+#include "TimeFuncDll_Service.h"
+#include "AstroFuncDll.h"
 #include "TleDll.h"
 #include "Sgp4PropDll.h"
+
+// #include "SensorDll.h"
+// #include "SensorDll_Service.h"
+// #include "ObsDll.h"
+// #include "ObsDll_Service.h"
+// #include "LamodDll.h"
+// #include "LamodDll_Service.h"
 }
 #endif
 
@@ -101,16 +108,17 @@ astroTracker::~astroTracker(){
     FreeAstroStdDlls();
 }
 
+//================================================ Initialization Functions ============================
 
 // Load all the dlls being used in the program
 void astroTracker::LoadAstroStdDlls(){
     // Library wrappers output loading messages to STDOUT. This will redirect to somewhere else
     // POSIX centric solution
-    #ifndef __Win32
-    fflush(stdout);
-    int stdout_fd = dup(STDOUT_FILENO); // Copy STDOUT info to temp var
-    freopen("/dev/null", "w", stdout); // Reopen STDOUT to write to /dev/null for now. 
-    #endif
+    // #ifndef __Win32
+    // fflush(stdout);
+    // int stdout_fd = dup(STDOUT_FILENO); // Copy STDOUT info to temp var
+    // freopen("/dev/null", "w", stdout); // Reopen STDOUT to write to /dev/null for now. 
+    // #endif
 
     // Load MainDll dll
     LoadDllMainDll();
@@ -130,12 +138,18 @@ void astroTracker::LoadAstroStdDlls(){
     // Load Sgp4Prop dll and assign function pointers
     LoadSgp4PropDll();
 
-    #ifndef __Win32
-    fflush(stdout);
-    std::cout.flush(); // Empty any output buffers
-    dup2(stdout_fd, STDOUT_FILENO); // Reset STDOUT to original info
-    close(stdout_fd); // Close temp var
-    #endif
+    // LoadSensorDll();
+
+    // LoadObsDll();
+
+    // LoadLamodDll(); // ITAR restrictions, can't use
+
+    // #ifndef __Win32
+    // fflush(stdout);
+    // std::cout.flush(); // Empty any output buffers
+    // dup2(stdout_fd, STDOUT_FILENO); // Reset STDOUT to original info
+    // close(stdout_fd); // Close temp var
+    // #endif
 }
 
 // Initialize all the dlls being used in the program
@@ -177,7 +191,22 @@ void astroTracker::InitAstroStdDlls(){
     errCode = Sgp4Init(apPtr);
     if (errCode != 0)
         ShowMsgAndTerminate();
+
+    // errCode = SensorInit(apPtr);
+    // if (errCode != 0)
+    //     ShowMsgAndTerminate();
+
+    // errCode = ObsInit(apPtr);
+    // if (errCode != 0)
+    //     ShowMsgAndTerminate();
+
+    // errCode = LamodInit(apPtr);
+    // if (errCode != 0)
+    //     ShowMsgAndTerminate();
     
+    // Temp call until user input implemented
+    sensorInit();
+
     // Version Info
     /*
     std::cout << std::endl;
@@ -213,11 +242,20 @@ void astroTracker::InitAstroStdDlls(){
 void astroTracker::FreeAstroStdDlls(){
     // Library wrappers output loading messages to STDOUT. This will redirect to somewhere else
     // POSIX centric solution
-    #ifndef __Win32
-    fflush(stdout);
-    int stdout_fd = dup(STDOUT_FILENO); // Copy STDOUT info to temp var
-    freopen("/dev/null", "w", stdout); // Reopen STDOUT to write to /dev/null for now. 
-    #endif
+    // #ifndef __Win32
+    // fflush(stdout);
+    // int stdout_fd = dup(STDOUT_FILENO); // Copy STDOUT info to temp var
+    // freopen("/dev/null", "w", stdout); // Reopen STDOUT to write to /dev/null for now. 
+    // #endif
+
+    // // Free LaMod dll
+    // FreeLamodDll();
+
+    // // Free Ops dll
+    // FreeObsDll();
+
+    // // Free Sensor dll
+    // FreeSensorDll();
 
     // Free Sgp4Prop dll
     FreeSgp4PropDll();
@@ -247,14 +285,60 @@ void astroTracker::FreeAstroStdDlls(){
     // Free MainDll dll
     FreeDllMainDll();
 
-    #ifndef __Win32
-    fflush(stdout);
-    std::cout.flush(); // Empty any output buffers
-    dup2(stdout_fd, STDOUT_FILENO); // Reset STDOUT to original info
-    close(stdout_fd); // Close temp var
-    #endif
+    // #ifndef __Win32
+    // fflush(stdout);
+    // std::cout.flush(); // Empty any output buffers
+    // dup2(stdout_fd, STDOUT_FILENO); // Reset STDOUT to original info
+    // close(stdout_fd); // Close temp var
+    // #endif
 }
+/*
+bool astroTracker::sensorInit(){
+    // Get ECR location
+    double metricLLH[3] = {39.05, -76.65, 0.04}, // TEST CASE
+           posEFG[3] = {0,0,0},
+           posECR[3] = {0,0,0},
+           ds50UTCcurr;
 
+    // Swap Earth model for GPS (WGS72 -> WGS84)
+    EnvSetGeoIdx(84);
+
+    // Convert Geodetic coordinates to ECR (via EFG)
+    LLHToEFGPos(metricLLH, posEFG);
+    
+    // Calculate current time in ds50UT1
+    std::time_t t = std::time(0);
+    tm* now = std::localtime(&t);
+    // Replace relevant tm fields with GPS time?
+    ds50UTCcurr = TimeComps2ToUTC(
+            now->tm_year,
+            now->tm_mon,
+            now->tm_mday,
+            now->tm_hour,
+            now->tm_min,
+            now->tm_sec
+    );
+
+    EFGToECRTime(ds50UTCcurr, posEFG, {0}, posECR, {0});
+
+    // Swap Earth model back to WGS72 for SGP4 propagation
+    EnvSetGeoIdx(72);
+    
+    char senDesc[] = "astroTracker User Loc";
+
+    // Create sensor
+    SensorSetLocAll(
+        005, // senKey
+        metricLLH[0], // astroLat (not sure how to do astronomical coordinate conversion)
+        metricLLH[1], // astroLon
+        posECR, // sensor ECR position
+        senDesc, // sensor description [24]
+        0, // 0 for ground-based
+        'U' // unclassified
+    );
+    return true;
+}
+*/
 //================================================ Satellite Loading Functions ============================
 
 // Load satellite objects from either .json or .tle file
@@ -478,6 +562,35 @@ void astroTracker::printSatPosTEME(std::string satName){
     << subjectPosTEME[1] << ", " 
     << subjectPosTEME[2] << ")"
     << std::endl;
+}
+
+void astroTracker::printSatLA(std::string satName){
+    satellite subjectSat = satellite();
+    for(int i = 0; i < loadedSats.size(); i++){
+        if(loadedSats.at(i).getSatelliteName()==satName){
+            subjectSat = loadedSats.at(i);
+        }
+    }
+    double subject_ds50UTC = getCurrTime_ds50UTC();
+    __int64 subjectSatKey = subjectSat.getSatKey();
+
+    // LamodSet1pAll(
+    //     1,
+    //     subject_ds50UTC,
+    //     subject_ds50UTC+300.0,
+    //     30,
+    //     0,
+    //     0,
+    //     0,
+    //     0,
+    //     'O',
+    //     0,
+    //     45.0
+    // );
+    // __int64 subject_senSatKey = LamodInitSenSat(005, subjectSatKey);
+    // std::cout << subjectSat.getSatelliteName() << " passes overhead "
+    //     << LamodGetNumPasses(subject_senSatKey) << "times." 
+    //     << std::endl;
 }
 
 
