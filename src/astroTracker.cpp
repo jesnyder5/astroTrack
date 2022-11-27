@@ -205,7 +205,7 @@ void astroTracker::InitAstroStdDlls(){
     //     ShowMsgAndTerminate();
     
     // Temp call until user input implemented
-    sensorInit();
+    // sensorInit();
 
     // Version Info
     /*
