@@ -7,4 +7,6 @@ LIB_PATH=$SCRIPT_DIR/lib/ # Append library directory to script location
 echo "Setting LD_LIBRARY_PATH to "$LIB_PATH
 export LD_LIBRARY_PATH=$LIB_PATH # Send appended variable to environment
 
+# Check for gnuplot (for matplotplusplus)
+
 ./build/astroTrack # Start program within shell containing modified environment

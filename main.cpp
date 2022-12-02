@@ -27,16 +27,16 @@ int main(){
 
     astroTracker test(file);
 
-    double posSunTEME[3], posMoonTEME[3], posSunECR[3], posMoonECR[3];
-    test.getSunAndMoonPosTEME(posSunTEME, posMoonTEME);
-    test.getSunAndMoonPosECR(posSunECR, posMoonECR);
-    std::cout << "Sun Position Vector (TEME): " << posSunTEME[0] << " " << posSunTEME[1] << " " << posSunTEME[2] << std::endl;
-    std::cout << "Sun Position Vector (ECR): " << posSunECR[0] << " " << posSunECR[1] << " " << posSunECR[2] << std::endl;
-    std::cout << "Moon Position Vector (TEME): " << posMoonTEME[0] << " " << posMoonTEME[1] << " " << posMoonTEME[2] << std::endl;
-    std::cout << "Moon Position Vector (ECR): " << posMoonECR[0] << " " << posMoonECR[1] << " " << posMoonECR[2] << std::endl;
+    // double posSunTEME[3], posMoonTEME[3], posSunECR[3], posMoonECR[3];
+    // test.getSunAndMoonPosTEME(posSunTEME, posMoonTEME);
+    // test.getSunAndMoonPosECR(posSunECR, posMoonECR);
+    // std::cout << "Sun Position Vector (TEME): " << posSunTEME[0] << " " << posSunTEME[1] << " " << posSunTEME[2] << std::endl;
+    // std::cout << "Sun Position Vector (ECR): " << posSunECR[0] << " " << posSunECR[1] << " " << posSunECR[2] << std::endl;
+    // std::cout << "Moon Position Vector (TEME): " << posMoonTEME[0] << " " << posMoonTEME[1] << " " << posMoonTEME[2] << std::endl;
+    // std::cout << "Moon Position Vector (ECR): " << posMoonECR[0] << " " << posMoonECR[1] << " " << posMoonECR[2] << std::endl;
 
 
-    test.printSatPosTEME("NOAA 15");
+    // test.printSatPosTEME("NOAA 15");
     test.graphSatGroundtrack("NOAA 15");
 
     finishTime = clock();

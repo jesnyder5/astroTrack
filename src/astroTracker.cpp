@@ -607,17 +607,36 @@ void astroTracker::graphSatGroundtrack(std::string satName){
     double subject_ds50UTC = getCurrTime_ds50UTC();
     __int64 subjectSatKey = subjectSat.getSatKey();
 
-    double startTime = subject_ds50UTC - 1.5;
-    double endTime = subject_ds50UTC + 1.5;
+    double startTime = subject_ds50UTC - 0.125;
+    double endTime = subject_ds50UTC + 0.125;
     double subject_LLH[] = {0,0,0};
-    std::vector<double> groundTrack_Lat, groundTrack_Lon;
-    for(double i = startTime; i < endTime; i += ((endTime-startTime)/50)){
-        Sgp4PropDs50UtcLLH(subjectSatKey, (startTime+i), subject_LLH);
-        groundTrack_Lat.push_back(subject_LLH[0]);
-        groundTrack_Lon.push_back(subject_LLH[1]);
+    double subject_Pos[] = {0,0,0};
+    std::vector<double> groundtrack_Lat, groundtrack_Lon;
+
+    for(double i = startTime; i < endTime; i += ((endTime-startTime)/500)){
+        Sgp4PropDs50UtcPos(subjectSatKey, (startTime+i), subject_Pos);
+        EnvSetGeoIdx(84); // Set GeoId for modern GPS coords
+        XYZToLLHTime(i, subject_Pos, subject_LLH);
+        EnvSetGeoIdx(72); // Reset GeoId to default for SGP4
+        groundtrack_Lat.push_back(subject_LLH[0]);
+        groundtrack_Lon.push_back(subject_LLH[1]);
     }
-    
-    matplot::geoplot(groundTrack_Lat, groundTrack_Lon, "g-*");
+
+    for(int i = 0; i < groundtrack_Lon.size(); i++){
+        if(groundtrack_Lon.at(i) > 180){
+            while(groundtrack_Lon.at(i) > 180){
+                groundtrack_Lon.at(i) -= 180;
+            }
+            groundtrack_Lon.at(i) -= 180;
+        }
+    }    
+
+    std::cout << "Lat Lon" << std::endl;
+    for(int i = 0; i < groundtrack_Lat.size(); i++){
+        std::cout << groundtrack_Lat.at(i) << " " << groundtrack_Lon.at(i) << std::endl;
+    }
+
+    matplot::geoplot(groundtrack_Lat, groundtrack_Lon);
     matplot::geolimits({-90, 90}, {-180, 180});
 
     matplot::show();

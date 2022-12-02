@@ -1,6 +1,7 @@
-cmake_minimum_required(VERSION 3.0.0)
+cmake_minimum_required(VERSION 3.14.0)
 project(astroTrack VERSION 0.1.0)
 
+include(FetchContent)
 include(CTest)
 enable_testing()
 
@@ -58,7 +59,15 @@ set(SERVICE_FILES
         ${CMAKE_CURRENT_SOURCE_DIR}/services/TleDll_Service.c
 )
 
-add_subdirectory(matplotplusplus)
+find_package(Matplot++ QUIET)
+if(NOT Matplot++_FOUND)
+        FetchContent_Declare(matplotplusplus GIT_REPOSITORY https://github.com/alandefreitas/matplotplusplus GIT_TAG origin/master)
+        FetchContent_GetProperties(matplotplusplus)
+        if(NOT matplotplusplus_POPULATED)
+                FetchContent_Populate(matplotplusplus)
+                add_subdirectory(${matplotplusplus_SOURCE_DIR} ${matplotplusplus_BINARY_DIR} EXCLUDE_FROM_ALL)
+        endif()
+endif()
 
 add_executable(astroTrack ${SRC_FILES} ${WRAPPER_FILES} ${SERVICE_FILES})
 
