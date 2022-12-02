@@ -58,9 +58,11 @@ set(SERVICE_FILES
         ${CMAKE_CURRENT_SOURCE_DIR}/services/TleDll_Service.c
 )
 
+add_subdirectory(matplotplusplus)
+
 add_executable(astroTrack ${SRC_FILES} ${WRAPPER_FILES} ${SERVICE_FILES})
 
-target_link_libraries(astroTrack ${CMAKE_DL_LIBS})
+target_link_libraries(astroTrack ${CMAKE_DL_LIBS} matplot)
 target_include_directories(astroTrack PUBLIC 
                                 ${CMAKE_CURRENT_SOURCE_DIR}/include
                                 ${CMAKE_CURRENT_SOURCE_DIR}/wrappers

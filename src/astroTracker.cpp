@@ -13,6 +13,7 @@
 #include <fstream>
 #include "stdlib.h"
 #include "time.h"
+#include <matplot/matplot.h>
 
 #ifndef __Win32
 #include <unistd.h>
@@ -591,8 +592,37 @@ void astroTracker::printSatLA(std::string satName){
     // std::cout << subjectSat.getSatelliteName() << " passes overhead "
     //     << LamodGetNumPasses(subject_senSatKey) << "times." 
     //     << std::endl;
+
+    double subject_pos[] = {0,0,0};
+    Sgp4PropDs50UtcPos(subjectSatKey, subject_ds50UTC, subject_pos);
 }
 
+void astroTracker::graphSatGroundtrack(std::string satName){
+    satellite subjectSat = satellite();
+    for(int i = 0; i < loadedSats.size(); i++){
+        if(loadedSats.at(i).getSatelliteName()==satName){
+            subjectSat = loadedSats.at(i);
+        }
+    }
+    double subject_ds50UTC = getCurrTime_ds50UTC();
+    __int64 subjectSatKey = subjectSat.getSatKey();
+
+    double startTime = subject_ds50UTC - 1.5;
+    double endTime = subject_ds50UTC + 1.5;
+    double subject_LLH[] = {0,0,0};
+    std::vector<double> groundTrack_Lat, groundTrack_Lon;
+    for(double i = startTime; i < endTime; i += ((endTime-startTime)/50)){
+        Sgp4PropDs50UtcLLH(subjectSatKey, (startTime+i), subject_LLH);
+        groundTrack_Lat.push_back(subject_LLH[0]);
+        groundTrack_Lon.push_back(subject_LLH[1]);
+    }
+    
+    matplot::geoplot(groundTrack_Lat, groundTrack_Lon, "g-*");
+    matplot::geolimits({-90, 90}, {-180, 180});
+
+    matplot::show();
+
+}
 
 //================================================ Utility Functions =================================
 

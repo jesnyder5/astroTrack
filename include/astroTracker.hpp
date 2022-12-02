@@ -52,6 +52,12 @@ public:
     // Print satellite current look angle
     void printSatLA(std::string satName);
 
+    // Display graph of satellite orbit using matplotplusplus
+    void graphSatOrbit(std::string satName);
+
+    // Display graph of satellite groundtrack using matplotplusplus
+    void graphSatGroundtrack(std::string satName);
+
 private:
     // Vector containing loaded satellite
     std::vector<satellite> loadedSats;
