@@ -22,8 +22,8 @@ int main(){
     startTime = clock();
 
     std::string file;
-    file = "omm-weather.json";
-    // file = "weather2.tle";
+    // file = "omm-weather.json";
+    file = "weather.tle";
 
     astroTracker test(file);
 
@@ -37,6 +37,10 @@ int main(){
 
 
     // test.printSatPosTEME("NOAA 15");
+    // std::vector<std::string> satNames = test.getSatNames();
+    // for(int i = 0; i < satNames.size(); i++){
+    //     std::cout << satNames.at(i) << "." << std::endl;
+    // }
     test.graphSatGroundtrack("NOAA 15");
 
     finishTime = clock();
