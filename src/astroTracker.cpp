@@ -600,35 +600,26 @@ void astroTracker::printSatLA(std::string satName){
     Sgp4PropDs50UtcPos(subjectSatKey, subject_ds50UTC, subject_pos);
 }
 
-void astroTracker::graphSatGroundtrack(std::string satName){
+void astroTracker::graphSatGroundtrack(std::string satName, double backwardsHours, double forwardHours){
     satellite subjectSat = satellite();
     for(int i = 0; i < loadedSats.size(); i++){
-        if(loadedSats.at(i).getSatelliteName()==satName){
+        if(loadedSats.at(i).getSatelliteName() == satName){
             std::cout << "Found satellite: " << satName << std::endl;
             subjectSat = loadedSats.at(i);
+            break;
         }
     }
     double subject_ds50UTC = getCurrTime_ds50UTC();
     __int64 subjectSatKey = subjectSat.getSatKey();
 
-    double startTime = subject_ds50UTC - 0.125;
-    double endTime = subject_ds50UTC + 0.125;
+    double startTime = subject_ds50UTC - (backwardsHours/24);
+    double endTime = subject_ds50UTC + (forwardHours/24);
     double subject_LLH[] = {0,0,0};
     double subject_Pos[] = {0,0,0};
     std::vector<double> groundtrack_Lat, groundtrack_Lon, groundtrack_Times;
     std::vector<std::vector<double>> groundtrack_Lat_split, groundtrack_Lon_split;
     groundtrack_Lat_split.push_back(groundtrack_Lat);
     groundtrack_Lon_split.push_back(groundtrack_Lon);
-
-    // Sgp4PropDs50UtcPos(subjectSatKey, startTime, subject_Pos);
-    // std::cout << subject_Pos[0] << " " << subject_Pos[1] << " " << subject_Pos[2] << std::endl;
-    // XYZToLLHTime(startTime, subject_Pos, subject_LLH);
-    // std::cout << subject_LLH[0] << " " << subject_LLH[1] << " " << subject_LLH[2] << std::endl;
-    // EnvSetGeoIdx(84); // Set GeoId for modern GPS coords
-    // XYZToLLHTime(startTime, subject_Pos, subject_LLH);
-    // EnvSetGeoIdx(72); // Reset GeoId to default for SGP4
-    // std::cout << subject_LLH[0] << " " << subject_LLH[1] << " " << subject_LLH[2] << std::endl;
-
 
     for(double i = startTime; i < endTime; i += ((endTime-startTime)/2000)){
         Sgp4PropDs50UtcPos(subjectSatKey, i, subject_Pos);
@@ -640,12 +631,6 @@ void astroTracker::graphSatGroundtrack(std::string satName){
         groundtrack_Times.push_back(i);
     }
 
-    // std::cout << "Lat Lon" << std::endl;
-    // for(int i = 0; i < groundtrack_Lat.size(); i++){
-    //     std::cout << groundtrack_Lat.at(i) << " " << groundtrack_Lon.at(i) << std::endl;
-    // }
-    // std::cout << std::endl;
-
     bool satLocSplit = true;
     int ind = 0;
     for(int i = 0; i < groundtrack_Lon.size(); i++){
@@ -655,13 +640,15 @@ void astroTracker::graphSatGroundtrack(std::string satName){
             }
             groundtrack_Lon.at(i) -= 180;
         }
-        if(((subject_ds50UTC - 0.01) <= groundtrack_Times.at(i)) && (groundtrack_Times.at(i) <= (subject_ds50UTC + 0.01)) && satLocSplit){
+        if(((subject_ds50UTC - 0.001) <= groundtrack_Times.at(i)) && (groundtrack_Times.at(i) <= (subject_ds50UTC + 0.001)) && satLocSplit){
             subject_LLH[1] = groundtrack_Lon.at(i);
             satLocSplit = false;
             std::vector<double> temp;
-            groundtrack_Lat_split.push_back(temp);
-            groundtrack_Lon_split.push_back(temp);
-            ind++;
+            if(i > 0){
+                groundtrack_Lat_split.push_back(temp);
+                groundtrack_Lon_split.push_back(temp);
+                ind++;
+            }
             groundtrack_Lat_split.at(ind).push_back(groundtrack_Lat.at(i));
             groundtrack_Lon_split.at(ind).push_back(groundtrack_Lon.at(i));
             groundtrack_Lat_split.push_back(temp);
@@ -682,27 +669,8 @@ void astroTracker::graphSatGroundtrack(std::string satName){
         groundtrack_Lon_split.at(ind).push_back(groundtrack_Lon.at(i));
     }
 
-    // std::cout << "Lat Lon" << std::endl;
-    // for(int i = 0; i < groundtrack_Lat_split.size(); i++){
-    //     std::cout << i << std::endl;
-    //     for(int j = 0; j < groundtrack_Lat_split.at(i).size(); j++){
-    //         std::cout << groundtrack_Lat_split.at(i).at(j) << " " << groundtrack_Lon_split.at(i).at(j) << std::endl;
-    //     }
-    // }
-
-    // std::cout << groundtrack_Lon.size() << std::endl;
-    // int count = 0;
-    // for(int i = 0; i < groundtrack_Lon_split.size(); i++){
-    //     count += groundtrack_Lon_split.at(i).size();
-    // }
-    // std::cout << count << std::endl;
-
-    // matplot::geoplot(groundtrack_Lat, groundtrack_Lon);
-
     std::string groundTrack_Line = "r-";
-    matplot::geoplot(groundtrack_Lat_split.at(0), groundtrack_Lon_split.at(0), groundTrack_Line);
-    matplot::hold(true);
-    for(int i = 1; i < groundtrack_Lat_split.size(); i++){
+    for(int i = 0; i < groundtrack_Lon_split.size(); i++){
         if(groundtrack_Lon_split.at(i).at(0) == subject_LLH[1]){
             matplot::geoplot(groundtrack_Lat_split.at(i), groundtrack_Lon_split.at(i), "p-*")->marker_size(10);
             groundTrack_Line = "b-";
@@ -711,9 +679,8 @@ void astroTracker::graphSatGroundtrack(std::string satName){
         matplot::geoplot(groundtrack_Lat_split.at(i), groundtrack_Lon_split.at(i), groundTrack_Line);
     }
     matplot::geolimits({-90, 90}, {-180, 180});
-
-    matplot::show();
-
+    matplot::wait();
+    matplot::cla();
 }
 
 //================================================ Utility Functions =================================
@@ -725,10 +692,10 @@ double astroTracker::getCurrTime_ds50UTC(){
     tm * currTime = gmtime(&rawCurrTime);
 
     return TimeComps1ToUTC((currTime->tm_year + 1900),
-                                                    currTime->tm_yday,
-                                                    currTime->tm_hour,
-                                                    currTime->tm_min,
-                                                    (double)currTime->tm_sec);
+                            (currTime->tm_yday + 1),
+                            currTime->tm_hour,
+                            currTime->tm_min,
+                            (double)currTime->tm_sec);
 
 }
 

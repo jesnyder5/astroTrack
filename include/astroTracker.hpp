@@ -56,7 +56,7 @@ public:
     void graphSatOrbit(std::string satName);
 
     // Display graph of satellite groundtrack using matplotplusplus
-    void graphSatGroundtrack(std::string satName);
+    void graphSatGroundtrack(std::string satName, double backwardsHours, double forwardHours);
 
 private:
     // Vector containing loaded satellite
