@@ -600,87 +600,94 @@ void astroTracker::printSatLA(std::string satName){
     Sgp4PropDs50UtcPos(subjectSatKey, subject_ds50UTC, subject_pos);
 }
 
-void astroTracker::graphSatGroundtrack(std::string satName, double backwardsHours, double forwardHours){
-    satellite subjectSat = satellite();
+bool astroTracker::graphSatGroundTrack(std::string subject_SatName, double backwardsHours, double forwardHours){
+    // Find subject satellite's satkey in loadedSats vector by satellite name
+    __int64 subject_SatKey = -1;
     for(int i = 0; i < loadedSats.size(); i++){
-        if(loadedSats.at(i).getSatelliteName() == satName){
-            std::cout << "Found satellite: " << satName << std::endl;
-            subjectSat = loadedSats.at(i);
+        if(loadedSats.at(i).getSatelliteName() == subject_SatName){
+            std::cout << "Found satellite: " << subject_SatName << std::endl;
+            subject_SatKey = loadedSats.at(i).getSatKey();
             break;
         }
     }
-    double subject_ds50UTC = getCurrTime_ds50UTC();
-    __int64 subjectSatKey = subjectSat.getSatKey();
-
-    double startTime = subject_ds50UTC - (backwardsHours/24);
-    double endTime = subject_ds50UTC + (forwardHours/24);
-    double subject_LLH[] = {0,0,0};
-    double subject_Pos[] = {0,0,0};
-    std::vector<double> groundtrack_Lat, groundtrack_Lon, groundtrack_Times;
-    std::vector<std::vector<double>> groundtrack_Lat_split, groundtrack_Lon_split;
-    groundtrack_Lat_split.push_back(groundtrack_Lat);
-    groundtrack_Lon_split.push_back(groundtrack_Lon);
-
-    for(double i = startTime; i < endTime; i += ((endTime-startTime)/2000)){
-        Sgp4PropDs50UtcPos(subjectSatKey, i, subject_Pos);
-        // EnvSetGeoIdx(84); // Set GeoId for modern GPS coords
-        XYZToLLHTime(i, subject_Pos, subject_LLH);
-        // EnvSetGeoIdx(72); // Reset GeoId to default for SGP4
-        groundtrack_Lat.push_back(subject_LLH[0]);
-        groundtrack_Lon.push_back(subject_LLH[1]);
-        groundtrack_Times.push_back(i);
+    // If the subject satellite isn't in the database print error and return false
+    if(subject_SatKey == -1){
+        std::cout << "Error: Could not find " << subject_SatName << "in satellite database" << std::endl;
+        return false;
     }
 
-    bool satLocSplit = true;
+    double subject_ds50UTC = getCurrTime_ds50UTC(); // Get the current time
+    // Create ground track time window
+    double startTime = subject_ds50UTC - (backwardsHours/24);
+    double endTime = subject_ds50UTC + (forwardHours/24);
+    // Create position arrays
+    double subject_LLH[] = {0,0,0};
+    double subject_Pos[] = {0,0,0};
+
+    // matplot++ uses vectors of latitude and longitude for geoplot
+    // matplot++'s geoplot won't handle lines that cross the 180 meridian, so a vector of vectors is used to hold coordinates
+    std::vector<std::vector<double>> groundTrack_Lat_split, groundTrack_Lon_split;
+    std::vector<double> vectorStarter;
+    groundTrack_Lat_split.push_back(vectorStarter);
+    groundTrack_Lon_split.push_back(vectorStarter);
+
+
+    double satLon = -1000;
     int ind = 0;
-    for(int i = 0; i < groundtrack_Lon.size(); i++){
-        if(groundtrack_Lon.at(i) > 180){
-            while(groundtrack_Lon.at(i) > 180){
-                groundtrack_Lon.at(i) -= 180;
+    for(double pointTime = startTime; pointTime < endTime; pointTime += ((endTime-startTime)/2000)){ // 2000 time divisions should be more than enough to create smooth curves
+        Sgp4PropDs50UtcPos(subject_SatKey, pointTime, subject_Pos);
+        XYZToLLHTime(pointTime, subject_Pos, subject_LLH);
+
+        // SGP4 requires the WGS-72 datum to work, while GPS coordinates now use WGS-84
+        // The Astrodynamics Standards libraries don't seem to provide a way to translate between datums, and I have not as of yet figured out how to do it manually
+        // So, for now these coordinates will just have to be a bit inaccurate
+
+        // Adjust longitudes to fit in -180 to 180
+        if(subject_LLH[1] > 180){
+            while(subject_LLH[1] > 180){
+                subject_LLH[1] -= 180;
             }
-            groundtrack_Lon.at(i) -= 180;
+            subject_LLH[1] -= 180;
         }
-        if(((subject_ds50UTC - 0.001) <= groundtrack_Times.at(i)) && (groundtrack_Times.at(i) <= (subject_ds50UTC + 0.001)) && satLocSplit){
-            subject_LLH[1] = groundtrack_Lon.at(i);
-            satLocSplit = false;
-            std::vector<double> temp;
-            if(i > 0){
-                groundtrack_Lat_split.push_back(temp);
-                groundtrack_Lon_split.push_back(temp);
+        if(((subject_ds50UTC - 0.001) <= pointTime) && (pointTime <= (subject_ds50UTC + 0.001)) && (satLon == -1000)){
+            satLon = subject_LLH[1];
+            if(pointTime > startTime){
+                groundTrack_Lat_split.push_back(vectorStarter);
+                groundTrack_Lon_split.push_back(vectorStarter);
                 ind++;
             }
-            groundtrack_Lat_split.at(ind).push_back(groundtrack_Lat.at(i));
-            groundtrack_Lon_split.at(ind).push_back(groundtrack_Lon.at(i));
-            groundtrack_Lat_split.push_back(temp);
-            groundtrack_Lon_split.push_back(temp);
+            groundTrack_Lat_split.at(ind).push_back(subject_LLH[0]);
+            groundTrack_Lon_split.at(ind).push_back(subject_LLH[1]);
+            groundTrack_Lat_split.push_back(vectorStarter);
+            groundTrack_Lon_split.push_back(vectorStarter);
             ind++;
             continue;
         }
-        if(i > 0){
-            if(((groundtrack_Lon.at(i) < -90) && (groundtrack_Lon.at(i-1) > 90)) || ((groundtrack_Lon.at(i) > 90) && (groundtrack_Lon.at(i-1) < -90))){
-                std::cout << groundtrack_Lon.at(i) << " " << groundtrack_Lon.at(i-1) << std::endl;
-                std::vector<double> temp;
-                groundtrack_Lat_split.push_back(temp);
-                groundtrack_Lon_split.push_back(temp);
+        if(pointTime > startTime){
+            if(((subject_LLH[1] < -90) && (groundTrack_Lon_split.at(ind).back() > 90)) || ((subject_LLH[1] > 90) && (groundTrack_Lon_split.at(ind).back() < -90))){
+                std::cout << subject_LLH[1] << " " << groundTrack_Lon_split.at(ind).back() << std::endl;
+                groundTrack_Lat_split.push_back(vectorStarter);
+                groundTrack_Lon_split.push_back(vectorStarter);
                 ind++;
             }
         }
-        groundtrack_Lat_split.at(ind).push_back(groundtrack_Lat.at(i));
-        groundtrack_Lon_split.at(ind).push_back(groundtrack_Lon.at(i));
+        groundTrack_Lat_split.at(ind).push_back(subject_LLH[0]);
+        groundTrack_Lon_split.at(ind).push_back(subject_LLH[1]);
     }
 
     std::string groundTrack_Line = "r-";
-    for(int i = 0; i < groundtrack_Lon_split.size(); i++){
-        if(groundtrack_Lon_split.at(i).at(0) == subject_LLH[1]){
-            matplot::geoplot(groundtrack_Lat_split.at(i), groundtrack_Lon_split.at(i), "p-*")->marker_size(10);
+    for(int i = 0; i < groundTrack_Lon_split.size(); i++){
+        if(groundTrack_Lon_split.at(i).at(0) == satLon){
+            matplot::geoplot(groundTrack_Lat_split.at(i), groundTrack_Lon_split.at(i), "p-*")->marker_size(10);
             groundTrack_Line = "b-";
             continue;
         }
-        matplot::geoplot(groundtrack_Lat_split.at(i), groundtrack_Lon_split.at(i), groundTrack_Line);
+        matplot::geoplot(groundTrack_Lat_split.at(i), groundTrack_Lon_split.at(i), groundTrack_Line);
     }
     matplot::geolimits({-90, 90}, {-180, 180});
     matplot::wait();
     matplot::cla();
+    return true;
 }
 
 //================================================ Utility Functions =================================

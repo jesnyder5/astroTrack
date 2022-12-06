@@ -41,7 +41,7 @@ int main(){
     // for(int i = 0; i < satNames.size(); i++){
     //     std::cout << satNames.at(i) << "." << std::endl;
     // }
-    test.graphSatGroundtrack("NOAA 15", 1, 1);
+    test.graphSatGroundTrack("NOAA 15", 2, 2);
 
     finishTime = clock();
     std::cout 
