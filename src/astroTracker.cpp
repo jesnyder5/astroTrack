@@ -620,27 +620,28 @@ bool astroTracker::graphSatGroundTrack(std::string subject_SatName, double backw
     // Create ground track time window
     double startTime = subject_ds50UTC - (backwardsHours/24);
     double endTime = subject_ds50UTC + (forwardHours/24);
-    // Create position arrays
+    // Create temp arrays to hold satellite position
     double subject_LLH[] = {0,0,0};
     double subject_Pos[] = {0,0,0};
 
     // matplot++ uses vectors of latitude and longitude for geoplot
-    // matplot++'s geoplot won't handle lines that cross the 180 meridian, so a vector of vectors is used to hold coordinates
+    // matplot++'s geoplot won't handle lines that cross the 180 meridian, so vectors of vectors are used to hold coordinates
     std::vector<std::vector<double>> groundTrack_Lat_split, groundTrack_Lon_split;
+    // An uninitialized double vector is needed to more easily prime sub-vectors for adding numbers
     std::vector<double> vectorStarter;
     groundTrack_Lat_split.push_back(vectorStarter);
     groundTrack_Lon_split.push_back(vectorStarter);
 
-
-    double satLon = -1000;
-    int ind = 0;
-    for(double pointTime = startTime; pointTime < endTime; pointTime += ((endTime-startTime)/2000)){ // 2000 time divisions should be more than enough to create smooth curves
-        Sgp4PropDs50UtcPos(subject_SatKey, pointTime, subject_Pos);
-        XYZToLLHTime(pointTime, subject_Pos, subject_LLH);
+    double satLon = -1000; // Current longitude of the satellite to mark it on the ground track
+    int ind = 0; // Index count for sub-vectors
+    for(double pointTime = startTime; pointTime < endTime; pointTime += ((endTime-startTime)/2000.0)){ // More divisions gives a higher track resolution
+        Sgp4PropDs50UtcPos(subject_SatKey, pointTime, subject_Pos); // Propagate satellite to pointTime
+        XYZToLLHTime(pointTime, subject_Pos, subject_LLH); // Convert propagated position to LatLon
 
         // SGP4 requires the WGS-72 datum to work, while GPS coordinates now use WGS-84
         // The Astrodynamics Standards libraries don't seem to provide a way to translate between datums, and I have not as of yet figured out how to do it manually
         // So, for now these coordinates will just have to be a bit inaccurate
+        // If I do figure out how, the implementation (or function call at least) will go here
 
         // Adjust longitudes to fit in -180 to 180
         if(subject_LLH[1] > 180){
@@ -649,45 +650,52 @@ bool astroTracker::graphSatGroundTrack(std::string subject_SatName, double backw
             }
             subject_LLH[1] -= 180;
         }
+        // Find one position close to the satellite's runtime position and split it off into its own sub-vector
         if(((subject_ds50UTC - 0.001) <= pointTime) && (pointTime <= (subject_ds50UTC + 0.001)) && (satLon == -1000)){
-            satLon = subject_LLH[1];
-            if(pointTime > startTime){
+            satLon = subject_LLH[1]; // Record runtime satellite longitude
+            if(pointTime > startTime){ // Only split before runtime position if the propagation time is greater than the start time 
                 groundTrack_Lat_split.push_back(vectorStarter);
                 groundTrack_Lon_split.push_back(vectorStarter);
                 ind++;
             }
+            // Push runtime position into the current sub-vector, then add a new sub-vector and start adding to that
             groundTrack_Lat_split.at(ind).push_back(subject_LLH[0]);
             groundTrack_Lon_split.at(ind).push_back(subject_LLH[1]);
             groundTrack_Lat_split.push_back(vectorStarter);
             groundTrack_Lon_split.push_back(vectorStarter);
             ind++;
-            continue;
+            continue; // Skip the rest of the loop to avoid adding the runtime position twice
         }
-        if(pointTime > startTime){
+        if(pointTime > startTime){ // Do this for all but the first point
+            // If the satellite is about to loop over the 180 meridian
             if(((subject_LLH[1] < -90) && (groundTrack_Lon_split.at(ind).back() > 90)) || ((subject_LLH[1] > 90) && (groundTrack_Lon_split.at(ind).back() < -90))){
-                std::cout << subject_LLH[1] << " " << groundTrack_Lon_split.at(ind).back() << std::endl;
+                std::cout << subject_LLH[1] << " " << groundTrack_Lon_split.at(ind).back() << std::endl; // debug
+                // Add a new sub-vector and start adding to that
                 groundTrack_Lat_split.push_back(vectorStarter);
                 groundTrack_Lon_split.push_back(vectorStarter);
                 ind++;
+                std::cout << "New sub-vector" << std::endl; // debug
             }
         }
+        // Add latitude and longitude to last sub-vector
         groundTrack_Lat_split.at(ind).push_back(subject_LLH[0]);
         groundTrack_Lon_split.at(ind).push_back(subject_LLH[1]);
     }
+    std::cout << "Propagation complete" << std::endl; // debug
 
-    std::string groundTrack_Line = "r-";
-    for(int i = 0; i < groundTrack_Lon_split.size(); i++){
-        if(groundTrack_Lon_split.at(i).at(0) == satLon){
-            matplot::geoplot(groundTrack_Lat_split.at(i), groundTrack_Lon_split.at(i), "p-*")->marker_size(10);
-            groundTrack_Line = "b-";
-            continue;
+    std::string groundTrack_Line = "r-"; // Set ground track line color
+    for(int i = 0; i < groundTrack_Lon_split.size(); i++){ // For each sub-vector
+        if(groundTrack_Lon_split.at(i).at(0) == satLon){ // If it is the sub-vector containing the runtime position
+            matplot::geoplot(groundTrack_Lat_split.at(i), groundTrack_Lon_split.at(i), "p-*")->marker_size(10); // Add a marker to the map
+            groundTrack_Line = "b-"; // Change the ground track line color
+            continue; // Already drew marker, skip to next loop
         }
-        matplot::geoplot(groundTrack_Lat_split.at(i), groundTrack_Lon_split.at(i), groundTrack_Line);
+        matplot::geoplot(groundTrack_Lat_split.at(i), groundTrack_Lon_split.at(i), groundTrack_Line); // Draw ground track
     }
-    matplot::geolimits({-90, 90}, {-180, 180});
-    matplot::wait();
-    matplot::cla();
-    return true;
+    matplot::geolimits({-90, 90}, {-180, 180}); // Show the whole map
+    matplot::wait(); // Make sure the user has time to see the map
+    matplot::cla(); // Clear the axes to prevent subsequent calls from drawing on top of the same map
+    return true; // Presumably, nothing broke by the time it gets down here
 }
 
 //================================================ Utility Functions =================================
