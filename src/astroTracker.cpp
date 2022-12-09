@@ -419,8 +419,8 @@ void astroTracker::loadFromJson(json omm){
 }
 
 // Load satellite objects from TLE lines and satellite name
-void astroTracker::loadFromTLE(std::string name, std::string line1, std::string line2){
-    loadedSats.push_back(satellite(name, line1, line2));
+void astroTracker::loadFromTLE(std::string subject_SatName, std::string line1, std::string line2){
+    loadedSats.push_back(satellite(subject_SatName, line1, line2));
 }
 
 //================================================ Main Functions ====================================
@@ -433,28 +433,23 @@ std::vector<std::string> astroTracker::getSatNames(){
     return satNames;
 }
 
-void astroTracker::printSatTLE(std::string name){
-/*
-    loadedSats.
+void astroTracker::printSatElset(std::string subject_SatName){
+    // Find subject satellite's satkey in loadedSats vector by satellite name
+    satellite subject_Sat = satellite();
+    for(int i = 0; i < loadedSats.size(); i++){
+        if(loadedSats.at(i).getSatelliteName() == subject_SatName){
+            std::cout << "Found satellite: " << subject_SatName << std::endl;
+            subject_Sat = loadedSats.at(i);
+            break;
+        }
+    }
+    // If the subject satellite isn't in the database print error and return
+    if(subject_Sat.getSatelliteName() == "null"){
+        std::cout << "Error: Could not find " << subject_SatName << " in satellite database" << std::endl;
+        return;
+    }
 
-    std::cout << std::endl;
-    std::cout << "satNum: " << sats[name].get<nlohmann::json>()["Norad_ID"].get<int>() << std::endl;
-    std::cout << "secClass: " << sats[name].get<nlohmann::json>()["Security_Class"].get<char>() << std::endl;
-    std::cout << "satName: " << sats[name].get<nlohmann::json>()["Intl_Des"].get<std::string>() << std::endl;
-    std::cout << "epochYr: " << sats[name].get<nlohmann::json>()["Epoch_Year"].get<int>() << std::endl;
-    std::cout << "epochDays: " << sats[name].get<nlohmann::json>()["Epoch_Days"].get<double>() << std::endl;
-    std::cout << "bstar: " << sats[name].get<nlohmann::json>()["Bstar"].get<double>() << std::endl;
-    std::cout << "ephType: " << sats[name].get<nlohmann::json>()["Eph_Type"].get<int>() << std::endl;
-    std::cout << "elsetNum: " << sats[name].get<nlohmann::json>()["Element_Set_Num"].get<int>() << std::endl;
-    std::cout << "incli: " << sats[name].get<nlohmann::json>()["Inclination"].get<double>() << std::endl;
-    std::cout << "node: " << sats[name].get<nlohmann::json>()["RA_Node"].get<double>() << std::endl;
-    std::cout << "eccen: " << sats[name].get<nlohmann::json>()["Eccentricity"].get<double>() << std::endl;
-    std::cout << "omega: " << sats[name].get<nlohmann::json>()["Arg_Perigee"].get<double>() << std::endl;
-    std::cout << "mnAnomaly: " << sats[name].get<nlohmann::json>()["Mean_Anomaly"].get<double>() << std::endl;
-    std::cout << "mnMotion: " << sats[name].get<nlohmann::json>()["Mean_Motion"].get<double>() << std::endl;
-    std::cout << "revNum: " << sats[name].get<nlohmann::json>()["Revolution_Num"].get<int>() << std::endl;
-    std::cout << std::endl;
-*/
+    subject_Sat.printSatElset();    
 }
 
 //  The following function has at least some of the logic to convert current WGS84 GPS coordinates
@@ -521,51 +516,85 @@ void astroTracker::getGPSposTEME(double posTEME[3]){
 }
 */
 
-void astroTracker::getSunAndMoonPosTEME(double posSunTEME[3], double posMoonTEME[3], double posTime_ds50UTC){
-    if(posTime_ds50UTC == -1){
-        posTime_ds50UTC = getCurrTime_ds50UTC();
+void astroTracker::getSunAndMoonPosTEME(double posSunTEME[3], double posMoonTEME[3], double subject_ds50UTC){
+    // Calculate current time, if needed
+    if(subject_ds50UTC == -1){
+        subject_ds50UTC = getCurrTime_ds50UTC();
     }
     double sunVecMag, moonVecMag;
-    CompSunMoonPos(posTime_ds50UTC, posSunTEME, &sunVecMag, posMoonTEME, &moonVecMag);
+    CompSunMoonPos(subject_ds50UTC, posSunTEME, &sunVecMag, posMoonTEME, &moonVecMag);
 }
 
-void astroTracker::getSunAndMoonPosECR(double posSunECR[3], double posMoonECR[3], double posTime_ds50UTC){
-    if(posTime_ds50UTC == -1){
-        posTime_ds50UTC = getCurrTime_ds50UTC();
+void astroTracker::getSunAndMoonPosECR(double posSunECR[3], double posMoonECR[3], double subject_ds50UTC){
+    // Calculate current time, if needed
+    if(subject_ds50UTC == -1){
+        subject_ds50UTC = getCurrTime_ds50UTC();
     }
     double sunVecMag, moonVecMag, posSunTEME[3], posMoonTEME[3], tempLLH[3];
-    CompSunMoonPos(posTime_ds50UTC, posSunTEME, &sunVecMag, posMoonTEME, &moonVecMag);
+    CompSunMoonPos(subject_ds50UTC, posSunTEME, &sunVecMag, posMoonTEME, &moonVecMag);
     double velSunTEME[3] = {0, 0, 0}, velSunECR[3] = {0, 0, 0};
-    ECIToEFGTime(posTime_ds50UTC, posSunTEME, velSunTEME, posSunECR, velSunECR);
+    ECIToEFGTime(subject_ds50UTC, posSunTEME, velSunTEME, posSunECR, velSunECR);
     double velMoonTEME[3] = {0, 0, 0}, velMoonECR[3] = {0, 0, 0};
-    ECIToEFGTime(posTime_ds50UTC, posMoonTEME, velMoonTEME, posMoonECR, velMoonECR);
+    ECIToEFGTime(subject_ds50UTC, posMoonTEME, velMoonTEME, posMoonECR, velMoonECR);
     // std::cout << velMoonECR[0] << std::endl;
-    // XYZToLLHTime(posTime_ds50UTC, posSunTEME, tempLLH); // nan start
+    // XYZToLLHTime(subject_ds50UTC, posSunTEME, tempLLH); // nan start
     // LLHToEFGPos(tempLLH, posSunECR);
     // std::cout << posSunTEME[0] << std::endl;
     // std::cout << tempLLH[0] << std::endl;
     // std::cout << posSunECR[0] << std::endl;
 
-    // XYZToLLHTime(posTime_ds50UTC, posMoonTEME, tempLLH);
+    // XYZToLLHTime(subject_ds50UTC, posMoonTEME, tempLLH);
     // LLHToEFGPos(tempLLH, posMoonECR);
 }
 
-void astroTracker::printSatPosTEME(std::string satName){
-    satellite subjectSat = satellite();
+void astroTracker::getSatPosTEME(double posSatTEME[3], std::string subject_SatName, double subject_ds50UTC){
+    // Find subject satellite's satkey in loadedSats vector by satellite name
+    satellite subject_Sat = satellite();
     for(int i = 0; i < loadedSats.size(); i++){
-        if(loadedSats.at(i).getSatelliteName()==satName){
-            subjectSat = loadedSats.at(i);
+        if(loadedSats.at(i).getSatelliteName() == subject_SatName){
+            std::cout << "Found satellite: " << subject_SatName << std::endl;
+            subject_Sat = loadedSats.at(i);
+            break;
         }
     }
-    double subject_ds50UTC = getCurrTime_ds50UTC();
-    __int64 subjectSatKey = subjectSat.getSatKey();
-    double subjectPosTEME[3];
-    Sgp4PropDs50UtcPos(subjectSatKey, subject_ds50UTC, subjectPosTEME);
-    std::cout << subjectSat.getSatelliteName() << " is at: (" 
-    << subjectPosTEME[0] << ", " 
-    << subjectPosTEME[1] << ", " 
-    << subjectPosTEME[2] << ")"
-    << std::endl;
+    // If the subject satellite isn't in the database print error and return
+    if(subject_Sat.getSatelliteName() == "null"){
+        std::cout << "Error: Could not find " << subject_SatName << " in satellite database" << std::endl;
+        return;
+    }
+    // Calculate current time, if needed
+    if(subject_ds50UTC == -1){
+        subject_ds50UTC = getCurrTime_ds50UTC();
+    }
+    // Propagate satellite to subject_ds50UTC, storing result in posSatTEME
+    Sgp4PropDs50UtcPos(subject_Sat.getSatKey(), subject_ds50UTC, posSatTEME);
+}
+
+void astroTracker::getSatPosECR(double posSatECR[3], std::string subject_SatName, double subject_ds50UTC){
+    // Find subject satellite's satkey in loadedSats vector by satellite name
+    satellite subject_Sat = satellite();
+    for(int i = 0; i < loadedSats.size(); i++){
+        if(loadedSats.at(i).getSatelliteName() == subject_SatName){
+            std::cout << "Found satellite: " << subject_SatName << std::endl;
+            subject_Sat = loadedSats.at(i);
+            break;
+        }
+    }
+    // If the subject satellite isn't in the database print error and return
+    if(subject_Sat.getSatelliteName() == "null"){
+        std::cout << "Error: Could not find " << subject_SatName << " in satellite database" << std::endl;
+        return;
+    }
+    // Calculate current time, if needed
+    if(subject_ds50UTC == -1){
+        subject_ds50UTC = getCurrTime_ds50UTC();
+    }
+    // Declare temp vars for frame conversion
+    double posSatTEME[3], posSatEFG[3], velTemp1[3]={0,0,0}, velTemp2[3]={0,0,0};
+    // Propagate satellite to subject_ds50UTC and convert position to ECR, storing result in posSatECR
+    Sgp4PropDs50UtcPos(subject_Sat.getSatKey(), subject_ds50UTC, posSatTEME);
+    ECIToEFGTime(subject_ds50UTC, posSatTEME, velTemp1, posSatEFG, velTemp2);
+    EFGToECRTime(subject_ds50UTC, posSatEFG, velTemp2, posSatECR, velTemp1);
 }
 
 void astroTracker::printSatLA(std::string satName){
@@ -612,7 +641,7 @@ bool astroTracker::graphSatGroundTrack(std::string subject_SatName, double backw
     }
     // If the subject satellite isn't in the database print error and return false
     if(subject_SatKey == -1){
-        std::cout << "Error: Could not find " << subject_SatName << "in satellite database" << std::endl;
+        std::cout << "Error: Could not find " << subject_SatName << " in satellite database" << std::endl;
         return false;
     }
 
@@ -653,7 +682,7 @@ bool astroTracker::graphSatGroundTrack(std::string subject_SatName, double backw
         // Find one position close to the satellite's runtime position and split it off into its own sub-vector
         if(((subject_ds50UTC - 0.001) <= pointTime) && (pointTime <= (subject_ds50UTC + 0.001)) && (satLon == -1000)){
             satLon = subject_LLH[1]; // Record runtime satellite longitude
-            if(pointTime > startTime){ // Only split before runtime position if the propagation time is greater than the start time 
+            if(groundTrack_Lon_split.at(ind).size() > 0){ // Only split before runtime position if the propagation time is greater than the start time 
                 groundTrack_Lat_split.push_back(vectorStarter);
                 groundTrack_Lon_split.push_back(vectorStarter);
                 ind++;
@@ -666,7 +695,7 @@ bool astroTracker::graphSatGroundTrack(std::string subject_SatName, double backw
             ind++;
             continue; // Skip the rest of the loop to avoid adding the runtime position twice
         }
-        if(pointTime > startTime){ // Do this for all but the first point
+        if(groundTrack_Lon_split.at(ind).size() > 0){ // Do this for all but the first point
             // If the satellite is about to loop over the 180 meridian
             if(((subject_LLH[1] < -90) && (groundTrack_Lon_split.at(ind).back() > 90)) || ((subject_LLH[1] > 90) && (groundTrack_Lon_split.at(ind).back() < -90))){
                 std::cout << subject_LLH[1] << " " << groundTrack_Lon_split.at(ind).back() << std::endl; // debug

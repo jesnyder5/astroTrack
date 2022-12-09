@@ -59,9 +59,15 @@ public:
 
     ~satellite();
     
+    /*
+     * @brief Prints the orbital element set fields for the specified satellite
+     */
+    void printSatElset();
+
     // Retrieve satellite name string
     std::string getSatelliteName();
 
+    // Retrieve satKey
     __int64 getSatKey();
 
 private:

@@ -42,6 +42,11 @@ int main(){
     //     std::cout << satNames.at(i) << "." << std::endl;
     // }
     test.graphSatGroundTrack("NOAA 15", 2, 2);
+    test.printSatElset("NOAA 15");
+    std::cout << std::endl;
+    test.printSatElset("NOAA 19");
+    std::cout << std::endl;
+    test.printSatElset("noaa 15");
 
     finishTime = clock();
     std::cout 

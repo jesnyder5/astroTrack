@@ -125,6 +125,25 @@ satellite::~satellite(){
 
 }
 
+void satellite::printSatElset(){
+    std::cout << "Element Set for " << satelliteName << std::endl;
+    std::cout << "satNum: " << satNum << std::endl;
+    std::cout << "secClass: " << secClass << std::endl;
+    std::cout << "satName: " << satName << std::endl;
+    std::cout << "epochYr: " << epochYr << std::endl;
+    std::cout << "epochDays: " << epochDays << std::endl;
+    std::cout << "bstar: " << bstar << std::endl;
+    std::cout << "ephType: " << ephType << std::endl;
+    std::cout << "elsetNum: " << elsetNum << std::endl;
+    std::cout << "incli: " << incli << std::endl;
+    std::cout << "node: " << node << std::endl;
+    std::cout << "eccen: " << eccen << std::endl;
+    std::cout << "omega: " << omega << std::endl;
+    std::cout << "mnAnomaly: " << mnAnomaly << std::endl;
+    std::cout << "mnMotion: " << mnMotion << std::endl;
+    std::cout << "revNum: " << revNum << std::endl;
+}
+
 // Retrieve satellite name string
 std::string satellite::getSatelliteName(){
     return satelliteName;
