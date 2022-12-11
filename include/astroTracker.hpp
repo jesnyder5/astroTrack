@@ -18,7 +18,8 @@ using json = nlohmann::json;
 
 class astroTracker {
 public:
-    //Constructors and Destructors
+    // ===== Constructors and Destructor =====
+
     /*
      * @brief Default constructor
      */
@@ -52,7 +53,7 @@ public:
      */
     ~astroTracker();
     
-    //===== Main Functions =====
+    // ===== Main Functions =====
 
     /*
      * @brief Returns a string vector containing the names of all loaded satellites
