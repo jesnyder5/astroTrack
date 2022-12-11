@@ -22,8 +22,8 @@ int main(){
     startTime = clock();
 
     std::string file;
-    // file = "omm-weather.json";
-    file = "weather.tle";
+    file = "omm-weather.json";
+    // file = "weather.tle";
 
     astroTracker test(file);
 
@@ -41,12 +41,18 @@ int main(){
     // for(int i = 0; i < satNames.size(); i++){
     //     std::cout << satNames.at(i) << "." << std::endl;
     // }
-    test.graphSatGroundTrack("NOAA 15", 2, 2);
-    test.printSatElset("NOAA 15");
-    std::cout << std::endl;
-    test.printSatElset("NOAA 19");
-    std::cout << std::endl;
-    test.printSatElset("noaa 15");
+    // test.printSatElset("NOAA 15");
+    // std::cout << std::endl;
+    // test.printSatElset("NOAA 19");
+    // std::cout << std::endl;
+    // test.printSatElset("noaa 15");
+    // std::cout << std::endl;
+
+    // test.graphSatGroundTrack("NOAA 15", 2, 2);
+
+    std::cout << test.getSatCount() << std::endl;
+    test.loadFromFile("omm-weather copy.json");
+    std::cout << test.getSatCount() << std::endl;
 
     finishTime = clock();
     std::cout 

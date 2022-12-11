@@ -40,6 +40,7 @@ public:
     /*
      * @brief Constructs satellite object using the satellite name and its TLE entry
      * @warning The Astrodynamics Standards SGP4 library must be loaded before construction
+     * @exception Throws runtime error if exact TLE already exists or attempting to add creates an error 
      * 
      * @param subject_SatName (std::string) - The name of the satellite
      * @param line1 (std::string) - The first TLE entry line for the satellite
@@ -50,6 +51,7 @@ public:
     /*
      * @brief Constructs satellite object using its individually provided fields
      * @warning The Astrodynamics Standards SGP4 library must be loaded before construction
+     * @exception Throws runtime error if exact TLE already exists or attempting to add creates an error 
      * 
      * @param subject_SatName (std::string) - The name of the satellite
      * @param in_satNum (int) - Satellite number

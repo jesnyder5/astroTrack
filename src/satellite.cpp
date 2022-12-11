@@ -39,6 +39,12 @@ satellite::satellite(std::string subject_SatName, std::string line1, std::string
     
     // Create and initialize Astrodynamics Standards library binary tree satKey
     satKey = TleAddSatFrLines(&line1[0], &line2[0]);
+    if(satKey == 0){
+        throw std::runtime_error("Attempted to add duplicate TLE to TLE library");
+    }
+    if(satKey < 0){
+        throw std::runtime_error("Error adding TLE to TLE library");
+    }
     Sgp4InitSat(satKey);
 
     // Record GP TLE fields from TLE library
@@ -100,6 +106,12 @@ satellite::satellite(std::string subject_SatName,
                 in_mnMotion,
                 in_revNum
             );
+    if(satKey == 0){
+        throw std::runtime_error("Attempted to add duplicate TLE to TLE library");
+    }
+    if(satKey < 0){
+        throw std::runtime_error("Error adding TLE to TLE library");
+    }
     Sgp4InitSat(satKey);
 
     // Record GP TLE fields from TLE library

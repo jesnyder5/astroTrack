@@ -101,7 +101,6 @@ astroTracker::~astroTracker(){
 
 //================================================ Initialization Functions ============================
 
-// Load all the dlls being used in the program
 void astroTracker::LoadAstroStdDlls(){
     // Library wrappers output loading messages to STDOUT. This will redirect to somewhere else
     // POSIX centric solution
@@ -137,7 +136,6 @@ void astroTracker::LoadAstroStdDlls(){
     // #endif
 }
 
-// Initialize all the dlls being used in the program
 void astroTracker::InitAstroStdDlls(){
     fAddr apPtr;
     int errCode;
@@ -312,27 +310,36 @@ void astroTracker::loadFromJson(json omm){
     //Second
     epochDays += (std::stod(epochStr.substr(17, 9)) / (24 * 60 * 60));
 
-    loadedSats.push_back(satellite(omm.at("OBJECT_NAME").get<std::string>(),
-            omm.at("NORAD_CAT_ID").get<int>(),
-            omm.at("CLASSIFICATION_TYPE").get<std::string>()[0],
-            satName,
-            epochYr,
-            epochDays,
-            omm.at("BSTAR").get<double>(),
-            omm.at("EPHEMERIS_TYPE").get<int>(),
-            omm.at("ELEMENT_SET_NO").get<int>(),
-            omm.at("INCLINATION").get<double>(),
-            omm.at("RA_OF_ASC_NODE").get<double>(),
-            omm.at("ECCENTRICITY").get<double>(),
-            omm.at("ARG_OF_PERICENTER").get<double>(),
-            omm.at("MEAN_ANOMALY").get<double>(),
-            omm.at("MEAN_MOTION").get<double>(),
-            omm.at("REV_AT_EPOCH").get<int>()));
-
+    try{
+        loadedSats.push_back(satellite(omm.at("OBJECT_NAME").get<std::string>(),
+                omm.at("NORAD_CAT_ID").get<int>(),
+                omm.at("CLASSIFICATION_TYPE").get<std::string>()[0],
+                satName,
+                epochYr,
+                epochDays,
+                omm.at("BSTAR").get<double>(),
+                omm.at("EPHEMERIS_TYPE").get<int>(),
+                omm.at("ELEMENT_SET_NO").get<int>(),
+                omm.at("INCLINATION").get<double>(),
+                omm.at("RA_OF_ASC_NODE").get<double>(),
+                omm.at("ECCENTRICITY").get<double>(),
+                omm.at("ARG_OF_PERICENTER").get<double>(),
+                omm.at("MEAN_ANOMALY").get<double>(),
+                omm.at("MEAN_MOTION").get<double>(),
+                omm.at("REV_AT_EPOCH").get<int>()));
+    } catch(const std::runtime_error& e){
+        std::cerr << "Error adding satellite from json: " << e.what() << std::endl;
+    } catch(const nlohmann::detail::out_of_range& e){
+        std::cerr << "Error with json object: " << e.what() << std::endl;
+    }
 }
 
 void astroTracker::loadFromTLE(std::string subject_SatName, std::string line1, std::string line2){
-    loadedSats.push_back(satellite(subject_SatName, line1, line2));
+    try{
+        loadedSats.push_back(satellite(subject_SatName, line1, line2));
+    } catch(const std::runtime_error& e){
+        std::cerr << "Error adding satellite from TLE: " << e.what() << std::endl;
+    }
 }
 
 //================================================ Main Functions ====================================
@@ -343,6 +350,11 @@ std::vector<std::string> astroTracker::getSatNames(){
         satNames.push_back(loadedSats[i].getSatelliteName());
     }
     return satNames;
+}
+
+int astroTracker::getSatCount(){
+    std::cout << loadedSats.size() << std::endl;
+    return TleGetCount();
 }
 
 void astroTracker::printSatElset(std::string subject_SatName){

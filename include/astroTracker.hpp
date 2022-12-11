@@ -53,6 +53,31 @@ public:
      */
     ~astroTracker();
     
+    // ===== Satellite Loading Functions =====
+
+    /*
+     * @brief Adds new satellites to the satellite database using satellite orbital information contained in the specified file. Currently only supports TLE files and json files in OMM format (EX: https://celestrak.org/NORAD/elements/gp.php?CATNR=25544&FORMAT=json)
+     * 
+     * @param FILENAME (std::string) - The filename (including path from the current working directory) to the file containing satellite orbital information
+     */
+    void loadFromFile(std::string FILENAME);
+
+    /*
+     * @brief Adds a new satellite to the satellite database using its json object in OMM format
+     * 
+     * @param omm (nlohmann::json) - A json object containing a satellite's orbital information in OMM format (EX: https://celestrak.org/NORAD/elements/gp.php?CATNR=25544&FORMAT=json)
+     */
+    void loadFromJson(json omm);
+
+    /*
+     * @brief Adds a new satellite to satellite database using the satellite name and its TLE entry
+     * 
+     * @param subject_SatName (std::string) - The name of the satellite
+     * @param line1 (std::string) - The first TLE entry line for the satellite
+     * @param line2 (std::string) - The second TLE entry line for the satellite
+     */
+    void loadFromTLE(std::string name, std::string line1, std::string line2);
+
     // ===== Main Functions =====
 
     /*
@@ -61,6 +86,13 @@ public:
      * @return Returns a std::vector<std::string> containing the names of all loaded satellite objects
      */
     std::vector<std::string> getSatNames();
+
+    /*
+     * @brief Returns the number of loaded satellites
+     * 
+     * @return Returns an integer of the number of loaded satellites
+     */
+    int getSatCount();
 
     /*
      * @brief Prints the orbital element set fields for the specified satellite
@@ -137,11 +169,6 @@ public:
 private:
     // Vector containing loaded satellite
     std::vector<satellite> loadedSats;
-
-    // Satellite Loading Functions
-    void loadFromFile(std::string FILENAME);
-    void loadFromJson(json omm);
-    void loadFromTLE(std::string name, std::string line1, std::string line2);
 
     // ===== Astrodynamics Standards Library initialization functions =====
 
