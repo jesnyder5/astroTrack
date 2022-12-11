@@ -52,6 +52,8 @@ public:
      */
     ~astroTracker();
     
+    //===== Main Functions =====
+
     /*
      * @brief Returns a string vector containing the names of all loaded satellites
      * 

@@ -32,13 +32,6 @@ extern "C" {
 #include "AstroFuncDll.h"
 #include "TleDll.h"
 #include "Sgp4PropDll.h"
-
-// #include "SensorDll.h"
-// #include "SensorDll_Service.h"
-// #include "ObsDll.h"
-// #include "ObsDll_Service.h"
-// #include "LamodDll.h"
-// #include "LamodDll_Service.h"
 }
 #endif
 
@@ -52,7 +45,6 @@ astroTracker::astroTracker(){
     LogMessage(logMsg);
 }
 
-// Construct using json object in OMM format
 astroTracker::astroTracker(json omm){
     // Load dlls
     LoadAstroStdDlls();
@@ -66,7 +58,6 @@ astroTracker::astroTracker(json omm){
     LogMessage(logMsg);
 }
 
-// Construct using tle lines and name
 astroTracker::astroTracker(std::string name, std::string line1, std::string line2){
     // Load dlls
     LoadAstroStdDlls();
@@ -80,7 +71,6 @@ astroTracker::astroTracker(std::string name, std::string line1, std::string line
     LogMessage(logMsg);
 }
 
-// Construct using json or tle files
 astroTracker::astroTracker(std::string FILENAME){
     // Load dlls
     LoadAstroStdDlls();
@@ -139,12 +129,6 @@ void astroTracker::LoadAstroStdDlls(){
     // Load Sgp4Prop dll and assign function pointers
     LoadSgp4PropDll();
 
-    // LoadSensorDll();
-
-    // LoadObsDll();
-
-    // LoadLamodDll(); // ITAR restrictions, can't use
-
     // #ifndef __Win32
     // fflush(stdout);
     // std::cout.flush(); // Empty any output buffers
@@ -170,7 +154,7 @@ void astroTracker::InitAstroStdDlls(){
     // Log tracker start time
     time_t rawtime;
     time(&rawtime);
-    strftime(logMsg, 128,"astroTracker Start: %c", localtime(&rawtime));
+    strftime(logMsg, 128,"astroTracker Start: %c UTC", gmtime(&rawtime));
     LogMessage(logMsg);
 
     errCode = EnvInit(apPtr);
@@ -193,53 +177,39 @@ void astroTracker::InitAstroStdDlls(){
     if (errCode != 0)
         ShowMsgAndTerminate();
 
-    // errCode = SensorInit(apPtr);
-    // if (errCode != 0)
-    //     ShowMsgAndTerminate();
-
-    // errCode = ObsInit(apPtr);
-    // if (errCode != 0)
-    //     ShowMsgAndTerminate();
-
-    // errCode = LamodInit(apPtr);
-    // if (errCode != 0)
-    //     ShowMsgAndTerminate();
-    
-    // Temp call until user input implemented
-    // sensorInit();
-
     // Version Info
-    /*
-    std::cout << std::endl;
     char DllInfo[INFOSTRLEN];
     DllMainGetInfo(DllInfo);
     DllInfo[INFOSTRLEN-1] = 0;
-    printf("%s\n", DllInfo);
+    // printf("%s\n", DllInfo);
+    LogMessage(DllInfo);
 
     EnvGetInfo(DllInfo);
     DllInfo[INFOSTRLEN-1] = 0;
-    printf("%s\n", DllInfo);
+    // printf("%s\n", DllInfo);
+    LogMessage(DllInfo);
 
     TimeFuncGetInfo(DllInfo);
     DllInfo[INFOSTRLEN-1] = 0;
-    printf("%s\n", DllInfo);
+    // printf("%s\n", DllInfo);
+    LogMessage(DllInfo);
 
     AstroFuncGetInfo(DllInfo);
     DllInfo[INFOSTRLEN-1] = 0;
-    printf("%s\n", DllInfo);
+    // printf("%s\n", DllInfo);
+    LogMessage(DllInfo);
 
     TleGetInfo(DllInfo);
     DllInfo[INFOSTRLEN-1] = 0;
-    printf("%s\n", DllInfo);
+    // printf("%s\n", DllInfo);
+    LogMessage(DllInfo);
 
     Sgp4GetInfo(DllInfo);
     DllInfo[INFOSTRLEN-1] = 0;
-    printf("%s\n", DllInfo);
-    std::cout << std::endl;
-    */
+    // printf("%s\n", DllInfo);
+    LogMessage(DllInfo);
 }
 
-// Free all the dlls being used in the program
 void astroTracker::FreeAstroStdDlls(){
     // Library wrappers output loading messages to STDOUT. This will redirect to somewhere else
     // POSIX centric solution
@@ -248,15 +218,6 @@ void astroTracker::FreeAstroStdDlls(){
     // int stdout_fd = dup(STDOUT_FILENO); // Copy STDOUT info to temp var
     // freopen("/dev/null", "w", stdout); // Reopen STDOUT to write to /dev/null for now. 
     // #endif
-
-    // // Free LaMod dll
-    // FreeLamodDll();
-
-    // // Free Ops dll
-    // FreeObsDll();
-
-    // // Free Sensor dll
-    // FreeSensorDll();
 
     // Free Sgp4Prop dll
     FreeSgp4PropDll();
@@ -279,7 +240,7 @@ void astroTracker::FreeAstroStdDlls(){
     // Log tracker stop time
     time_t rawtime;
     time(&rawtime);
-    strftime(logMsg, 128,"astroTracker Stop: %c", localtime(&rawtime));
+    strftime(logMsg, 128,"astroTracker Stop: %c UTC", gmtime(&rawtime));
     LogMessage(logMsg);
     CloseLogFile();
 
@@ -293,56 +254,9 @@ void astroTracker::FreeAstroStdDlls(){
     // close(stdout_fd); // Close temp var
     // #endif
 }
-/*
-bool astroTracker::sensorInit(){
-    // Get ECR location
-    double metricLLH[3] = {39.05, -76.65, 0.04}, // TEST CASE
-           posEFG[3] = {0,0,0},
-           posECR[3] = {0,0,0},
-           ds50UTCcurr;
 
-    // Swap Earth model for GPS (WGS72 -> WGS84)
-    EnvSetGeoIdx(84);
-
-    // Convert Geodetic coordinates to ECR (via EFG)
-    LLHToEFGPos(metricLLH, posEFG);
-    
-    // Calculate current time in ds50UT1
-    std::time_t t = std::time(0);
-    tm* now = std::localtime(&t);
-    // Replace relevant tm fields with GPS time?
-    ds50UTCcurr = TimeComps2ToUTC(
-            now->tm_year,
-            now->tm_mon,
-            now->tm_mday,
-            now->tm_hour,
-            now->tm_min,
-            now->tm_sec
-    );
-
-    EFGToECRTime(ds50UTCcurr, posEFG, {0}, posECR, {0});
-
-    // Swap Earth model back to WGS72 for SGP4 propagation
-    EnvSetGeoIdx(72);
-    
-    char senDesc[] = "astroTracker User Loc";
-
-    // Create sensor
-    SensorSetLocAll(
-        005, // senKey
-        metricLLH[0], // astroLat (not sure how to do astronomical coordinate conversion)
-        metricLLH[1], // astroLon
-        posECR, // sensor ECR position
-        senDesc, // sensor description [24]
-        0, // 0 for ground-based
-        'U' // unclassified
-    );
-    return true;
-}
-*/
 //================================================ Satellite Loading Functions ============================
 
-// Load satellite objects from either .json or .tle file
 void astroTracker::loadFromFile(std::string FILENAME){
     if(FILENAME.substr(FILENAME.length()-5) == ".json"){
         // std::cout << "Loading json file" << std::endl;
@@ -378,7 +292,6 @@ void astroTracker::loadFromFile(std::string FILENAME){
     }
 }
 
-// Load satellite objects from OMM json object
 void astroTracker::loadFromJson(json omm){
     char satName[8]; 
     std::string satNameStr = omm.at("OBJECT_ID").get<std::string>();
@@ -418,7 +331,6 @@ void astroTracker::loadFromJson(json omm){
 
 }
 
-// Load satellite objects from TLE lines and satellite name
 void astroTracker::loadFromTLE(std::string subject_SatName, std::string line1, std::string line2){
     loadedSats.push_back(satellite(subject_SatName, line1, line2));
 }
@@ -451,70 +363,6 @@ void astroTracker::printSatElset(std::string subject_SatName){
 
     subject_Sat.printSatElset();    
 }
-
-//  The following function has at least some of the logic to convert current WGS84 GPS coordinates
-//  I don't remember writing it, but it was in GitHub's version of this file, so I guess I did
-//  Either way, it appears to essentially be the logic I only just came up with to solve the WGS84-WGS72 conversion issue
-//  ****Review and update before implementing
-/*
-// Convert latitude, longitude, and height retrived from GPS to TEME vector
-void astroTracker::getGPSposTEME(double posTEME[3]){
-    double thetaG,
-           metricLLH[3] = {39.05, -76.65, 0.04}, // TEST CASE
-           ds50UT1;
-    
-    // Zero out current vector
-    posTEME[0] = 0;
-    posTEME[1] = 0;
-    posTEME[2] = 0;
-
-    // Swap Earth model for GPS (WGS72 -> WGS84)
-    // EnvSetGeoIdx(84);
-
-    // Retrieve GPS info (converting to Metric if needed) -> metricLLH
-    
-    // === Calculate Greenwich Sidereal (thetaG) ===
-    // Calculate current time in ds50UT1
-    std::time_t t = std::time(0);
-    tm* now = std::localtime(&t);
-    // Replace relevant tm fields with GPS time?
-    ds50UT1 = UTCToUT1(
-        TimeComps2ToUTC(
-            now->tm_year,
-            now->tm_mon,
-            now->tm_mday,
-            now->tm_hour,
-            now->tm_min,
-            now->tm_sec
-        )
-    );
-
-    thetaG = ThetaGrnwch(ds50UT1, EnvGetFkPtr());
-
-    // === Convert LLH to ECI position vector (TEME of Date in km)
-    LLHToXYZ(thetaG, metricLLH, posTEME);
-
-    // Convert position vector to something independent of Earth model
-    // Swap Earth model back to WGS72 for SGP4 propagation
-    // EnvSetGeoIdx(72);
-    // Convert position vector back to TEME
-
-    // === Convert posTEME to unit vector ===
-    // (Is this even needed?)
-    double mag = sqrt(
-        (
-            (posTEME[0]*posTEME[0])+
-            (posTEME[1]*posTEME[1])+
-            (posTEME[2]*posTEME[2])
-        )
-    );
-
-    posTEME[0] = (posTEME[0] / mag);
-    posTEME[1] = (posTEME[1] / mag);
-    posTEME[2] = (posTEME[2] / mag);
-
-}
-*/
 
 void astroTracker::getSunAndMoonPosTEME(double posSunTEME[3], double posMoonTEME[3], double subject_ds50UTC){
     // Calculate current time, if needed
