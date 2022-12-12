@@ -27,15 +27,6 @@ int main(){
 
     astroTracker test(file);
 
-    // double posSunTEME[3], posMoonTEME[3], posSunECR[3], posMoonECR[3];
-    // test.getSunAndMoonPosTEME(posSunTEME, posMoonTEME);
-    // test.getSunAndMoonPosECR(posSunECR, posMoonECR);
-    // std::cout << "Sun Position Vector (TEME): " << posSunTEME[0] << " " << posSunTEME[1] << " " << posSunTEME[2] << std::endl;
-    // std::cout << "Sun Position Vector (ECR): " << posSunECR[0] << " " << posSunECR[1] << " " << posSunECR[2] << std::endl;
-    // std::cout << "Moon Position Vector (TEME): " << posMoonTEME[0] << " " << posMoonTEME[1] << " " << posMoonTEME[2] << std::endl;
-    // std::cout << "Moon Position Vector (ECR): " << posMoonECR[0] << " " << posMoonECR[1] << " " << posMoonECR[2] << std::endl;
-
-
     // test.printSatPosTEME("NOAA 15");
     // std::vector<std::string> satNames = test.getSatNames();
     // for(int i = 0; i < satNames.size(); i++){
@@ -50,9 +41,33 @@ int main(){
 
     // test.graphSatGroundTrack("NOAA 15", 2, 2);
 
-    std::cout << test.getSatCount() << std::endl;
-    test.loadFromFile("omm-weather copy.json");
-    std::cout << test.getSatCount() << std::endl;
+    // std::cout << test.getSatCount() << std::endl;
+    // test.loadFromFile("omm-weather copy.json");
+    // std::cout << test.getSatCount() << std::endl;
+
+    double moonPos[3];
+    test.getMoonPosTEME(moonPos);
+    std::cout << moonPos[0] << " " << moonPos[1] << " " << moonPos[2] << std::endl;
+    test.getMoonPosECR(moonPos);
+    std::cout << moonPos[0] << " " << moonPos[1] << " " << moonPos[2] << std::endl;
+    test.getMoonPosLLH(moonPos);
+    std::cout << moonPos[0] << " " << moonPos[1] << " " << moonPos[2] << std::endl;
+
+    double sunPos[3];
+    test.getSunPosTEME(sunPos);
+    std::cout << sunPos[0] << " " << sunPos[1] << " " << sunPos[2] << std::endl;
+    test.getSunPosECR(sunPos);
+    std::cout << sunPos[0] << " " << sunPos[1] << " " << sunPos[2] << std::endl;
+    test.getSunPosLLH(sunPos);
+    std::cout << sunPos[0] << " " << sunPos[1] << " " << sunPos[2] << std::endl;
+
+    double satPos[3];
+    test.getSatPosTEME(satPos, "NOAA 15");
+    std::cout << satPos[0] << " " << satPos[1] << " " << satPos[2] << std::endl;
+    test.getSatPosECR(satPos, "NOAA 15");
+    std::cout << satPos[0] << " " << satPos[1] << " " << satPos[2] << std::endl;
+    test.getSatPosLLH(satPos, "NOAA 15");
+    std::cout << satPos[0] << " " << satPos[1] << " " << satPos[2] << std::endl;
 
     finishTime = clock();
     std::cout 

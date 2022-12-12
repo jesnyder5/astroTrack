@@ -362,7 +362,7 @@ void astroTracker::printSatElset(std::string subject_SatName){
     satellite subject_Sat = satellite();
     for(int i = 0; i < loadedSats.size(); i++){
         if(loadedSats.at(i).getSatelliteName() == subject_SatName){
-            std::cout << "Found satellite: " << subject_SatName << std::endl;
+            // std::cout << "Found satellite: " << subject_SatName << std::endl;
             subject_Sat = loadedSats.at(i);
             break;
         }
@@ -376,35 +376,128 @@ void astroTracker::printSatElset(std::string subject_SatName){
     subject_Sat.printSatElset();    
 }
 
-void astroTracker::getSunAndMoonPosTEME(double posSunTEME[3], double posMoonTEME[3], double subject_ds50UTC){
+void astroTracker::getSunPosTEME(double posSunTEME[3], double subject_ds50UTC){
     // Calculate current time, if needed
     if(subject_ds50UTC == -1){
         subject_ds50UTC = getCurrTime_ds50UTC();
     }
-    double sunVecMag, moonVecMag;
-    CompSunMoonPos(subject_ds50UTC, posSunTEME, &sunVecMag, posMoonTEME, &moonVecMag);
+    double subject_ds50ET = UTCToET(subject_ds50UTC);
+
+    // Declare temp vars for frame conversion
+    double sunVecMag;
+    // Calculate Sun position in ECR
+    CompSunPos(subject_ds50ET, posSunTEME, &sunVecMag);
+    posSunTEME[0] = posSunTEME[0] * sunVecMag;
+    posSunTEME[1] = posSunTEME[1] * sunVecMag;
+    posSunTEME[2] = posSunTEME[2] * sunVecMag;
 }
 
-void astroTracker::getSunAndMoonPosECR(double posSunECR[3], double posMoonECR[3], double subject_ds50UTC){
+void astroTracker::getSunPosECR(double posSunECR[3], double subject_ds50UTC){
     // Calculate current time, if needed
     if(subject_ds50UTC == -1){
         subject_ds50UTC = getCurrTime_ds50UTC();
     }
-    double sunVecMag, moonVecMag, posSunTEME[3], posMoonTEME[3], tempLLH[3];
-    CompSunMoonPos(subject_ds50UTC, posSunTEME, &sunVecMag, posMoonTEME, &moonVecMag);
-    double velSunTEME[3] = {0, 0, 0}, velSunECR[3] = {0, 0, 0};
-    ECIToEFGTime(subject_ds50UTC, posSunTEME, velSunTEME, posSunECR, velSunECR);
-    double velMoonTEME[3] = {0, 0, 0}, velMoonECR[3] = {0, 0, 0};
-    ECIToEFGTime(subject_ds50UTC, posMoonTEME, velMoonTEME, posMoonECR, velMoonECR);
-    // std::cout << velMoonECR[0] << std::endl;
-    // XYZToLLHTime(subject_ds50UTC, posSunTEME, tempLLH); // nan start
-    // LLHToEFGPos(tempLLH, posSunECR);
-    // std::cout << posSunTEME[0] << std::endl;
-    // std::cout << tempLLH[0] << std::endl;
-    // std::cout << posSunECR[0] << std::endl;
+    double subject_ds50ET = UTCToET(subject_ds50UTC);
 
-    // XYZToLLHTime(subject_ds50UTC, posMoonTEME, tempLLH);
-    // LLHToEFGPos(tempLLH, posMoonECR);
+    // Declare temp vars for frame conversion
+    double posSunTEME[3], sunVecMag, velSunTEME[3] = {0,0,0}, posSunEFG[3], velSunEFG[3], velSunECR[3];
+    // Calculate Sun position in ECR
+    CompSunPos(subject_ds50ET, posSunTEME, &sunVecMag);
+    posSunTEME[0] = posSunTEME[0] * sunVecMag;
+    posSunTEME[1] = posSunTEME[1] * sunVecMag;
+    posSunTEME[2] = posSunTEME[2] * sunVecMag;
+    ECIToEFGTime(subject_ds50UTC, posSunTEME, velSunTEME, posSunEFG, velSunEFG);
+    // EFGToECRTime(subject_ds50UTC, posSunEFG, velSunEFG, posSunECR, velSunECR);
+    // ECR conversion only returns zeroes (probably need to input polar motion data for it to work), so for now just return EFG values
+    posSunECR[0] = posSunEFG[0];
+    posSunECR[1] = posSunEFG[1];
+    posSunECR[2] = posSunEFG[2];
+}
+
+void astroTracker::getSunPosLLH(double posSunLLH[3], double subject_ds50UTC){
+    // Calculate current time, if needed
+    if(subject_ds50UTC == -1){
+        subject_ds50UTC = getCurrTime_ds50UTC();
+    }
+    double subject_ds50ET = UTCToET(subject_ds50UTC);
+
+    // Declare temp vars for frame conversion
+    double posSunTEME[3], sunVecMag;
+    // Propagate satellite to subject_ds50UTC, storing result in posSatTEME
+    CompSunPos(subject_ds50ET, posSunTEME, &sunVecMag);
+    posSunTEME[0] = posSunTEME[0] * sunVecMag;
+    posSunTEME[1] = posSunTEME[1] * sunVecMag;
+    posSunTEME[2] = posSunTEME[2] * sunVecMag;
+    XYZToLLHTime(subject_ds50UTC, posSunTEME, posSunLLH);
+    // Adjust longitudes to fit in -180 to 180
+    if(posSunLLH[1] > 180){
+        while(posSunLLH[1] > 180){
+            posSunLLH[1] -= 180;
+        }
+        posSunLLH[1] -= 180;
+    }
+}
+
+void astroTracker::getMoonPosTEME(double posMoonTEME[3], double subject_ds50UTC){
+    // Calculate current time, if needed
+    if(subject_ds50UTC == -1){
+        subject_ds50UTC = getCurrTime_ds50UTC();
+    }
+    double subject_ds50ET = UTCToET(subject_ds50UTC);
+
+    // Declare temp vars for frame conversion
+    double moonVecMag;
+    // Calculate Sun position in ECR
+    CompMoonPos(subject_ds50ET, posMoonTEME, &moonVecMag);
+    posMoonTEME[0] = posMoonTEME[0] * moonVecMag;
+    posMoonTEME[1] = posMoonTEME[1] * moonVecMag;
+    posMoonTEME[2] = posMoonTEME[2] * moonVecMag;
+}
+
+void astroTracker::getMoonPosECR(double posMoonECR[3], double subject_ds50UTC){
+    // Calculate current time, if needed
+    if(subject_ds50UTC == -1){
+        subject_ds50UTC = getCurrTime_ds50UTC();
+    }
+    double subject_ds50ET = UTCToET(subject_ds50UTC);
+
+    // Declare temp vars for frame conversion
+    double posMoonTEME[3], moonVecMag, velMoonTEME[3] = {0,0,0}, posMoonEFG[3], velMoonEFG[3], velMoonECR[3];
+    // Calculate Sun position in ECR
+    CompMoonPos(subject_ds50ET, posMoonTEME, &moonVecMag);
+    posMoonTEME[0] = posMoonTEME[0] * moonVecMag;
+    posMoonTEME[1] = posMoonTEME[1] * moonVecMag;
+    posMoonTEME[2] = posMoonTEME[2] * moonVecMag;
+    ECIToEFGTime(subject_ds50UTC, posMoonTEME, velMoonTEME, posMoonEFG, velMoonEFG);
+    // EFGToECRTime(subject_ds50UTC, posMoonEFG, velMoonEFG, posMoonECR, velMoonECR);
+    // ECR conversion only returns zeroes (probably need to input polar motion data for it to work), so for now just return EFG values
+    posMoonECR[0] = posMoonEFG[0];
+    posMoonECR[1] = posMoonEFG[1];
+    posMoonECR[2] = posMoonEFG[2];
+}
+
+void astroTracker::getMoonPosLLH(double posMoonLLH[3], double subject_ds50UTC){
+    // Calculate current time, if needed
+    if(subject_ds50UTC == -1){
+        subject_ds50UTC = getCurrTime_ds50UTC();
+    }
+    double subject_ds50ET = UTCToET(subject_ds50UTC);
+
+    // Declare temp vars for frame conversion
+    double posMoonTEME[3], moonVecMag;
+    // Propagate satellite to subject_ds50UTC, storing result in posSatTEME
+    CompMoonPos(subject_ds50ET, posMoonTEME, &moonVecMag);
+    posMoonTEME[0] = posMoonTEME[0] * moonVecMag;
+    posMoonTEME[1] = posMoonTEME[1] * moonVecMag;
+    posMoonTEME[2] = posMoonTEME[2] * moonVecMag;
+    XYZToLLHTime(subject_ds50UTC, posMoonTEME, posMoonLLH);
+    // Adjust longitudes to fit in -180 to 180
+    if(posMoonLLH[1] > 180){
+        while(posMoonLLH[1] > 180){
+            posMoonLLH[1] -= 180;
+        }
+        posMoonLLH[1] -= 180;
+    }
 }
 
 void astroTracker::getSatPosTEME(double posSatTEME[3], std::string subject_SatName, double subject_ds50UTC){
@@ -412,7 +505,7 @@ void astroTracker::getSatPosTEME(double posSatTEME[3], std::string subject_SatNa
     satellite subject_Sat = satellite();
     for(int i = 0; i < loadedSats.size(); i++){
         if(loadedSats.at(i).getSatelliteName() == subject_SatName){
-            std::cout << "Found satellite: " << subject_SatName << std::endl;
+            // std::cout << "Found satellite: " << subject_SatName << std::endl;
             subject_Sat = loadedSats.at(i);
             break;
         }
@@ -435,7 +528,7 @@ void astroTracker::getSatPosECR(double posSatECR[3], std::string subject_SatName
     satellite subject_Sat = satellite();
     for(int i = 0; i < loadedSats.size(); i++){
         if(loadedSats.at(i).getSatelliteName() == subject_SatName){
-            std::cout << "Found satellite: " << subject_SatName << std::endl;
+            // std::cout << "Found satellite: " << subject_SatName << std::endl;
             subject_Sat = loadedSats.at(i);
             break;
         }
@@ -450,11 +543,48 @@ void astroTracker::getSatPosECR(double posSatECR[3], std::string subject_SatName
         subject_ds50UTC = getCurrTime_ds50UTC();
     }
     // Declare temp vars for frame conversion
-    double posSatTEME[3], posSatEFG[3], velTemp1[3]={0,0,0}, velTemp2[3]={0,0,0};
+    double posSatTEME[3], velSatTEME[3]={0,0,0}, posSatEFG[3], velSatEFG[3], velSatECR[3];
     // Propagate satellite to subject_ds50UTC and convert position to ECR, storing result in posSatECR
+    Sgp4PropDs50UtcPosVel(subject_Sat.getSatKey(), subject_ds50UTC, posSatTEME, velSatTEME);
+    ECIToEFGTime(subject_ds50UTC, posSatTEME, velSatTEME, posSatEFG, velSatEFG);
+    // EFGToECRTime(subject_ds50UTC, posSatEFG, velSatEFG, posSatECR, velSatECR);
+    // ECR conversion only returns zeroes (probably need to input polar motion data for it to work), so for now just return EFG values
+    posSatECR[0] = posSatEFG[0];
+    posSatECR[1] = posSatEFG[1];
+    posSatECR[2] = posSatEFG[2];
+}
+
+void astroTracker::getSatPosLLH(double posSatLLH[3], std::string subject_SatName, double subject_ds50UTC){
+    // Find subject satellite's satkey in loadedSats vector by satellite name
+    satellite subject_Sat = satellite();
+    for(int i = 0; i < loadedSats.size(); i++){
+        if(loadedSats.at(i).getSatelliteName() == subject_SatName){
+            // std::cout << "Found satellite: " << subject_SatName << std::endl;
+            subject_Sat = loadedSats.at(i);
+            break;
+        }
+    }
+    // If the subject satellite isn't in the database print error and return
+    if(subject_Sat.getSatelliteName() == "null"){
+        std::cout << "Error: Could not find " << subject_SatName << " in satellite database" << std::endl;
+        return;
+    }
+    // Calculate current time, if needed
+    if(subject_ds50UTC == -1){
+        subject_ds50UTC = getCurrTime_ds50UTC();
+    }
+    // Declare temp vars for frame conversion
+    double posSatTEME[3];
+    // Propagate satellite to subject_ds50UTC, storing result in posSatTEME
     Sgp4PropDs50UtcPos(subject_Sat.getSatKey(), subject_ds50UTC, posSatTEME);
-    ECIToEFGTime(subject_ds50UTC, posSatTEME, velTemp1, posSatEFG, velTemp2);
-    EFGToECRTime(subject_ds50UTC, posSatEFG, velTemp2, posSatECR, velTemp1);
+    XYZToLLHTime(subject_ds50UTC, posSatTEME, posSatLLH);
+    // Adjust longitudes to fit in -180 to 180
+    if(posSatLLH[1] > 180){
+        while(posSatLLH[1] > 180){
+            posSatLLH[1] -= 180;
+        }
+        posSatLLH[1] -= 180;
+    }
 }
 
 void astroTracker::printSatLA(std::string satName){
@@ -494,7 +624,7 @@ bool astroTracker::graphSatGroundTrack(std::string subject_SatName, double backw
     __int64 subject_SatKey = -1;
     for(int i = 0; i < loadedSats.size(); i++){
         if(loadedSats.at(i).getSatelliteName() == subject_SatName){
-            std::cout << "Found satellite: " << subject_SatName << std::endl;
+            // std::cout << "Found satellite: " << subject_SatName << std::endl;
             subject_SatKey = loadedSats.at(i).getSatKey();
             break;
         }

@@ -102,22 +102,54 @@ public:
     void printSatElset(std::string subject_SatName);
 
     /*
-     * @brief Calculates the position vectors to the Sun and Moon at subject_ds50UTC in the TEME frame
+     * @brief Calculates the position unit vector to the Sun at subject_ds50UTC in the TEME frame
      * 
      * @param posSunTEME (OUT-double[3]) - A 3-element double array to store the position of the Sun at subject_ds50UTC.
-     * @param posMoonTEME (OUT-double[3]) - A 3-element double array to store the position of the Sun at subject_ds50UTC.
      * @param subject_ds50UTC (IN-double) - The time to calculate the positions at. Defaults to -1, indicating to calculate the current time
      */
-    void getSunAndMoonPosTEME(double posSunTEME[3], double posMoonTEME[3], double posTime_ds50UTC=-1);
+    void getSunPosTEME(double posSunTEME[3], double posTime_ds50UTC=-1);
     
     /*
-     * @brief Calculates the position vectors to the Sun and Moon at subject_ds50UTC in the ECR frame
+     * @brief Calculates the position unit vector to the Sun at subject_ds50UTC in the ECR frame
+     * @note ECR conversion is not currently working. For now this function outputs in the EFG frame (a difference on the order of 15 meters or less)
      * 
      * @param posSunECR (OUT-double[3]) - A 3-element double array to store the position of the Sun at subject_ds50UTC.
-     * @param posMoonECR (OUT-double[3]) - A 3-element double array to store the position of the Sun at subject_ds50UTC.
      * @param subject_ds50UTC (IN-double) - The time to calculate the positions at. Defaults to -1, indicating to calculate the current time
      */
-    void getSunAndMoonPosECR(double posSunECR[3], double posMoonECR[3], double subject_ds50UTC=-1);
+    void getSunPosECR(double posSunECR[3], double subject_ds50UTC=-1);
+
+    /*
+     * @brief Calculates the latitude, longitude, and height in kilometers of the Sun at subject_ds50UTC
+     * 
+     * @param posSunLLH (OUT-double[3]) - A 3-element double array to store the latitude, longitude, and height in km of the Sun at subject_ds50UTC.
+     * @param subject_ds50UTC (IN-double) - The time to calculate the position at. Defaults to -1, indicating to calculate the current time
+     */
+    void getSunPosLLH(double posSunLLH[3], double subject_ds50UTC=-1);
+
+    /*
+     * @brief Calculates the position unit vector to the Moon at subject_ds50UTC in the TEME frame
+     * 
+     * @param posMoonTEME (OUT-double[3]) - A 3-element double array to store the position of the Moon at subject_ds50UTC.
+     * @param subject_ds50UTC (IN-double) - The time to calculate the positions at. Defaults to -1, indicating to calculate the current time
+     */
+    void getMoonPosTEME(double posMoonTEME[3], double posTime_ds50UTC=-1);
+    
+    /*
+     * @brief Calculates the position unit vector to the Moon at subject_ds50UTC in the ECR frame
+     * @note ECR conversion is not currently working. For now this function outputs in the EFG frame (a difference on the order of 15 meters or less)
+     * 
+     * @param posMoonECR (OUT-double[3]) - A 3-element double array to store the position of the Moon at subject_ds50UTC.
+     * @param subject_ds50UTC (IN-double) - The time to calculate the positions at. Defaults to -1, indicating to calculate the current time
+     */
+    void getMoonPosECR(double posMoonECR[3], double subject_ds50UTC=-1);
+
+    /*
+     * @brief Calculates the latitude, longitude, and height in kilometers of the Moon at subject_ds50UTC
+     * 
+     * @param posMoonLLH (OUT-double[3]) - A 3-element double array to store the latitude, longitude, and height in km of the Moon at subject_ds50UTC.
+     * @param subject_ds50UTC (IN-double) - The time to calculate the position at. Defaults to -1, indicating to calculate the current time
+     */
+    void getMoonPosLLH(double posMoonLLH[3], double subject_ds50UTC=-1);
 
     /*
      * @brief Calculates the position vector to the specified satellite at subject_ds50UTC in the TEME frame
@@ -130,12 +162,22 @@ public:
 
     /*
      * @brief Calculates the position vector to the specified satellite at subject_ds50UTC in the ECR frame
+     * @note ECR conversion is not currently working. For now this function outputs in the EFG frame (a difference on the order of 15 meters or less)
      * 
      * @param posSatECR (OUT-double[3]) - A 3-element double array to store the position of the satellite at subject_ds50UTC.
      * @param subject_SatName (IN-std::string) - The name of the satellite to calculate the position of. This should be the same name as returned by the satellite object's getSatelliteName() and designated when creating the object.
      * @param subject_ds50UTC (IN-double) - The time to calculate the position at. Defaults to -1, indicating to calculate the current time
      */
     void getSatPosECR(double posSatECR[3], std::string subject_SatName, double subject_ds50UTC=-1);
+
+    /*
+     * @brief Calculates the latitude, longitude, and height in kilometers of the specified satellite at subject_ds50UTC
+     * 
+     * @param posSatLLH (OUT-double[3]) - A 3-element double array to store the latitude, longitude, and height in km of the satellite at subject_ds50UTC.
+     * @param subject_SatName (IN-std::string) - The name of the satellite to calculate the position of. This should be the same name as returned by the satellite object's getSatelliteName() and designated when creating the object.
+     * @param subject_ds50UTC (IN-double) - The time to calculate the position at. Defaults to -1, indicating to calculate the current time
+     */
+    void getSatPosLLH(double posSatLLH[3], std::string subject_SatName, double subject_ds50UTC=-1);
 
     /*
      * @brief [NOT FULLY IMPLEMENTED] Calculates the look angle to a specified satellite at subject_ds50UTC[?] from an observer's position
@@ -145,7 +187,7 @@ public:
     void printSatLA(std::string subject_SatName);
 
     /*
-     * @brief Displays graph of satellite orbit using matplotplusplus
+     * @brief [NOT YET IMPLEMENTED] Displays graph of satellite orbit using matplotplusplus
      * 
      * @param subject_SatName (std::string) - The name of the satellite to graph the orbit of. This should be the same name as returned by the satellite object's getSatelliteName() and designated when creating the object.
      * @param backwardsHours (double) - The number of hours before the current time to track the satellite. Defaults to 1
@@ -166,6 +208,15 @@ public:
      */
     bool graphSatGroundTrack(std::string subject_SatName, double backwardsHours=1, double forwardHours=1);
 
+    // ===== Utility Functions =====
+
+    /*
+     * @brief Calculates and returns the current time in ds50UTC
+     * 
+     * @return Returns a double representing the current time in ds50TUC
+     */
+    double getCurrTime_ds50UTC();
+
 private:
     // Vector containing loaded satellite
     std::vector<satellite> loadedSats;
@@ -182,9 +233,6 @@ private:
     void FreeAstroStdDlls();
 
     // ===== Utility Functions =====
-
-    // Returns the current time in the ds50UTC format
-    double getCurrTime_ds50UTC();
 
     // Determines whether the provided year is a leap year
     bool isLeapYear(int year);
