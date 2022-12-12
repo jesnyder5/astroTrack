@@ -101,6 +101,8 @@ public:
      */
     void printSatElset(std::string subject_SatName);
 
+        // ===== Position Functions =====
+
     /*
      * @brief Calculates the position unit vector to the Sun at subject_ds50UTC in the TEME frame
      * 
@@ -186,6 +188,8 @@ public:
      */
     void printSatLA(std::string subject_SatName);
 
+        // ===== Visualization Functions =====
+
     /*
      * @brief [NOT YET IMPLEMENTED] Displays graph of satellite orbit using matplotplusplus
      * 
@@ -195,20 +199,21 @@ public:
      * 
      * @return Returns false if the satellite could not be found by the name provided. Returns true otherwise.
      */
-    void graphSatOrbit(std::string subject_SatName, double backwardsHours=1, double forwardHours=1);
+    void graphSatOrbit(std::string subject_SatName, double subject_ds50UTC=-1, double backwardsHours=1, double forwardHours=1);
 
     /*
      * @brief Displays graph of satellite ground track using matplotplusplus
      * 
      * @param subject_SatName (std::string) - The name of the satellite to create a ground track for. This should be the same name as returned by the satellite object's getSatelliteName() and designated when creating the object.
-     * @param backwardsHours (double) - The number of hours before the current time to track the satellite. Defaults to 1
-     * @param forwardHours (double) - The number of hours after the current time to track the satellite. Defaults to 1
+     * @param subject_ds50UTC (double) - The time to mark the satellite position at. Defaults to -1, indicating to calculate the current time
+     * @param backwardsHours (double) - The number of hours before subject_ds50UTC to track the satellite. Defaults to 1
+     * @param forwardHours (double) - The number of hours after subject_ds50UTC to track the satellite. Defaults to 1
      * 
      * @return Returns false if the satellite could not be found by the name provided. Returns true otherwise.
      */
-    bool graphSatGroundTrack(std::string subject_SatName, double backwardsHours=1, double forwardHours=1);
+    bool graphSatGroundTrack(std::string subject_SatName, double subject_ds50UTC=-1, double backwardsHours=1, double forwardHours=1);
 
-    // ===== Utility Functions =====
+        // ===== Utility Functions =====
 
     /*
      * @brief Calculates and returns the current time in ds50UTC
@@ -216,6 +221,34 @@ public:
      * @return Returns a double representing the current time in ds50TUC
      */
     double getCurrTime_ds50UTC();
+
+    /*
+     * @brief Calculates and returns the specified time in ds50UTC
+     * 
+     * @param subject_Time (struct tm*) - The time to convert to ds50UTC
+     * 
+     * @return Returns a double representing the specified time in ds50TUC
+     */
+    double getTime_ds50UTC(tm* subject_Time);
+
+    /*
+     * @brief [NOT FULLY IMPLEMENTED] Calculates and returns the specified time in ds50UTC
+     * 
+     * @param subject_Time (std::string) - The time to convert to ds50UTC in DTG15, DTG17, DTG19, or DTG20 format
+     * 
+     * @return Returns a double representing the specified time in ds50TUC
+     */
+    double getTime_ds50UTC(std::string subject_Time);
+
+    /*
+     * @brief Determines whether a location on Earth is sunlit at subject_ds50UTC
+     * 
+     * @param posLLH (double[3]) - A 3-element double array to store the latitude, longitude, and height in km of the location to check
+     * @param subject_ds50UTC (double) - The time to check
+     * 
+     * @return Returns true is the location is sunlit at subject_ds50UTC and false if it is not
+     */
+    bool isLocationSunlit(double posLLH[3], double subject_ds50UTC=-1);
 
 private:
     // Vector containing loaded satellite

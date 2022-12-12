@@ -11,8 +11,8 @@
 #include "astroTracker.hpp"
 #include <iostream>
 #include <fstream>
-#include "stdlib.h"
-#include "time.h"
+#include <stdlib.h>
+#include <time.h>
 #include <matplot/matplot.h>
 
 #ifndef __Win32
@@ -147,7 +147,6 @@ void astroTracker::InitAstroStdDlls(){
     OpenLogFile(LOGFILE);
 
     // Create log message variables
-    std::string logMsgStr;
     char logMsg[128];
     // Log tracker start time
     time_t rawtime;
@@ -233,7 +232,6 @@ void astroTracker::FreeAstroStdDlls(){
     FreeEnvConstDll();
 
     // Create log message variables
-    std::string logMsgStr;
     char logMsg[128];
     // Log tracker stop time
     time_t rawtime;
@@ -619,7 +617,7 @@ void astroTracker::printSatLA(std::string satName){
     Sgp4PropDs50UtcPos(subjectSatKey, subject_ds50UTC, subject_pos);
 }
 
-bool astroTracker::graphSatGroundTrack(std::string subject_SatName, double backwardsHours, double forwardHours){
+bool astroTracker::graphSatGroundTrack(std::string subject_SatName, double subject_ds50UTC, double backwardsHours, double forwardHours){
     // Find subject satellite's satkey in loadedSats vector by satellite name
     __int64 subject_SatKey = -1;
     for(int i = 0; i < loadedSats.size(); i++){
@@ -634,8 +632,10 @@ bool astroTracker::graphSatGroundTrack(std::string subject_SatName, double backw
         std::cout << "Error: Could not find " << subject_SatName << " in satellite database" << std::endl;
         return false;
     }
-
-    double subject_ds50UTC = getCurrTime_ds50UTC(); // Get the current time
+        // Calculate current time, if needed
+        if(subject_ds50UTC == -1){
+            subject_ds50UTC = getCurrTime_ds50UTC();
+        }
     // Create ground track time window
     double startTime = subject_ds50UTC - (backwardsHours/24);
     double endTime = subject_ds50UTC + (forwardHours/24);
@@ -723,7 +723,7 @@ bool astroTracker::graphSatGroundTrack(std::string subject_SatName, double backw
 double astroTracker::getCurrTime_ds50UTC(){
     time_t rawCurrTime;
     time(&rawCurrTime);
-    tm * currTime = gmtime(&rawCurrTime);
+    tm* currTime = gmtime(&rawCurrTime);
 
     return TimeComps1ToUTC((currTime->tm_year + 1900),
                             (currTime->tm_yday + 1),
@@ -732,6 +732,36 @@ double astroTracker::getCurrTime_ds50UTC(){
                             (double)currTime->tm_sec);
 
 }
+
+double astroTracker::getTime_ds50UTC(tm* subject_Time){
+    return TimeComps1ToUTC((subject_Time->tm_year + 1900),
+                            (subject_Time->tm_yday + 1),
+                            subject_Time->tm_hour,
+                            subject_Time->tm_min,
+                            (double)subject_Time->tm_sec);
+}
+
+double astroTracker::getTime_ds50UTC(std::string subject_Time){
+    char subject_TimeDTG[20];
+    if(subject_Time.length() > 20){
+        // subject_Time.replace()
+    }
+    return DTGToUTC(subject_TimeDTG);
+}
+
+bool astroTracker::isLocationSunlit(double posLLH[3], double subject_ds50UTC){
+    // Calculate current time, if needed
+    if(subject_ds50UTC == -1){
+        subject_ds50UTC = getCurrTime_ds50UTC();
+    }
+    double subject_ds50ET = UTCToET(subject_ds50UTC);
+
+    // Declare temp vars for frame conversion
+    double posTEME[3];
+    // Determine whether point is sunlit
+    return IsPointSunlit(subject_ds50ET, posTEME);
+}
+
 
 //Returns true if year is a leap year
 bool astroTracker::isLeapYear(int year){
