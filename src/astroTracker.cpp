@@ -104,11 +104,11 @@ astroTracker::~astroTracker(){
 void astroTracker::LoadAstroStdDlls(){
     // Library wrappers output loading messages to STDOUT. This will redirect to somewhere else
     // POSIX centric solution
-    // #ifndef __Win32
-    // fflush(stdout);
-    // int stdout_fd = dup(STDOUT_FILENO); // Copy STDOUT info to temp var
-    // freopen("/dev/null", "w", stdout); // Reopen STDOUT to write to /dev/null for now. 
-    // #endif
+    #ifndef __Win32
+    fflush(stdout);
+    int stdout_fd = dup(STDOUT_FILENO); // Copy STDOUT info to temp var
+    freopen("/dev/null", "w", stdout); // Reopen STDOUT to write to /dev/null for now. 
+    #endif
 
     // Load MainDll dll
     LoadDllMainDll();
@@ -128,12 +128,12 @@ void astroTracker::LoadAstroStdDlls(){
     // Load Sgp4Prop dll and assign function pointers
     LoadSgp4PropDll();
 
-    // #ifndef __Win32
-    // fflush(stdout);
-    // std::cout.flush(); // Empty any output buffers
-    // dup2(stdout_fd, STDOUT_FILENO); // Reset STDOUT to original info
-    // close(stdout_fd); // Close temp var
-    // #endif
+    #ifndef __Win32
+    fflush(stdout);
+    std::cout.flush(); // Empty any output buffers
+    dup2(stdout_fd, STDOUT_FILENO); // Reset STDOUT to original info
+    close(stdout_fd); // Close temp var
+    #endif
 }
 
 void astroTracker::InitAstroStdDlls(){
@@ -210,11 +210,11 @@ void astroTracker::InitAstroStdDlls(){
 void astroTracker::FreeAstroStdDlls(){
     // Library wrappers output loading messages to STDOUT. This will redirect to somewhere else
     // POSIX centric solution
-    // #ifndef __Win32
-    // fflush(stdout);
-    // int stdout_fd = dup(STDOUT_FILENO); // Copy STDOUT info to temp var
-    // freopen("/dev/null", "w", stdout); // Reopen STDOUT to write to /dev/null for now. 
-    // #endif
+    #ifndef __Win32
+    fflush(stdout);
+    int stdout_fd = dup(STDOUT_FILENO); // Copy STDOUT info to temp var
+    freopen("/dev/null", "w", stdout); // Reopen STDOUT to write to /dev/null for now. 
+    #endif
 
     // Free Sgp4Prop dll
     FreeSgp4PropDll();
@@ -243,12 +243,12 @@ void astroTracker::FreeAstroStdDlls(){
     // Free MainDll dll
     FreeDllMainDll();
 
-    // #ifndef __Win32
-    // fflush(stdout);
-    // std::cout.flush(); // Empty any output buffers
-    // dup2(stdout_fd, STDOUT_FILENO); // Reset STDOUT to original info
-    // close(stdout_fd); // Close temp var
-    // #endif
+    #ifndef __Win32
+    fflush(stdout);
+    std::cout.flush(); // Empty any output buffers
+    dup2(stdout_fd, STDOUT_FILENO); // Reset STDOUT to original info
+    close(stdout_fd); // Close temp var
+    #endif
 }
 
 //================================================ Satellite Loading Functions ============================
@@ -337,6 +337,62 @@ void astroTracker::loadFromTLE(std::string subject_SatName, std::string line1, s
         loadedSats.push_back(satellite(subject_SatName, line1, line2));
     } catch(const std::runtime_error& e){
         std::cerr << "Error adding satellite from TLE: " << e.what() << std::endl;
+    }
+}
+
+bool astroTracker::removeSat(std::string subject_SatName){
+    // Find subject satellite's satkey in loadedSats vector by satellite name
+    __int64 subject_SatKey = -1;
+    int subject_SatInd = 0;
+    for(; subject_SatInd < loadedSats.size(); subject_SatInd++){
+        if(loadedSats.at(subject_SatInd).getSatelliteName() == subject_SatName){
+            // std::cout << "Found satellite: " << subject_SatName << std::endl;
+            subject_SatKey = loadedSats.at(subject_SatInd).getSatKey();
+            break;
+        }
+    }
+    // If the subject satellite isn't in the database print error and return false
+    if(subject_SatKey == -1){
+        std::cout << "Error: Could not find " << subject_SatName << " in satellite database" << std::endl;
+        return false;
+    }
+
+    // Remove satellite from SGP4
+    if(Sgp4RemoveSat(subject_SatKey) == 0){
+        // Successfully removed from SGP4, remove satellite from TLE binary tree
+        if(TleRemoveSat(subject_SatKey) == 0){
+            // Successfully removed from libraries, remove from local vector
+            loadedSats.erase(loadedSats.begin() + subject_SatInd);
+            return true;
+        }
+        else{
+            std::cout << "Error removing " << subject_SatName << " from TLE library" << std::endl;
+            return false;
+        }
+    }
+    else{
+        std::cout << "Error removing " << subject_SatName << " from SGP4 library" << std::endl;
+        return false;
+    }
+}
+
+bool astroTracker::removeAllSats(){
+    // Remove all satellites from SGP4
+    if(Sgp4RemoveAllSats() == 0){
+        // Successfully removed from SGP4, remove satellites from TLE binary tree
+        if(TleRemoveAllSats() == 0){
+            // Successfully removed from libraries, clear local vector
+            loadedSats.clear();
+            return true;
+        }
+        else{
+            std::cout << "Error clearing satellites from TLE library" << std::endl;
+            return false;
+        }
+    }
+    else{
+        std::cout << "Error clearing satellites from SGP4 library" << std::endl;
+        return false;
     }
 }
 
@@ -617,7 +673,7 @@ void astroTracker::printSatLA(std::string satName){
     Sgp4PropDs50UtcPos(subjectSatKey, subject_ds50UTC, subject_pos);
 }
 
-bool astroTracker::graphSatGroundTrack(std::string subject_SatName, double subject_ds50UTC, double backwardsHours, double forwardHours){
+bool astroTracker::graphSatGroundTrack(std::string subject_SatName, double backwardsHours, double forwardHours, double subject_ds50UTC){
     #ifdef __WIN32
         std::cout << "Ground track graphing only available on Linux build" << std::endl;
         return false;

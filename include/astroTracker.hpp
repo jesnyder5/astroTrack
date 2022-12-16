@@ -78,6 +78,21 @@ public:
      */
     void loadFromTLE(std::string name, std::string line1, std::string line2);
 
+    /*
+     * @brief Removes a satellite from the satellite database using the satellite name
+     * 
+     * @param subject_SatName (std::string) - The name of the satellite to remove
+     * @return True if satellite is successfully removed, False otherwise
+     */
+    bool removeSat(std::string subject_SatName);
+
+    /*
+     * @brief Removes all satellites from the satellite database
+     * 
+     * @return True satellites are successfully removed, False otherwise
+     */
+    bool removeAllSats();
+
     // ===== Main Functions =====
 
     /*
@@ -199,19 +214,19 @@ public:
      * 
      * @return Returns false if the satellite could not be found by the name provided. Returns true otherwise.
      */
-    void graphSatOrbit(std::string subject_SatName, double subject_ds50UTC=-1, double backwardsHours=1, double forwardHours=1);
+    void graphSatOrbit(std::string subject_SatName, double backwardsHours=1, double forwardHours=1, double subject_ds50UTC=-1);
 
     /*
      * @brief Displays graph of satellite ground track using matplotplusplus
      * 
      * @param subject_SatName (std::string) - The name of the satellite to create a ground track for. This should be the same name as returned by the satellite object's getSatelliteName() and designated when creating the object.
-     * @param subject_ds50UTC (double) - The time to mark the satellite position at. Defaults to -1, indicating to calculate the current time
      * @param backwardsHours (double) - The number of hours before subject_ds50UTC to track the satellite. Defaults to 1
      * @param forwardHours (double) - The number of hours after subject_ds50UTC to track the satellite. Defaults to 1
+     * @param subject_ds50UTC (double) - The time to mark the satellite position at. Defaults to -1, indicating to calculate the current time
      * 
      * @return Returns false if the satellite could not be found by the name provided. Returns true otherwise.
      */
-    bool graphSatGroundTrack(std::string subject_SatName, double subject_ds50UTC=-1, double backwardsHours=1, double forwardHours=1);
+    bool graphSatGroundTrack(std::string subject_SatName, double backwardsHours=1, double forwardHours=1, double subject_ds50UTC=-1);
 
         // ===== Utility Functions =====
 

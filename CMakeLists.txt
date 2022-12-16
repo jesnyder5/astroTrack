@@ -9,6 +9,7 @@ enable_testing()
 
 set (SRC_FILES 
         main.cpp 
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/astroTracker_menu.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/astroTracker.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/satellite.cpp
 )

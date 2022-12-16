@@ -3,12 +3,11 @@
  * Author: Jeremy Snyder
  * Creation: Jan 1, 2022
  *
- * Last Update: Nov 13, 2022
- *
- * [desc]
+ * Main file for astroTrack
  */
 //export LD_LIBRARY_PATH=./lib/
 
+#include "astroTracker_menu.hpp"
 #include "astroTracker.hpp"
 #include <iostream>
 #include <fstream>
@@ -17,13 +16,23 @@
 
 using json = nlohmann::json;
 
+void test();
+
 int main(){
+    // test();
+
+    astroTracker_menu main_run("weather.tle");
+    main_run.mainMenu();
+}
+
+
+void test(){
     clock_t startTime, finishTime;
     startTime = clock();
 
     std::string file;
-    file = "omm-weather.json";
-    // file = "weather.tle";
+    // file = "omm-weather.json";
+    file = "weather.tle";
 
     astroTracker test(file);
 
@@ -42,7 +51,7 @@ int main(){
     test.graphSatGroundTrack("NOAA 15", 2, 2);
 
     std::cout << test.getSatCount() << std::endl;
-    test.loadFromFile("omm-weather copy.json");
+    // test.loadFromFile("omm-weather copy.json");
     std::cout << test.getSatCount() << std::endl;
 
     double moonPos[3];
@@ -81,4 +90,3 @@ int main(){
     << " seconds" 
     << std::endl;
 }
-
