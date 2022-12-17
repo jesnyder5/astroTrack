@@ -1,11 +1,9 @@
 /*
- * File: astroTracker.cpp
+ * File: astroTracker_menu.cpp
  * Author: Jeremy Snyder
- * Creation: Jan 1, 2022
+ * Creation: Dec 16, 2022
  *
- * Last Update: Nov 13, 2022
- *
- * Uses USSF SGP4 to track objects from an Earth-fixed terrestrial reference frame.
+ * Menu class to interface with astroTracker
  */
 
 #include "astroTracker_menu.hpp"
@@ -187,7 +185,16 @@ void astroTracker_menu::editSatDatabase(){
                 std::cout << "Enter Selection -> ";
                 std::getline(std::cin, userInput);
                 if((userInput == "y") || (userInput == "Y")){
-                    astroTrack.removeAllSats();
+                    if(astroTrack.removeAllSats()){
+                        std::cout << "Successfully erased satellite database" << std::endl;
+                        userInput = "";
+                        break;
+                    }
+                    else{
+                        std::cout << "Error erasing satellite database" << std::endl;
+                        userInput = "";
+                        break;
+                    }
                 }
             }
             userInput = "";
@@ -206,7 +213,6 @@ void astroTracker_menu::selectSat(){
         std::cout << "==============================AstroTrack==============================" << std::endl;
         std::cout << "||                    Select Satellite To Track                     ||" << std::endl;
         state.copyfmt(std::cout); // Save original cout formatting
-
 
         numDigits = std::to_string(loadedSatNames.size()).length(); // Determine the max digits that need to be listed
         for(int i = 1; i < loadedSatNames.size()+1; i+=2){
@@ -239,17 +245,122 @@ void astroTracker_menu::selectSat(){
                     continue;
                 }
                 subject_SatName = loadedSatNames.at(satInd-1);
+                trackSat();
             }
             else if((userInput == "s") || (userInput == "S")){
-                subject_SatName = "Sun";
+                subject_SatName = "The Sun";
+                trackSunMoon();
             }
             else if((userInput == "m") || (userInput == "M")){
-                subject_SatName = "Moon";
+                subject_SatName = "The Moon";
+                trackSunMoon();
             }
-            // Should be good now
-            trackSat();
             subject_SatName = ""; // Reset for possible re-selection
         }
     }
-    userInput = "";
 }
+
+void astroTracker_menu::trackSat(){
+    std::string userInput = "";
+    std::ios state(nullptr); // Create state object to reset cout
+    std::stringstream trackingHeader;
+    trackingHeader << std::setw(5 + (60-("Tracking " + subject_SatName).length())/2) << std::left << "||   " << ("Tracking " + subject_SatName) << std::setw(5 + (60-("Tracking " + subject_SatName).length())/2 + (60-("Tracking " + subject_SatName).length())%2) << std::right << "   ||";
+
+    while((userInput != "q") && (userInput != "Q")){
+        std::cout << "==============================AstroTrack==============================" << std::endl;
+        std::cout << trackingHeader.str() << std::endl;
+        std::cout << "||   T - Get satellite's position in True Equator Mean Equinox      ||" << std::endl;
+        std::cout << "||   E - Get satellite's position in Earth-Centered Rotating        ||" << std::endl;
+        std::cout << "||   L - Get satellite's position in Latitude and Longitude         ||" << std::endl;
+        std::cout << "||   G - Graph satellite's ground track                             ||" << std::endl;
+        std::cout << "||                                                       Q - Back   ||" << std::endl;
+        std::cout << "||                                                                  ||" << std::endl;
+        std::cout << "======================================================================" << std::endl;
+        std::cout << "Enter Selection -> ";
+        std::getline(std::cin, userInput);
+
+        if((userInput == "t") || (userInput == "T")){
+            double posSatTEME[3] = {0,0,0};
+            astroTrack.getSatPosTEME(posSatTEME, subject_SatName);
+            std::cout << "The satellite " << subject_SatName << "'s current position in the TEME reference frame is: (" << posSatTEME[0] << ", " << posSatTEME[1] << ", " << posSatTEME[2] << ")" << std::endl;
+        }
+        if((userInput == "e") || (userInput == "E")){
+            double posSatECR[3] = {0,0,0};
+            astroTrack.getSatPosECR(posSatECR, subject_SatName);
+            std::cout << "The satellite " << subject_SatName << "'s current position in the ECR reference frame is: (" << posSatECR[0] << ", " << posSatECR[1] << ", " << posSatECR[2] << ")" << std::endl;
+        }
+        if((userInput == "l") || (userInput == "L")){
+            double posSatLLH[3] = {0,0,0};
+            astroTrack.getSatPosLLH(posSatLLH, subject_SatName);
+            std::cout << "The satellite " << subject_SatName << "'s current position in Latitude, Longitude, and Height in kilometers is: (" << posSatLLH[0] << ", " << posSatLLH[1] << ", " << posSatLLH[2] << ")" << std::endl;
+        }
+        if((userInput == "g") || (userInput == "G")){
+            double backHours, foreHours;
+            while((userInput.find_first_not_of("0123456789.") != std::string::npos) || userInput.empty() || (userInput.find('.') != userInput.rfind('.'))){
+                std::cout << "Enter the decimal number of hours before the current time to graph -> ";
+                std::getline(std::cin, userInput);
+            }
+            backHours = std::stod(userInput);
+            userInput = "";
+            while((userInput.find_first_not_of("0123456789.") != std::string::npos) || userInput.empty() || (userInput.find('.') != userInput.rfind('.'))){
+                std::cout << "Enter the decimal number of hours after the current time to graph -> ";
+                std::getline(std::cin, userInput);
+            }
+            foreHours = std::stod(userInput);
+            std::cout << "Graphing " << subject_SatName << "'s position from " << backHours << " hours in the past to " << foreHours << " hours in the future" << std::endl;
+            astroTrack.graphSatGroundTrack(subject_SatName, backHours, foreHours);
+        }
+    }
+}
+
+void astroTracker_menu::trackSunMoon(){
+    std::string userInput = "";
+    std::ios state(nullptr); // Create state object to reset cout
+    std::stringstream trackingHeader;
+    trackingHeader << std::setw(5 + (60-("Tracking " + subject_SatName).length())/2) << std::left << "||   " << ("Tracking " + subject_SatName) << std::setw(5 + (60-("Tracking " + subject_SatName).length())/2 + (60-("Tracking " + subject_SatName).length())%2) << std::right << "   ||";
+
+    while((userInput != "q") && (userInput != "Q")){
+        std::cout << "==============================AstroTrack==============================" << std::endl;
+        std::cout << trackingHeader.str() << std::endl;
+        std::cout << "||   T - Get position in True Equator Mean Equinox                  ||" << std::endl;
+        std::cout << "||   E - Get position in Earth-Centered Rotating                    ||" << std::endl;
+        std::cout << "||   L - Get position in Latitude and Longitude                     ||" << std::endl;
+        std::cout << "||                                                       Q - Back   ||" << std::endl;
+        std::cout << "||                                                                  ||" << std::endl;
+        std::cout << "======================================================================" << std::endl;
+        std::cout << "Enter Selection -> ";
+        std::getline(std::cin, userInput);
+
+        if((userInput == "t") || (userInput == "T")){
+            double posTEME[3] = {0,0,0};
+            if(subject_SatName == "The Sun"){
+                astroTrack.getSunPosTEME(posTEME);
+            }
+            else{
+                astroTrack.getMoonPosTEME(posTEME);
+            }
+            std::cout << subject_SatName << "'s current position in the TEME reference frame is: (" << posTEME[0] << ", " << posTEME[1] << ", " << posTEME[2] << ")" << std::endl;
+        }
+        if((userInput == "e") || (userInput == "E")){
+            double posECR[3] = {0,0,0};
+            if(subject_SatName == "The Sun"){
+                astroTrack.getSunPosECR(posECR);
+            }
+            else{
+                astroTrack.getMoonPosECR(posECR);
+            }
+            std::cout << subject_SatName << "'s current position in the ECR reference frame is: (" << posECR[0] << ", " << posECR[1] << ", " << posECR[2] << ")" << std::endl;
+        }
+        if((userInput == "l") || (userInput == "L")){
+            double posLLH[3] = {0,0,0};
+            if(subject_SatName == "The Sun"){
+                astroTrack.getSunPosLLH(posLLH);
+            }
+            else{
+                astroTrack.getMoonPosLLH(posLLH);
+            }
+            std::cout << subject_SatName << "'s current position in Latitude, Longitude, and Height in kilometers is: (" << posLLH[0] << ", " << posLLH[1] << ", " << posLLH[2] << ")" << std::endl;
+        }
+    }
+}
+

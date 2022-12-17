@@ -2,9 +2,9 @@
 #define ASTROTRACKER_MENU_H
 
 /*
- * File: astroTracker.hpp
+ * File: astroTracker_menu.hpp
  * Author: Jeremy Snyder
- * Creation: Jan 1, 2022
+ * Creation: Dec 16, 2022
  *
  * Menu class to interface with astroTracker
  */
@@ -15,7 +15,7 @@
 class astroTracker_menu {
 public:
     /*
-     * @brief Default constructor
+     * @brief Constructs the astroTracker_menu object without loading any satellite orbital information
      */
     astroTracker_menu();
 
@@ -33,7 +33,7 @@ public:
 
 
     /*
-     * @brief Main menu interface start function
+     * @brief astroTracker_menu Main Menu interface start function
      */
     void mainMenu();
 
@@ -47,26 +47,25 @@ private:
     void about();
 
     /*
-     * @brief Start satellite database editing page
+     * @brief Manipulate satellite database (add, remove, erase)
      */
     void editSatDatabase();
 
     /*
-     * @brief Start satellite selection page
+     * @brief Select satellite (or Sun/Moon) for tracking
      */
     void selectSat();
 
     /*
-     * @brief Start satellite tracking page
+     * @brief Track satellite (position/ground track)
      */
     void trackSat();
 
     /*
-     * @brief Start position calculation page
+     * @brief Track Sun/Moon (position)
      */
-    void positionCalc();
+    void trackSunMoon();
 
-    
 };
 
 #endif

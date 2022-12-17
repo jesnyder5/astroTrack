@@ -748,19 +748,19 @@ bool astroTracker::graphSatGroundTrack(std::string subject_SatName, double backw
             if(groundTrack_Lon_split.at(ind).size() > 0){ // Do this for all but the first point
                 // If the satellite is about to loop over the 180 meridian
                 if(((subject_LLH[1] < -90) && (groundTrack_Lon_split.at(ind).back() > 90)) || ((subject_LLH[1] > 90) && (groundTrack_Lon_split.at(ind).back() < -90))){
-                    std::cout << subject_LLH[1] << " " << groundTrack_Lon_split.at(ind).back() << std::endl; // debug
+                    // std::cout << subject_LLH[1] << " " << groundTrack_Lon_split.at(ind).back() << std::endl; // debug
                     // Add a new sub-vector and start adding to that
                     groundTrack_Lat_split.push_back(vectorStarter);
                     groundTrack_Lon_split.push_back(vectorStarter);
                     ind++;
-                    std::cout << "New sub-vector" << std::endl; // debug
+                    // std::cout << "New sub-vector" << std::endl; // debug
                 }
             }
             // Add latitude and longitude to last sub-vector
             groundTrack_Lat_split.at(ind).push_back(subject_LLH[0]);
             groundTrack_Lon_split.at(ind).push_back(subject_LLH[1]);
         }
-        std::cout << "Propagation complete" << std::endl; // debug
+        // std::cout << "Propagation complete" << std::endl; // debug
 
         std::string groundTrack_Line = "r-"; // Set ground track line color
         for(int i = 0; i < groundTrack_Lon_split.size(); i++){ // For each sub-vector
