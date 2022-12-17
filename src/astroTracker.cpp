@@ -407,7 +407,7 @@ std::vector<std::string> astroTracker::getSatNames(){
 }
 
 int astroTracker::getSatCount(){
-    std::cout << loadedSats.size() << std::endl;
+    // std::cout << loadedSats.size() << std::endl;
     return TleGetCount();
 }
 

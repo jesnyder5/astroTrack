@@ -39,6 +39,7 @@ public:
 
 private:
     astroTracker astroTrack;
+    std::string subject_SatName;
 
     /*
      * @brief Display program about page
@@ -49,6 +50,16 @@ private:
      * @brief Start satellite database editing page
      */
     void editSatDatabase();
+
+    /*
+     * @brief Start satellite selection page
+     */
+    void selectSat();
+
+    /*
+     * @brief Start satellite tracking page
+     */
+    void trackSat();
 
     /*
      * @brief Start position calculation page
